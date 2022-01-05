@@ -16,8 +16,7 @@
      <!-- Session Status -->
      <x-auth-session-status class="mb-4" :status="session('status')" />
 
-     <!-- Validation Errors -->
-     <x-auth-validation-errors class="mb-4" :errors="$errors" />
+     
     <div class="container-fluid">
         <div id="corpo">
             <div id="title">Sistema de Medicina Ocupacional</div>
@@ -35,6 +34,8 @@
                         <input type="password" class="form-control" id="password" autofocus autocomplete="current-password" required name="password">
                     </div>
                 </div>
+                <!-- Validation Errors -->
+     <x-auth-validation-errors class="mb-4" :errors="$errors" />
                 <input type="submit" value="Entrar" class="btn btn-primary">
             </form>
         </div>
