@@ -1,0 +1,27 @@
+label {
+    text-align: right;
+    padding-top: 5px;
+}
+input {
+    border: 1px solid #ccc;
+    padding-top: 5px;
+}
+#corpo {
+    background-color: #fff;
+    width: 400px;
+    height: 220px;
+    margin: auto;
+    margin-top: 100px;
+    text-align: center;
+}
+#title {
+    background-color: #163550;
+    color: #fff;
+    width: 400px;
+    height: 40px;
+    margin: auto;
+    margin-bottom: 20px;
+    text-align: center;
+    padding-top: 8px;
+    font-size: 18px;
+}
