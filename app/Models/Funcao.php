@@ -12,7 +12,7 @@ class Funcao extends Model
     protected $table = 'funcao';
     protected $fillable = [
         'nome',
-        
-        
-    ];
+     ];
+
+     public $timestamps = false;
 }
