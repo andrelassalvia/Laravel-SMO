@@ -15,6 +15,12 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/home', 'App\Http\Controllers\Admin\HomeController@index')->middleware(['auth'])->name('home');
 
+Route::get('/funcoes', 'App\Http\Controllers\Admin\FuncaoController@index')->middleware(['auth'])->name('funcoes.index');
+Route::get('/funcoes/{id}/edit', 'App\Http\Controllers\Admin\FuncaoController@edit')->middleware(['auth'])->name('funcoes.edit');
+Route::get('/funcoes/{id}/show', 'App\Http\Controllers\Admin\FuncaoController@show')->middleware(['auth'])->name('funcoes.show');
+Route::get('/funcoes/search', 'App\Http\Controllers\Admin\FuncaoController@search')->middleware(['auth'])->name('funcoes.search');
+Route::get('/funcoes/create', 'App\Http\Controllers\Admin\FuncaoController@create')->middleware(['auth'])->name('funcoes.create');
+Route::any('/funcoes/store', 'App\Http\Controllers\Admin\FuncaoController@store')->middleware(['auth'])->name('funcoes.store');
 
 
 Route::get('/', function () {

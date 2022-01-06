@@ -1,4 +1,4 @@
-<nav class="navbar navbar-expand-lg navbar--white navbar--main">
+<nav class="navbar navbar-expand-lg mb-3 navbar--white navbar--main">
   <div class="container-fluid">
     
     
@@ -13,7 +13,7 @@
             Tabelas
           </a>
           <ul class="dropdown-menu " aria-labelledby="navbarDropdown">
-            <li><a class="dropdown-item" href="#">Funções</a></li>
+            <li><a class="dropdown-item" href="{{route('funcoes.index')}}">Funções</a></li>
             <li><a class="dropdown-item" href="#">Setores</a></li>
             <li><a class="dropdown-item" href="#">Exames</a></li>
             <li><a class="dropdown-item" href="#">Grupos Homogêneos</a></li>
