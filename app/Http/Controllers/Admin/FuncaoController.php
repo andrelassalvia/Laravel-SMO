@@ -4,16 +4,19 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\Funcao;
 use App\Http\Requests\Admin\FuncaoFormRequest; 
 use App\Models\Empregado;
+use App\Repositories\Interfaces\FuncaoInterface;
+
+
 
 class FuncaoController extends Controller
 {
     // Construct method
-    private $funcao;
-    public function __construct(Funcao $funcao){
-        $this->funcao = $funcao;
+   
+    protected $repo;
+    public function __construct(FuncaoInterface $repo){
+        $this->repo = $repo;
     }
     /**
      * Display a listing of the resource.
@@ -22,7 +25,9 @@ class FuncaoController extends Controller
      */
     public function index()
     {
-        $funcoes = $this->funcao->orderBy('nome', 'ASC')->paginate(5);
+        
+        $funcoes = $this->repo->allOrdered('nome', 'ASC', 5);
+        
         return view ('admin.funcao.index', ['funcoes' => $funcoes]);
     }
 
@@ -31,6 +36,7 @@ class FuncaoController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+
     public function create()
     {
         return view ('admin.funcao.create');
@@ -45,24 +51,23 @@ class FuncaoController extends Controller
     public function store(FuncaoFormRequest $request)
     {
         $dataForm = $request->all();
-        // print_r($dataForm);
         $nome = $dataForm['nome'];
-        // print_r($nome);
 
         // Verifica de o nome ja esta cadastrado
-        $funcao = $this->funcao->where('nome', '=', $nome)->get()->first();
+        $funcao = $this->repo->checkDb('nome', '=', $nome);
+        
         if($funcao != null){
-            return redirect()->route('funcoes.create')->withErrors(['errors'=> 'Função já cadastrada'])->withInput();
+            return $this->repo->failRedirect('funcoes.create', ['errors'=> 'Função já cadastrada']);
         }
         
         // inserir o nome
-        $insert = $this->funcao->insert(['nome' => $nome]);
+        $insert = $this->repo->insert(['nome' => $nome]);
 
         if($insert){
-            return redirect()->route('funcoes.index')->with(['success'=>'Registro Cadastrado com Sucesso'])->withInput();
+            return $this->repo->successRedirect('funcoes.index', ['success'=>'Registro Cadastrado com Sucesso']);
         }
         else{
-            return redirect('admin/funcoes/create')->withErrors(['errors' => 'Erro na insercao'])->withInput();
+            return $this->repo->failRedirect('funcoes.create', ['errors' => 'Erro na inserção.']);
         }
     }
 
@@ -75,7 +80,7 @@ class FuncaoController extends Controller
     public function show($id)
     {
         // buscar a funcao
-        $funcao = $this->funcao->find($id);
+        $funcao = $this->repo->get($id);
         return view ('admin.funcao.show', ['funcao'=>$funcao]);
     }
 
@@ -85,13 +90,12 @@ class FuncaoController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
+
     public function edit($id)
     {
         // buscar a funcao
-        $funcao = $this->funcao->find($id);
+        $funcao = $this->repo->get($id);
         return view ('admin.funcao.edit', ['funcao'=>$funcao]);
-
-
     }
 
     /**
@@ -104,28 +108,30 @@ class FuncaoController extends Controller
     public function update(FuncaoFormRequest $request, $id)
     {
         // Buscar funcao
-        $funcao = $this->funcao->find($id);
-
+        $funcao = $this->repo->get($id);
+        
         // GRAVAR FUNCAO
 
             // pegar os dados do request
         $dataForm = $request->all();
+        
         $nome = $dataForm['nome'];
 
             // verificar se ha duplicidade no BD
-        $busca = $this->funcao->where('nome', '=', $nome)->where('id', '<>', $id)->get()->first();
+        $busca = $this->repo->checkDb('nome', '=', $nome);
         if($busca != null){
-            return redirect()->route('funcoes.edit', $id)->withErrors(['errors'=>'Função já cadastrada'])->withInput();
+            return $this->repo->failRedirect('funcoes.edit', ['errors' => 'Funcao ja cadastrada'], $id);
         }
 
             // altera valor
-        $update = $funcao->update($dataForm);
-        if($update){
-            return redirect()->route('funcoes.index')->with(['success'=>'Função cadastrada com sucesso'])->withInput();
-        }else{
-            return redirect()->route('funcoes.edit', $id)->withErrors(['errors'=>'Erro na inserção'])->withInput();
-        }
-
+            $update = $this->repo->update($funcao, $dataForm);
+            
+            if($update){
+                return $this->repo->successRedirect('funcoes.index', ['success' => 'Funcao cadastrada com sucesso.']);
+            }
+            else{
+                return $this->repo->failRedirect('funcoes.edit', ['errors' => 'Erro na insercao'], $id);
+            }
     }
 
     /**
@@ -137,38 +143,34 @@ class FuncaoController extends Controller
     public function destroy($id)
     {
         //Busca a funcao no BD
-        $funcao = $this->funcao->find($id);
+        $funcao = $this->repo->get($id);
 
-        // vinculada com chave estrangeira?
-            // a tabela funcao possui relacao com a tabela empregagdo
+        // Verificar chaves estrangerias com outras tabelas
+        //     // tabela empregagdo
         $busca = Empregado::where('funcao_id', '=', $id)->get()->count();
         if($busca > 0){
             $mensagem = "Falha no Delete. Existem $busca empregado(s) com esta função.";
-            return redirect()->route('funcoes.show', $id)->withErrors(['errors' => $mensagem])->withInput();
+            return $this->repo->failRedirect('funcoes.show', $mensagem, $id);
         }
-
+        
         // nao havendo vinculacao podemos deletar
-        $delete = $funcao->delete();
+        $delete = $this->repo->delete($funcao);
 
         // retorna mensagem de sucesso ou erro no processo
         if($delete){
-            return redirect()->route('funcoes.index')->with(['success' => 'Função deletada com sucesso']);
+            return $this->repo->successRedirect('funcoes.index', ['success' => 'Funcao deletada com sucesso.']);
+        }else{
+            return $this->repo->failRedirect('funcoes.show', ['errors'=>'Erro no delete'], $id);
         }
-        else{
-            return redirect()->route('funcoes.show',$id)->withErrors(['errors' => 'Erro no Delete.'])->withInput();
-        }
-
     }
 
     public function search(Request $request){
 
         $dataForm = $request->all();
-        // print_r($dataForm);
         $nome = '%'.$dataForm['nome'].'%';
-        // print_r($nome);
-        $funcoes = $this->funcao->where('nome','LIKE',$nome)->orderBy('nome', 'ASC')->paginate(5);
 
+        $funcoes = $this->repo->search('nome', 'like', $nome, 'ASC', 5);
+    
         return view('admin.funcao.index', ['dataForm'=>$dataForm, 'funcoes'=>$funcoes]);
     }
-
 }

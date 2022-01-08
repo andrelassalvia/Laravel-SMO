@@ -27,6 +27,9 @@
         </div>
       </div>
     </form>
+    <div class="btn btn-link ms-3">
+        <a href="{{route('funcoes.index')}}">Voltar</a>
+    </div>
     
     @if (isset($errors) && count($errors)>0)
     <div class="alert alert-warning" style="margin: auto; width:400px">
