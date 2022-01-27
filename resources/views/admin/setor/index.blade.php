@@ -4,14 +4,14 @@
 @section('content')
 
 <div class="conteudo">
-  @include('admin.funcao.title')
+  @include('admin.setor.title')
 
   <div class="d-flex">
 
     {{-- Pesquisa --}}
     <div class="form-search" style="margin-bottom: 20px; margin-left:10%; 100px;width:20%">
-      <form method="get" class="search" action="{{route('funcoes.search')}}">
-        <input type="text" class="form-control me-2" name="nome" placeholder="Nome da função">
+      <form method="get" class="search" action="{{route('setores.search')}}">
+        <input type="text" class="form-control me-2" name="nome" placeholder="Nome do setor">
         <button class="btn btn-primary">
           <i class="bi bi-search" aria-hidden="true"></i>
         </button>
@@ -21,7 +21,7 @@
     {{-- Adicao de Registro --}}
     <div class="form-central" style="margin-bottom: 20px; margin-left:2%; 100px;width:20%">
       <div class="btn btn-primary">
-        <a href="{{route('funcoes.create')}}" style="color: #fff; text-decoration:none">Cadastrar função
+        <a href="{{route('setores.create')}}" style="color: #fff; text-decoration:none">Cadastrar setor
           <i class="bi bi-plus-lg" style="color: #fff"></i>
         </a>
       </div>
@@ -35,20 +35,20 @@
     </div>
 
   @endif
-  {{-- TABELA COM LISTA DE FUNCOES --}}
+  {{-- TABELA COM LISTA DE setores --}}
   <table class="table table-striped table-hover mb-3" style="width: 80%; margin:auto">
     <tr>
-      <th>Função</th>
+      <th>Setor</th>
       <th width='100'>Ações</th>
     </tr>
-    @foreach ($funcoes as $funcao )
+    @foreach ($setores as $setor )
     <tr>
-      <td>{{$funcao->nome}}</td>
+      <td>{{$setor->nome}}</td>
       <td width='100'>
-        <a href="{{route('funcoes.edit',$funcao->id)}}" class="btn btn-primary btn-sm">
+        <a href="{{route('setores.edit',$setor->id)}}" class="btn btn-primary btn-sm">
           <i class="bi bi-pen" aria-hidden="true"></i>
         </a>
-        <a href="{{route('funcoes.show', $funcao->id)}}" class="btn btn-danger btn-sm">
+        <a href="{{route('setores.show', $setor->id)}}" class="btn btn-danger btn-sm">
           <i class="bi bi-trash" aria-hidden="true"></i>
         </a>
       </td>
@@ -57,24 +57,25 @@
     @endforeach
   </table>
 
-  {{-- Voltar para Funcoes --}}
+  {{-- Voltar para setores --}}
   <div class="ms-3">
-    @if(Route::is('funcoes.search') && request()->filled('nome'))
+    @if(Route::is('setores.search') && request()->filled('nome'))
 
-    <a class="btn btn-link" href="{{route('funcoes.index')}}">Voltar</a>
+    <a class="btn btn-link" href="{{route('setores.index')}}">Voltar</a>
       
 
     @endif
   </div>
+
   {{-- Paginacao --}}
   <div class="pagination">
     @if(isset($dataForm))
 
-      {{$funcoes->appends($dataForm)->links()}}
+      {{$setores->appends($dataForm)->links()}}
     
     @else
 
-      {{$funcoes->links()}}
+      {{$setores->links()}}
     
     @endif
         

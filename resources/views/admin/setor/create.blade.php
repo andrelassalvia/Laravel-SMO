@@ -4,17 +4,17 @@
 @section('content')
 
   <div class="conteudo">
-    @include('admin.setor.title')
+    @include('admin.funcao.title')
 
-    <form action="{{route('setores.store')}}" class="form-control form--create" method="post">
+    <form action="{{route('funcoes.store')}}" class="form-control form--create" method="post">
       <div class="form1">
         <input type="hidden" name="_token" value="{{csrf_token()}}">
         <div class="d-flex align-items-center">
 
           <div class="form-group d-flex col-sm-11">
-            <label for="nome" class="control-label col-sm-2 control-label--create">Setor:</label>
+            <label for="nome" class="control-label col-sm-2 control-label--create">Função:</label>
             <div class=" col-sm-10 ">
-              <input placeholder="Cadastrar setor" type="text" name="nome" class="form-control" value="{{old('nome')}}">
+              <input placeholder="Cadastrar função" type="text" name="nome" class="form-control" value="{{old('nome')}}">
             </div>
           </div>
           

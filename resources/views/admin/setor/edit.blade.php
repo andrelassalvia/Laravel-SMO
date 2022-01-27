@@ -3,17 +3,17 @@
 @section('content')
 
 <div class="conteudo">
-  @include('admin.funcao.title')
+  @include('admin.setor.title')
 
-  <form action="{{route('funcoes.update',[$funcao->id])}}" class="form-control form--create" method="post">
+  <form action="{{route('setores.update',[$setor->id])}}" class="form-control form--create" method="post">
     <div class="form1">
       <input type="hidden" name="_token" value="{{csrf_token()}}">
       <div class="d-flex align-items-center">
 
         <div class="form-group d-flex col-sm-11">
-          <label for="nome" class="control-label col-sm-2 control-label--create">Função:</label>
+          <label for="nome" class="control-label col-sm-2 control-label--create">Setor:</label>
           <div class=" col-sm-10 ">
-            <input placeholder="Cadastrar função" type="text" name="nome" class="form-control" value="{{$funcao->nome}}">
+            <input placeholder="Cadastrar setor" type="text" name="nome" class="form-control" value="{{$setor->nome}}">
           </div>
         </div>
         
@@ -27,7 +27,7 @@
     </div>
   </form>
   <div class="ms-3">
-    <a class="btn btn-link" href="{{route('funcoes.index')}}">Voltar</a>
+    <a class="btn btn-link" href="{{route('setores.index')}}">Voltar</a>
   </div>
   
   @if (isset($errors) && count($errors)>0)

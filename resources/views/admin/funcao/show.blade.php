@@ -27,8 +27,8 @@
       </div>
     </div>
   </form>
-  <div class="btn btn-link ms-3">
-    <a href="{{route('funcoes.index')}}">Voltar</a>
+  <div class= ms-3">
+    <a class="btn btn-link" href="{{route('funcoes.index')}}">Voltar</a>
   </div>
   
   @if (isset($errors) && count($errors)>0)

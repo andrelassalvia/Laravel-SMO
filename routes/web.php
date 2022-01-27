@@ -15,14 +15,31 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/home', 'App\Http\Controllers\Admin\HomeController@index')->middleware(['auth'])->name('home');
 
-Route::get('/funcoes', 'App\Http\Controllers\Admin\FuncaoController@index')->middleware(['auth'])->name('funcoes.index');
-Route::get('/funcoes/{id}/edit', 'App\Http\Controllers\Admin\FuncaoController@edit')->middleware(['auth'])->name('funcoes.edit');
-Route::any('/funcoes/{id}/update', 'App\Http\Controllers\Admin\FuncaoController@update')->middleware(['auth'])->name('funcoes.update');
-Route::get('/funcoes/{id}/show', 'App\Http\Controllers\Admin\FuncaoController@show')->middleware(['auth'])->name('funcoes.show');
-Route::any('/funcoes/{id}/destroy', 'App\Http\Controllers\Admin\FuncaoController@destroy')->middleware(['auth'])->name('funcoes.destroy');
-Route::get('/funcoes/search', 'App\Http\Controllers\Admin\FuncaoController@search')->middleware(['auth'])->name('funcoes.search');
-Route::get('/funcoes/create', 'App\Http\Controllers\Admin\FuncaoController@create')->middleware(['auth'])->name('funcoes.create');
-Route::any('/funcoes/store', 'App\Http\Controllers\Admin\FuncaoController@store')->middleware(['auth'])->name('funcoes.store');
+// Rotas para FUNCAO
+Route::prefix('funcoes')->controller('App\Http\Controllers\Admin\FuncaoController')->middleware(['auth'])->group(function(){
+
+    Route::get('/', 'index')->name('funcoes.index');
+    Route::get('/{id}/edit', 'edit')->name('funcoes.edit');
+    Route::any('/{id}/update', 'update')->name('funcoes.update');
+    Route::get('/{id}/show', 'show')->name('funcoes.show');
+    Route::any('/{id}/destroy', 'destroy')->name('funcoes.destroy');
+    Route::get('/search', 'search')->name('funcoes.search');
+    Route::get('/create', 'create')->name('funcoes.create');
+    Route::any('/store', 'store')->name('funcoes.store');
+});
+
+// Rotas para SETOR
+Route::prefix('setores')->controller('App\Http\Controllers\Admin\SetorController')->middleware(['auth'])->group(function(){
+
+    Route::get('/', 'index')->name('setores.index');
+    Route::get('/{id}/edit', 'edit')->name('setores.edit');
+    Route::any('/{id}/update', 'update')->name('setores.update');
+    Route::get('/{id}/show', 'show')->name('setores.show');
+    Route::any('/{id}/destroy', 'destroy')->name('setores.destroy');
+    Route::get('/search', 'search')->name('setores.search');
+    Route::get('/create', 'create')->name('setores.create');
+    Route::any('/store', 'store')->name('setores.store');
+});
 
 
 Route::get('/', function () {
