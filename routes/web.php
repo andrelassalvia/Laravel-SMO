@@ -41,6 +41,18 @@ Route::prefix('setores')->controller('App\Http\Controllers\Admin\SetorController
     Route::any('/store', 'store')->name('setores.store');
 });
 
+// Rotas para EXAME
+Route::prefix('exames')->controller('App\Http\Controllers\Admin\ExameController')->middleware(['auth'])->group(function(){
+
+    Route::get('/', 'index')->name('exames.index');
+    Route::get('/{id}/edit', 'edit')->name('exames.edit');
+    Route::any('/{id}/update', 'update')->name('exames.update');
+    Route::get('/{id}/show', 'show')->name('exames.show');
+    Route::any('/{id}/destroy', 'destroy')->name('exames.destroy');
+    Route::get('/search', 'search')->name('exames.search');
+    Route::get('/create', 'create')->name('exames.create');
+    Route::any('/store', 'store')->name('exames.store');
+});
 
 Route::get('/', function () {
     return view('welcome');

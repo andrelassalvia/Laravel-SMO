@@ -4,17 +4,17 @@
 @section('content')
 
   <div class="conteudo">
-    @include('admin.funcao.title')
+    @include('admin.exame.title')
 
-    <form action="{{route('funcoes.store')}}" class="form-control form--create" method="post">
+    <form action="{{route('exames.store')}}" class="form-control form--create" method="post">
       <div class="form1">
         <input type="hidden" name="_token" value="{{csrf_token()}}">
         <div class="d-flex align-items-center">
 
           <div class="form-group d-flex col-sm-11">
-            <label for="nome" class="control-label col-sm-2 control-label--create">Funcao:</label>
+            <label for="nome" class="control-label col-sm-2 control-label--create">Exame:</label>
             <div class=" col-sm-10 ">
-              <input placeholder="Cadastrar funcao" type="text" name="nome" class="form-control" value="{{old('nome')}}">
+              <input placeholder="Cadastrar exame" type="text" name="nome" class="form-control" value="{{old('nome')}}">
             </div>
           </div>
           
@@ -28,7 +28,7 @@
       </div>
     </form>
     <div class="ms-3">
-        <a class="btn btn-link " href="{{route('funcoes.index')}}">Voltar</a>
+        <a class="btn btn-link " href="{{route('exames.index')}}">Voltar</a>
     </div>
     
     @if (isset($errors) && count($errors)>0)

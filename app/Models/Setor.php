@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Empregado;
 
 class Setor extends Model
 {
@@ -46,8 +47,7 @@ class Setor extends Model
     public function changeRegister($id, $data, $form){
 
         $register = $this->get($id);
-        // dd($register);
-
+        
         $check = $this->checkDataBase($data);
 
         if($check == null){
@@ -66,6 +66,32 @@ class Setor extends Model
             return $check;
         }
 
+    }
+
+    public function erase($id){
+
+        $register = $this->get($id);
+
+        $search = Empregado::where('funcao_id', $id)->get()->count();
+
+        if($search > 0){
+            $msg = ['errors' => 'Falha no Delete. Existem '. $search. ' empregado(s) com esta função.'];
+            return $this->failRedirect('setores.show', $msg);
+        }
+
+        $deletedRegister = $register->delete();
+
+        if($deletedRegister){
+            return $this->successRedirect('setores.index', ['success' => 'Função deletada com sucesso.']);
+        }
+        else{
+            return $this->failRedirect('setores.show', ['errors' => 'Erro no Delete']);
+        }
+
+    }
+
+    public function search($column, $operator, $loohFor, $order, $nPag){
+        return $this->where($column, $operator, $loohFor)->orderBy($column, $order)->paginate($nPag);
     }
 
     public function checkDataBase($data){
@@ -94,33 +120,6 @@ class Setor extends Model
 
     public function get($id){
         return $this->find($id);
-    }
-
-    public function erase($id){
-
-        $register = $this->get($id);
-
-        $search = Empregado::where('funcao_id', $id)->get()->count();
-
-        if($search > 0){
-            $msg = ['errors' => 'Falha no Delete. Existem '. $search. ' empregado(s) com esta função.'];
-            return $this->failRedirect('setores.show', $msg);
-        }
-
-        $deletedRegister = $register->delete();
-
-        if($deletedRegister){
-            return $this->successRedirect('setores.index', ['success' => 'Função deletada com sucesso.']);
-        }
-        else{
-            return $this->failRedirect('setores.show', ['errors' => 'Erro no Delete']);
-        }
-
-        // return $var->delete();
-    }
-
-    public function search($column, $operator, $loohFor, $order, $nPag){
-        return $this->where($column, $operator, $loohFor)->orderBy($column, $order)->paginate($nPag);
     }
 
 }

@@ -15,7 +15,7 @@
           <ul class="dropdown-menu " aria-labelledby="navbarDropdown">
             <li><a class="dropdown-item" href="{{route('funcoes.index')}}">Funções</a></li>
             <li><a class="dropdown-item" href="{{route('setores.index')}}">Setores</a></li>
-            <li><a class="dropdown-item" href="#">Exames</a></li>
+            <li><a class="dropdown-item" href="{{route('exames.index')}}">Exames</a></li>
             <li><a class="dropdown-item" href="#">Grupos Homogêneos</a></li>
             <li><a class="dropdown-item" href="#">Tipos de Usuários</a></li>
             <li><a class="dropdown-item" href="#">Tipos de Riscos</a></li>
