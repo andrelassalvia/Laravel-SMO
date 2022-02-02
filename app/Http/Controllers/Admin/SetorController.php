@@ -4,17 +4,26 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Models\Setor;
+use App\Models\Atendimento;
+
 use App\Http\Requests\Admin\SetorFormRequest;
 use App\Classes\Setor\CollectData;
 use App\Classes\Setor\SaveInDatabase;
-use App\Models\Setor;
+use App\Classes\Setor\ChangeRegister;
+use App\Classes\Setor\DeleteRegister;
+use App\Classes\Setor\SearchRequest;
 
 class SetorController extends Controller
 {
-    public function __construct(Setor $setor ){
+    public function __construct(
+        Setor $setor,
+        Atendimento $atendimento )
+    {
         $this->setor = $setor;
- 
+        $this->atendimento = $atendimento;;
     }
+
     public function index()
     {
         $setores = new CollectData($this->setor);
@@ -22,7 +31,6 @@ class SetorController extends Controller
         
         return view ('admin.setor.index', compact('setores'));
     }
-
     
     public function create()
     {
@@ -47,34 +55,59 @@ class SetorController extends Controller
         return $setores;
     }
 
+
     public function show($id)
     {
-        $setor = $this->setor->get($id);
-        return view ('admin.setor.show', compact('setor'));
+        // buscar a funcao
+        $setores = Setor::find($id);
+        return view ('admin.setor.show', compact('setores'));
     }
 
-   
+    
     public function edit($id)
     {
-        $setor = $this->setor->get($id);
-        return view ('admin.setor.edit', ['setor'=>$setor]);
+        // buscar a funcao
+        $setores = Setor::find($id);
+        return view ('admin.setor.edit', compact('setores'));
     }
 
     
     public function update(SetorFormRequest $request, $id)
     {
+        // pegar os dados do request
         $dataForm = $request->all();
         $nome = $dataForm['nome'];
 
-        $alter = $this->setor->changeRegister($id, $nome, $dataForm);
+        $alter = new ChangeRegister($this->setor);
+        $alter = $alter->changeRegisterInDatabase
+        (
+        $id, 
+        'nome', 
+        ['nome'=>$nome], 
+        'setores.index',
+        ['success' => 'Alteracao efetuada com sucesso'],
+        'setores.edit',
+        ['errors' => 'Registro igual ao anterior']
+        );
+
         return $alter;
     }
 
     
     public function destroy($id)
     {
-        return $this->setor->erase($id);
-
+        $delete = new DeleteRegister($this->setor);
+        $delete = $delete->erase(
+            $id, 
+            [$this->empregado, $this->atendimento], 
+            ['setor_id'],
+            'setores.show',
+            ['errors' => 'Existem tabelas vinculadas a este registro'],
+            'setores.index',
+            ['success' => 'Funcao deleteada com sucesso']
+        );
+        
+        return $delete;
     }
 
     public function search(Request $request){
@@ -82,8 +115,11 @@ class SetorController extends Controller
         $dataForm = $request->all();
         $nome = '%'.$dataForm['nome'].'%';
 
-        $setores = $this->setor->search('nome', 'like', $nome, 'ASC', 5);
+        $setores = new SearchRequest($this->setor);
+
+        $setores = $setores->searchIt('nome', ['nome' => $nome]);
     
         return view('admin.setor.index', ['dataForm'=>$dataForm, 'setores'=>$setores]);
     }
+    
 }

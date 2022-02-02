@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Classes\Funcao;
+namespace App\Classes\Setor;
 
 class DeleteRegister extends \App\AbstractClasses\DeleteRegister
 {

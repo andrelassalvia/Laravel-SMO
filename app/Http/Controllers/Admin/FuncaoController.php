@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Funcao;
 use App\Models\Empregado;
+use App\Models\Atendimento;
 use Illuminate\Http\Request;
 use App\Http\Requests\Admin\FuncaoFormRequest; 
 use App\Classes\Funcao\CollectData;
@@ -19,11 +20,13 @@ class FuncaoController extends Controller
 {
     public function __construct(
         Funcao $funcao,
-        Empregado $empregado
+        Empregado $empregado,
+        Atendimento $atendimento
     )
     {
         $this->funcao = $funcao;
         $this->empregado = $empregado;
+        $this->atendimento = $atendimento;
        
     }
     
@@ -102,7 +105,7 @@ class FuncaoController extends Controller
         $delete = new DeleteRegister($this->funcao);
         $delete = $delete->erase(
             $id, 
-            [$this->empregado], 
+            [$this->empregado, $this->atendimento], 
             ['funcao_id'],
             'funcoes.show',
             ['errors' => 'Existem tabelas vinculadas a este registro'],

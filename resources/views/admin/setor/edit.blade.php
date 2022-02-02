@@ -5,7 +5,7 @@
 <div class="conteudo">
   @include('admin.setor.title')
 
-  <form action="{{route('setores.update',[$setor->id])}}" class="form-control form--create" method="post">
+  <form action="{{route('setores.update',[$setores->id])}}" class="form-control form--create" method="post">
     <div class="form1">
       <input type="hidden" name="_token" value="{{csrf_token()}}">
       <div class="d-flex align-items-center">
@@ -13,7 +13,7 @@
         <div class="form-group d-flex col-sm-11">
           <label for="nome" class="control-label col-sm-2 control-label--create">Setor:</label>
           <div class=" col-sm-10 ">
-            <input placeholder="Cadastrar setor" type="text" name="nome" class="form-control" value="{{$setor->nome}}">
+            <input placeholder="Cadastrar setor" type="text" name="nome" class="form-control" value="{{$setores->nome}}">
           </div>
         </div>
         
