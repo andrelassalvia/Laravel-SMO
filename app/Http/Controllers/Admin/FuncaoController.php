@@ -3,35 +3,34 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Funcao;
+use App\Models\Empregado;
 use Illuminate\Http\Request;
 use App\Http\Requests\Admin\FuncaoFormRequest; 
-use App\Funcao\CollectData;
-use App\Funcao\SaveInDatabase;
-use App\Models\Funcao;
-use App\Funcao\ChangeRegister;
-use App\Funcao\DeleteRegister;
-use App\Funcao\FindRegister;
-use App\Funcao\SearchRequest;
+use App\Classes\Funcao\CollectData;
+use App\Classes\Funcao\SaveInDatabase;
+use App\Classes\Funcao\ChangeRegister;
+use App\Classes\Funcao\DeleteRegister;
+use App\Classes\Funcao\SearchRequest;
+
 
 
 class FuncaoController extends Controller
 {
-    // Construct method
-    public function __construct(CollectData $collectData, Funcao $funcao, SaveInDatabase $saveInDatabase, ChangeRegister $changeRegister, DeleteRegister $deleteRegister, FindRegister $findRegister, SearchRequest $searchRequest ){
-        $this->collectData = $collectData;
+    public function __construct(
+        Funcao $funcao,
+        Empregado $empregado
+    )
+    {
         $this->funcao = $funcao;
-        $this->saveInDatabase = $saveInDatabase;
-        $this->changeRegister = $changeRegister;
-        $this->deleteRegister = $deleteRegister;
-        $this->findRegister = $findRegister;
-        $this->searchRequest = $searchRequest;
-
- 
+        $this->empregado = $empregado;
+       
     }
-
+    
     public function index()
     {
-        $funcoes = $this->collectData->collection('nome', 'ASC');
+        $funcoes = new CollectData($this->funcao);
+        $funcoes = $funcoes->collection('nome', 'ASC');
         
         return view ('admin.funcao.index', compact('funcoes'));
     }
@@ -44,17 +43,26 @@ class FuncaoController extends Controller
     public function store(FuncaoFormRequest $request)
     {
         $dataForm = $request->all();
-        $nome = $dataForm['nome'];
+        $nome = $dataForm['nome']; // array 
         
-        $funcao = $this->saveInDatabase->saveDatabase($nome, 'nome');
-        return $funcao;
+        $funcoes = new SaveInDatabase($this->funcao);
+        $funcoes = $funcoes->saveDatabase
+        (
+        'nome', 
+        ['nome' => $nome], 
+        'funcoes.index', 
+        ['success' => 'Registro cadastrado com sucesso'], 
+        'funcoes.create', 
+        ['errors' => 'Funcao ja cadastrada']
+        );
         
+        return $funcoes;
     }
     
     public function show($id)
     {
         // buscar a funcao
-        $funcao = $this->findRegister->findId($id);
+        $funcao = Funcao::find($id);
         return view ('admin.funcao.show', compact('funcao'));
     }
 
@@ -62,7 +70,7 @@ class FuncaoController extends Controller
     public function edit($id)
     {
         // buscar a funcao
-        $funcao = $this->findRegister->findId($id);
+        $funcao = Funcao::find($id);
         return view ('admin.funcao.edit', ['funcao'=>$funcao]);
     }
 
@@ -73,14 +81,35 @@ class FuncaoController extends Controller
         $dataForm = $request->all();
         $nome = $dataForm['nome'];
 
-        $alter = $this->changeRegister->changeRegisterInDatabase($id, 'nome', $nome, $dataForm);
+        $alter = new ChangeRegister($this->funcao);
+        $alter = $alter->changeRegisterInDatabase
+        (
+        $id, 
+        'nome', 
+        ['nome'=>$nome], 
+        'funcoes.index',
+        ['success' => 'Alteracao efetuada com sucesso'],
+        'funcoes.edit',
+        ['errors' => 'Registro igual ao anterior']
+        );
+
         return $alter;
     }
 
     
     public function destroy($id)
     {
-        $delete =  $this->deleteRegister->deleteRegisterInDatabase($id);
+        $delete = new DeleteRegister($this->funcao);
+        $delete = $delete->erase(
+            $id, 
+            [$this->empregado], 
+            ['funcao_id'],
+            'funcoes.show',
+            ['errors' => 'Existem tabelas vinculadas a este registro'],
+            'funcoes.index',
+            ['success' => 'Funcao deleteada com sucesso']
+        );
+        
         return $delete;
     }
 
@@ -89,7 +118,9 @@ class FuncaoController extends Controller
         $dataForm = $request->all();
         $nome = '%'.$dataForm['nome'].'%';
 
-        $funcoes = $this->searchRequest->searchIt('nome', $nome);
+        $funcoes = new SearchRequest($this->funcao);
+
+        $funcoes = $funcoes->searchIt('nome', ['nome' => $nome]);
     
         return view('admin.funcao.index', ['dataForm'=>$dataForm, 'funcoes'=>$funcoes]);
     }

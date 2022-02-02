@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Http\Requests\Admin\SetorFormRequest;
+use App\Classes\Setor\CollectData;
+use App\Classes\Setor\SaveInDatabase;
 use App\Models\Setor;
 
 class SetorController extends Controller
@@ -15,7 +17,8 @@ class SetorController extends Controller
     }
     public function index()
     {
-        $setores = $this->setor->collection();
+        $setores = new CollectData($this->setor);
+        $setores = $setores->collection('nome', 'ASC');
         
         return view ('admin.setor.index', compact('setores'));
     }
@@ -23,21 +26,27 @@ class SetorController extends Controller
     
     public function create()
     {
-        return view ('admin.funcao.create');
+        return view ('admin.setor.create');
     }
 
-    
-    
     public function store(SetorFormRequest $request)
     {
         $dataForm = $request->all();
         $nome = $dataForm['nome'];
         
-        $setor = $this->setor->saveInDatabase($nome);
-        return $setor;
+        $setores = new SaveInDatabase($this->setor);
+        $setores = $setores->saveDatabase
+        (
+        'nome',
+        ['nome' => $nome],
+        'setores.index',
+        ['success' => 'Registro cadastrado com sucesso'], 
+        'setores.create', 
+        ['errors' => 'Setor ja cadastrado']
+            );
+        return $setores;
     }
 
-    
     public function show($id)
     {
         $setor = $this->setor->get($id);
