@@ -5,14 +5,14 @@
 <div class="conteudo">
   @include('admin.setor.title')
 
-  <form action="{{route('funcoes.destroy',[$setores->id])}}" class="form-control form--create" method="get">
+  <form action="{{route('setores.destroy',[$setores->id])}}" class="form-control form--create" method="get">
     <div class="form1">
       <input type="hidden" name="_token" value="{{csrf_token()}}">
       <input type="hidden" name="_method" value="DELETE">
       <div class="d-flex align-items-center">
 
         <div class="form-group d-flex col-sm-11">
-          <label for="nome" class="control-label col-sm-2 control-label--create">Função:</label>
+          <label for="nome" class="control-label col-sm-2 control-label--create">Setor:</label>
           <div class=" col-sm-10 ">
             <input placeholder="" type="text" name="nome" class="form-control" value="{{$setores->nome}}">
           </div>

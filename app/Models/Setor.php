@@ -17,4 +17,9 @@ class Setor extends Model
     ];
     public $timestamps = false;
 
+    public function funcoes()
+    {
+        return $this->hasMany(Funcao::class);
+    }
+
 }

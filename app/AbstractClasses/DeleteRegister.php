@@ -28,6 +28,7 @@ abstract class DeleteRegister
     )
     {
       $register = $this->model->find($id);
+      // dd($register);
 
 
     for ($i=0; $i < count($linkedModels) ; $i++) { 
@@ -51,7 +52,7 @@ abstract class DeleteRegister
 
     if($deletedRegister)
     {
-      return SuccessRedirectMessage::successRedirect($routeSuccess, $msgSuccess);
+      return SuccessRedirectMessage::successRedirect($routeSuccess, $msgSuccess, '');
     }
     else
     {

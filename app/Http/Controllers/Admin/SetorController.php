@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Setor;
 use App\Models\Atendimento;
+use App\Models\Empregado;
 
 use App\Http\Requests\Admin\SetorFormRequest;
 use App\Classes\Setor\CollectData;
@@ -18,10 +19,13 @@ class SetorController extends Controller
 {
     public function __construct(
         Setor $setor,
-        Atendimento $atendimento )
+        Atendimento $atendimento,
+        Empregado $empregado
+    )
     {
         $this->setor = $setor;
-        $this->atendimento = $atendimento;;
+        $this->atendimento = $atendimento;
+        $this->empregado = $empregado;
     }
 
     public function index()

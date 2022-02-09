@@ -4,21 +4,35 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Http\Requests\Admin\ExameFormRequest; 
 use App\Models\Exame;
+use App\Models\AtendimentoExame;
+use App\Models\GrupoExame;
+use App\Http\Requests\Admin\ExameFormRequest; 
+use App\Classes\Exame\CollectData;
+use App\Classes\Exame\SaveInDatabase;
+use App\Classes\Exame\ChangeRegister;
+use App\Classes\Exame\DeleteRegister;
+use App\Classes\Exame\SearchRequest;
 
 
 class ExameController extends Controller
 {
-    // Construct method
-    public function __construct(Exame $exame ){
+    public function __construct(
+        Exame $exame,
+        AtendimentoExame $atendimentoExame,
+        GrupoExame $grupoExame
+    )
+    {
         $this->exame = $exame;
- 
+        $this->atendimentoExame = $atendimentoExame;
+        $this->grupoExame = $grupoExame;
+       
     }
-
+    
     public function index()
     {
-        $exames = $this->exame->collection();
+        $exames = new CollectData($this->exame);
+        $exames = $exames->collection('nome', 'ASC');
         
         return view ('admin.exame.index', compact('exames'));
     }
@@ -31,25 +45,34 @@ class ExameController extends Controller
     public function store(ExameFormRequest $request)
     {
         $dataForm = $request->all();
-        $nome = $dataForm['nome'];
+        $nome = $dataForm['nome']; // array 
         
-        $exame = $this->exame->saveInDatabase($nome);
-        return $exame;
+        $exames = new SaveInDatabase($this->exame);
+        $exames = $exames->saveDatabase
+        (
+        'nome', 
+        ['nome' => $nome], 
+        'exames.index', 
+        ['success' => 'Registro cadastrado com sucesso'], 
+        'exames.create', 
+        ['errors' => 'Exame ja cadastrado']
+        );
         
+        return $exames;
     }
     
     public function show($id)
     {
-        // buscar a exame
-        $exame = $this->exame->get($id);
+        // buscar a funcao
+        $exame = Exame::find($id);
         return view ('admin.exame.show', compact('exame'));
     }
 
     
     public function edit($id)
     {
-        // buscar a exame
-        $exame = $this->exame->get($id);
+        // buscar a funcao
+        $exame = Exame::find($id);
         return view ('admin.exame.edit', ['exame'=>$exame]);
     }
 
@@ -60,14 +83,36 @@ class ExameController extends Controller
         $dataForm = $request->all();
         $nome = $dataForm['nome'];
 
-        $alter = $this->exame->changeRegister($id, $nome, $dataForm);
+        $alter = new ChangeRegister($this->exame);
+        $alter = $alter->changeRegisterInDatabase
+        (
+        $id, 
+        'nome', 
+        ['nome'=>$nome], 
+        'exames.index',
+        ['success' => 'Alteracao efetuada com sucesso'],
+        'exames.edit',
+        ['errors' => 'Registro igual ao anterior']
+        );
+
         return $alter;
     }
 
     
     public function destroy($id)
     {
-        return $this->exame->erase($id);
+        $delete = new DeleteRegister($this->exame);
+        $delete = $delete->erase(
+            $id, 
+            [$this->grupoExame, $this->atendimentoExame], 
+            ['exame_id'],
+            'exames.show',
+            ['errors' => 'Existem tabelas vinculadas a este registro'],
+            'exames.index',
+            ['success' => 'Exame deleteado com sucesso']
+        );
+        
+        return $delete;
     }
 
     public function search(Request $request){
@@ -75,7 +120,9 @@ class ExameController extends Controller
         $dataForm = $request->all();
         $nome = '%'.$dataForm['nome'].'%';
 
-        $exames = $this->exame->search('nome', 'like', $nome, 'ASC', 5);
+        $exames = new SearchRequest($this->exame);
+
+        $exames = $exames->searchIt('nome', ['nome' => $nome]);
     
         return view('admin.exame.index', ['dataForm'=>$dataForm, 'exames'=>$exames]);
     }

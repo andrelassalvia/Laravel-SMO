@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\TipoRisco;
 
 class Risco extends Model
 {
@@ -15,4 +16,13 @@ class Risco extends Model
         'tiporisco_id',
                 
     ];
+
+    public function grupos()
+    {
+        return $this->belongsToMany(Grupo::class);
+    }
+
+    public function tiporisco(){
+        return $this->belongsTo(TipoRisco::class);
+    }
 }

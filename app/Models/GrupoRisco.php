@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Risco;
+use App\Models\Grupo;
 
 class GrupoRisco extends Model
 {
@@ -15,8 +17,17 @@ class GrupoRisco extends Model
         'grupo_id',
         'risco_id',
         
-        
-        
-        
     ];
+
+    public $timestamps = false;
+
+    public function risco()
+    {
+        return $this->belongsTo(Risco::class);
+    }
+
+    public function grupo()
+    {
+        return $this->belongsTo(Grupo::class);
+    }
 }

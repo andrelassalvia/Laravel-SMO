@@ -46,17 +46,19 @@ class FuncaoController extends Controller
     public function store(FuncaoFormRequest $request)
     {
         $dataForm = $request->all();
+        // dd($dataForm);
         $nome = $dataForm['nome']; // array 
         
         $funcoes = new SaveInDatabase($this->funcao);
         $funcoes = $funcoes->saveDatabase
         (
-        'nome', 
-        ['nome' => $nome], 
+        ['nome'], 
+        [$nome], 
         'funcoes.index', 
         ['success' => 'Registro cadastrado com sucesso'], 
         'funcoes.create', 
-        ['errors' => 'Funcao ja cadastrada']
+        ['errors' => 'Funcao ja cadastrada'],
+            ''
         );
         
         return $funcoes;
@@ -82,14 +84,15 @@ class FuncaoController extends Controller
     {
         // pegar os dados do request
         $dataForm = $request->all();
+        
         $nome = $dataForm['nome'];
 
         $alter = new ChangeRegister($this->funcao);
         $alter = $alter->changeRegisterInDatabase
         (
         $id, 
-        'nome', 
-        ['nome'=>$nome], 
+        ['nome'], 
+        [$nome], 
         'funcoes.index',
         ['success' => 'Alteracao efetuada com sucesso'],
         'funcoes.edit',
@@ -102,6 +105,7 @@ class FuncaoController extends Controller
     
     public function destroy($id)
     {
+        // dd($id);
         $delete = new DeleteRegister($this->funcao);
         $delete = $delete->erase(
             $id, 

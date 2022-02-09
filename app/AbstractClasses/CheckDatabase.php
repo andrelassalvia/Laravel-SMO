@@ -11,11 +11,18 @@ class CheckDataBase
     $this->model = $model;
   }
 
-  public function checkInDatabase(string $column, array $data)
+  public function checkInDatabase(array $columns, array $values)
   {
-    $checkDatabase = $this->model->where($column, $data)->get()->first();
+    $combined = array_combine($columns, $values);
+    
+    $checkDatabase = $this->model->where($combined)->get()->first();
+    // dd($checkDatabase);
 
-    return $checkDatabase;
-
+    if($checkDatabase == null){
+      return $combined;
+    }else{
+      return null;
+    }
+    
   }
 }

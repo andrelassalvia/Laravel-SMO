@@ -18,27 +18,28 @@ abstract class ChangeRegister
 
   public function changeRegisterInDatabase
   (
-    int $id, 
-    $columnToCheck,
-    $data, 
-    $routeSuccess, 
-    $msgSuccess, 
-    $routeError,
-    $msgError
+    string $id, 
+    array $columnsToCheck,
+    array $values, 
+    string $routeSuccess, 
+    array $msgSuccess, 
+    string $routeError,
+    array $msgError
     )
   {
     $register = $this->model->find($id);
 
     $checkDatabase = new CheckDatabase($this->model);
-    $checkDatabase = $checkDatabase->checkInDatabase($columnToCheck, $data);
-
-    if($checkDatabase == null)
+    $checkDatabase = $checkDatabase->checkInDatabase($columnsToCheck, $values);
+   
+    if($checkDatabase)
     {
-      $update = $register->update($data);
+    
+      $update = $register->update($checkDatabase);
 
       if($update)
       {
-        return SuccessRedirectMessage::successRedirect($routeSuccess, $msgSuccess);
+        return SuccessRedirectMessage::successRedirect($routeSuccess, $msgSuccess, '');
       }
     }
     else

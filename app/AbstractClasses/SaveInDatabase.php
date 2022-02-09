@@ -11,8 +11,7 @@ abstract Class SaveInDatabase
 {
   use FailRedirectMessage;
   use SuccessRedirectMessage;
-  // use CheckDataBase;
-
+ 
   public function __construct(Model $model)
   {
     $this->model = $model;
@@ -20,12 +19,13 @@ abstract Class SaveInDatabase
 
   public function saveDatabase
   (
-    string $column,
+    array $column,
     array $data,
     string $routeSuccess, 
     array $msgSuccess, 
     string $routeError, 
-    array $msgError
+    array $msgError,
+    string $id
   )
 
   {
@@ -33,17 +33,17 @@ abstract Class SaveInDatabase
     $checkDatabase = $checkDatabase->checkInDatabase($column, $data);
         
     // Erro se ja estiver cadastrada
-    if($checkDatabase != null){
+    if($checkDatabase == null){
         
-        return FailRedirectMessage::failRedirect($routeError, $msgError, '');
+        return FailRedirectMessage::failRedirect($routeError, $msgError, $id);
         
     }
     
     else{
 
-       $this->model->create($data);
+       $this->model->create($checkDatabase);
 
-       return SuccessRedirectMessage::successRedirect($routeSuccess, $msgSuccess);
+       return SuccessRedirectMessage::successRedirect($routeSuccess, $msgSuccess, $id);
       }
 
   }

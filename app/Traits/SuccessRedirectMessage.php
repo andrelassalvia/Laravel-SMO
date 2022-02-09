@@ -7,9 +7,10 @@ trait SuccessRedirectMessage
   public function successRedirect
   (
     string $route,
-    array $msg
+    array $msg,
+    string $id
   )
   {
-    return redirect()->route($route)->with($msg)->withInput();
+    return redirect()->route($route, $id)->with($msg)->withInput();
   }
 }

@@ -18,4 +18,14 @@ class Funcao extends Model
 
     public $timestamps = false;
 
+    public function grupos()
+    {
+        return $this->belongsToMany(Grupo::class);
+    }
+
+    public function setor()
+    {
+        return $this->belongsTo(Setor::class);
+    }
+
 }

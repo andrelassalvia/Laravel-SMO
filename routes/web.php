@@ -54,6 +54,37 @@ Route::prefix('exames')->controller('App\Http\Controllers\Admin\ExameController'
     Route::any('/store', 'store')->name('exames.store');
 });
 
+// Rotas para GRUPO
+Route::prefix('grupos')->controller('App\Http\Controllers\Admin\GrupoController')->middleware(['auth'])->group(function(){
+
+    Route::get('/', 'index')->name('grupos.index');
+    Route::get('/{id}/edit', 'edit')->name('grupos.edit');
+    Route::any('/{id}/update', 'update')->name('grupos.update');
+    Route::get('/{id}/show', 'show')->name('grupos.show');
+    Route::any('/{id}/destroy', 'destroy')->name('grupos.destroy');
+    Route::get('/search', 'search')->name('grupos.search');
+    Route::get('/create', 'create')->name('grupos.create');
+    Route::any('/store', 'store')->name('grupos.store');    
+});
+
+
+//  Rotas para GRUPO FUNCAO
+Route::prefix('grupofuncao')->controller('App\Http\Controllers\Admin\GrupoFuncaoController')->middleware(['auth'])->group(function(){
+
+    Route::get('/', 'index')->name('grupoFuncao.index');
+    Route::any('/{id}/destroy', 'destroy')->name('grupoFuncao.destroy');
+    Route::any('/store', 'store')->name('grupoFuncao.store');    
+});
+
+
+//  Rotas para GRUPO RISCO
+Route::prefix('gruporisco')->controller('App\Http\Controllers\Admin\GrupoRiscoController')->middleware(['auth'])->group(function(){
+
+    Route::get('/{id}', 'index')->name('gruporisco.index');
+    Route::any('/{id}/destroy', 'destroy')->name('gruporisco.destroy');
+    Route::any('/{id}/store', 'store')->name('gruporisco.store');    
+});
+
 Route::get('/', function () {
     return view('welcome');
 });
