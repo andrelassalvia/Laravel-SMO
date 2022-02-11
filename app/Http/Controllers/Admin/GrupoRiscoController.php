@@ -4,12 +4,12 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\GrupoRiscoFormRequest;
-use Illuminate\Http\Request;
 use App\Models\GrupoRisco;
 use App\Models\Grupo;
 use App\Models\Risco;
 use App\Classes\GrupoRisco\CollectData;
 use App\Classes\GrupoRisco\SaveInDatabase;
+use App\Classes\GrupoRisco\DeleteRegister;
 
 
 
@@ -43,6 +43,7 @@ class GrupoRiscoController extends Controller
         
         
         $grupoRiscos = $this->grupoRisco->where('grupo_id', $id)->get();
+        // dd($grupoRiscos);
         
       
 
@@ -59,7 +60,7 @@ class GrupoRiscoController extends Controller
     {
         
         $dataForm = $request->all();
-        
+               
         $risco_id = $dataForm['risco_id'];
 
         $grupoRisco = new SaveInDatabase($this->grupoRisco);
@@ -81,17 +82,22 @@ class GrupoRiscoController extends Controller
 
     public function destroy($id)
     {
+
+        $deleted = new DeleteRegister($this->grupoRisco);
         $register = $this->grupoRisco->find($id);
-        $grupo_id = $register->grupo_id;
-        $deleted = $register->delete();
+        $grupo_id = $register->grupo->id;
+        $deleted = $deleted->erase
+        (
+            $id,
+            [],
+            [],
+            'gruporisco.index',
+            'gruporisco.index',
+            ['success' => 'Registro apagado com sucesso.'],
+            $grupo_id
+        );
        
-        if($deleted){
-
-            return redirect()->route('gruporisco.index', $grupo_id)->with(['success' => 'Registro apagado com sucesso.'])->withInput();
-        }else{
-
-            return redirect()->route('gruporisco.index', $grupo_id)->withErrors(['errors' => 'Falha no delete'])->withInput();
-        }
+        return $deleted;
 
     }
     

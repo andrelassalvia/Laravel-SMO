@@ -28,4 +28,9 @@ class Funcao extends Model
         return $this->belongsTo(Setor::class);
     }
 
+    public function grupoFuncoes()
+    {
+        return $this->hasMany(GrupoFuncao::class);
+    }
+
 }

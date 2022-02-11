@@ -19,6 +19,8 @@ class CreateGrupoFuncaoTable extends Migration
             $table->foreign('grupo_id')->references('id')->on('grupo');
             $table->unsignedBigInteger('funcao_id');
             $table->foreign('funcao_id')->references('id')->on('funcao');
+            $table->unsignedBigInteger('setor_id');
+            $table->foreign('setor_id')->references('id')->on('setor');
            
         });
     }

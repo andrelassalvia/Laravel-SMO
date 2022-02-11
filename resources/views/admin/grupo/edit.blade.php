@@ -14,13 +14,13 @@
           <a class="nav-link active aba--nav" aria-current="page" href="{{route('grupos.edit', [$grupo->id])}}">Grupo</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link aba--nav" href="#">Funcoes x Setores</a>
+          <a class="nav-link aba--nav" href="{{route('grupofuncao.index', $grupo->id)}}">Funcoes x Setores</a>
         </li>
         <li class="nav-item">
           <a class="nav-link aba--nav" href="{{route('gruporisco.index', $grupo->id)}}">Riscos</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link aba--nav" href="#">Exames</a>
+          <a class="nav-link aba--nav" href="{{route('grupoexame.index', $grupo->id)}}">Exames</a>
         </li>
       </ul>
     </div>

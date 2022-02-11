@@ -9,6 +9,7 @@ use App\Models\Atendimento;
 use App\Models\Empregado;
 use App\Models\GrupoExame;
 use App\Models\GrupoRisco;
+use App\Models\GrupoFuncao;
 use App\Http\Requests\Admin\GrupoFormRequest; 
 use App\Classes\Grupo\CollectData;
 use App\Classes\Grupo\SaveInDatabase;
@@ -24,7 +25,8 @@ class GrupoController extends Controller
         Atendimento $atendimento,
         Empregado $empregado,
         GrupoExame $grupoExame,
-        GrupoRisco $grupoRisco
+        GrupoRisco $grupoRisco,
+        GrupoFuncao $grupoFuncao
        
     )
     {
@@ -33,6 +35,7 @@ class GrupoController extends Controller
         $this->empregado = $empregado;
         $this->grupoExame = $grupoExame;
         $this->grupoRisco = $grupoRisco;
+        $this->grupoFuncao = $grupoFuncao;
         
        
     }
@@ -59,12 +62,13 @@ class GrupoController extends Controller
         $grupos = new SaveInDatabase($this->grupo);
         $grupos = $grupos->saveDatabase
         (
-        'nome', 
-        ['nome' => $nome], 
+        ['nome'], 
+        [$nome], 
         'grupos.index', 
         ['success' => 'Registro cadastrado com sucesso'], 
         'grupos.create', 
-        ['errors' => 'Grupo ja cadastrado']
+        ['errors' => 'Grupo ja cadastrado'],
+        ''
         );
         
         return $grupos;
@@ -98,8 +102,8 @@ class GrupoController extends Controller
         $alter = $alter->changeRegisterInDatabase
         (
         $id, 
-        'nome', 
-        ['nome'=>$nome], 
+        ['nome'], 
+        [$nome], 
         'grupos.index',
         ['success' => 'Alteracao efetuada com sucesso'],
         'grupos.edit',
@@ -112,6 +116,7 @@ class GrupoController extends Controller
     
     public function destroy($id)
     {
+       
         $delete = new DeleteRegister($this->grupo);
         $delete = $delete->erase(
             $id, 
@@ -119,13 +124,14 @@ class GrupoController extends Controller
                 $this->atendimento,
                 $this->empregado, 
                 $this->grupoExame,
-                $this->grupoRisco
+                $this->grupoRisco,
+                $this->grupoFuncao
             ], 
             ['grupo_id'],
             'grupos.show',
-            ['errors' => 'Existem tabelas vinculadas a este registro'],
             'grupos.index',
-            ['success' => 'Exame deleteado com sucesso']
+            ['success' => 'Registro apagado com sucesso'],
+            ''
         );
         
         return $delete;

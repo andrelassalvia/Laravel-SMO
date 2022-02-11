@@ -22,4 +22,9 @@ class Setor extends Model
         return $this->hasMany(Funcao::class);
     }
 
+    public function grupoFuncoes()
+    {
+        return $this->hasMany(GrupoFuncao::class);
+    }
+
 }

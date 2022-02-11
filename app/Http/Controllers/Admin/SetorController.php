@@ -7,7 +7,6 @@ use Illuminate\Http\Request;
 use App\Models\Setor;
 use App\Models\Atendimento;
 use App\Models\Empregado;
-
 use App\Http\Requests\Admin\SetorFormRequest;
 use App\Classes\Setor\CollectData;
 use App\Classes\Setor\SaveInDatabase;
@@ -49,12 +48,13 @@ class SetorController extends Controller
         $setores = new SaveInDatabase($this->setor);
         $setores = $setores->saveDatabase
         (
-        'nome',
-        ['nome' => $nome],
+        ['nome'],
+        [$nome],
         'setores.index',
         ['success' => 'Registro cadastrado com sucesso'], 
         'setores.create', 
-        ['errors' => 'Setor ja cadastrado']
+        ['errors' => 'Setor ja cadastrado'],
+        ''
             );
         return $setores;
     }
@@ -86,8 +86,8 @@ class SetorController extends Controller
         $alter = $alter->changeRegisterInDatabase
         (
         $id, 
-        'nome', 
-        ['nome'=>$nome], 
+        ['nome'], 
+        [$nome], 
         'setores.index',
         ['success' => 'Alteracao efetuada com sucesso'],
         'setores.edit',
@@ -106,9 +106,9 @@ class SetorController extends Controller
             [$this->empregado, $this->atendimento], 
             ['setor_id'],
             'setores.show',
-            ['errors' => 'Existem tabelas vinculadas a este registro'],
             'setores.index',
-            ['success' => 'Funcao deleteada com sucesso']
+            ['success' => 'Função deleteada com sucesso'],
+            ''
         );
         
         return $delete;

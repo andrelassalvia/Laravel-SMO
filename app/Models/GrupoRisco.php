@@ -13,11 +13,7 @@ class GrupoRisco extends Model
 
     
     protected $table = 'gruporisco';
-    protected $fillable = [
-        'grupo_id',
-        'risco_id',
-        
-    ];
+    protected $guarded = [];
 
     public $timestamps = false;
 

@@ -19,13 +19,13 @@ abstract Class SaveInDatabase
 
   public function saveDatabase
   (
-    array $column,
-    array $data,
-    string $routeSuccess, 
-    array $msgSuccess, 
-    string $routeError, 
-    array $msgError,
-    string $id
+    array $column, // nome das colunas no model
+    array $data, // variaveis associadas aos nomes das colunas no model
+    string $routeSuccess, // rota em caso de sucesso
+    array $msgSuccess,  // mensagem em caso de sucesso
+    string $routeError, // rota em caso de falha
+    array $msgError, // mensagem em caso de falha
+    string $id // 
   )
 
   {

@@ -12,6 +12,12 @@ class TipoAtendimento extends Model
     protected $table = 'tipoatendimento';
     protected $fillable = [
         'nome',
-                        
     ];
+    
+    public $timestamps = false;
+
+    public function grupoExame()
+    {
+        return $this->hasMany(GrupoExame::class);
+    }
 }

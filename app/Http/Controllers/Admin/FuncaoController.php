@@ -112,9 +112,9 @@ class FuncaoController extends Controller
             [$this->empregado, $this->atendimento], 
             ['funcao_id'],
             'funcoes.show',
-            ['errors' => 'Existem tabelas vinculadas a este registro'],
             'funcoes.index',
-            ['success' => 'Funcao deleteada com sucesso']
+            ['success' => 'Função deleteada com sucesso'],
+            ''
         );
         
         return $delete;

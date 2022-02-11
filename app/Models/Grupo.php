@@ -12,21 +12,19 @@ class Grupo extends Model
     use HasFactory;
 
     protected $table = 'grupo';
-    protected $fillable = [
-        'nome'
-        
-        
-    ];
+    protected $guarded = [];
 
     public $timestamps  = false;
 
-    public function funcoes()
-    {
-        return $this->belongsToMany(Funcao::class);
-    }
+    // public function funcoes()
+    // {
+    //     return $this->belongsToMany(Funcao::class);
+    // }
 
-    public function riscos()
-    {
-        return $this->belongsToMany(Risco::class);
-    }
+    // public function riscos()
+    // {
+    //     return $this->belongsToMany(Risco::class);
+    // }
+
+   
 }

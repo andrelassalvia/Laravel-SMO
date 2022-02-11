@@ -12,10 +12,10 @@
           <a class="nav-link active aba--nav" aria-current="page" href="{{route('grupos.show', [$grupo->id])}}">Grupo</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link aba--nav" href="#">Funcoes x Setores</a>
+          <a class="nav-link aba--nav" href="{{route('grupofuncao.index', [$grupo->id])}}">Funcoes x Setores</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link aba--nav" href="#">Riscos</a>
+          <a class="nav-link aba--nav" href="{{route('gruporisco.index', [$grupo->id])}}">Riscos</a>
         </li>
         <li class="nav-item">
           <a class="nav-link aba--nav" href="#">Exames</a>

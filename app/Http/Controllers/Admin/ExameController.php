@@ -50,12 +50,13 @@ class ExameController extends Controller
         $exames = new SaveInDatabase($this->exame);
         $exames = $exames->saveDatabase
         (
-        'nome', 
-        ['nome' => $nome], 
+        ['nome'], 
+        [$nome], 
         'exames.index', 
         ['success' => 'Registro cadastrado com sucesso'], 
         'exames.create', 
-        ['errors' => 'Exame ja cadastrado']
+        ['errors' => 'Exame ja cadastrado'],
+        ''
         );
         
         return $exames;
@@ -87,10 +88,10 @@ class ExameController extends Controller
         $alter = $alter->changeRegisterInDatabase
         (
         $id, 
-        'nome', 
-        ['nome'=>$nome], 
+        ['nome'], 
+        [$nome], 
         'exames.index',
-        ['success' => 'Alteracao efetuada com sucesso'],
+        ['success' => 'Alteração efetuada com sucesso'],
         'exames.edit',
         ['errors' => 'Registro igual ao anterior']
         );
@@ -107,9 +108,9 @@ class ExameController extends Controller
             [$this->grupoExame, $this->atendimentoExame], 
             ['exame_id'],
             'exames.show',
-            ['errors' => 'Existem tabelas vinculadas a este registro'],
             'exames.index',
-            ['success' => 'Exame deleteado com sucesso']
+            ['success' => 'Exame deleteado com sucesso'],
+            ''
         );
         
         return $delete;

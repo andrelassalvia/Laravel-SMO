@@ -18,6 +18,11 @@ class Exame extends Model
 
     public $timestamps = false;
 
+    public function grupoExame()
+    {
+        return $this->hasMany(GrupoExame::class);
+    }
+
    
 
     
