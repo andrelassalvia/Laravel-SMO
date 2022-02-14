@@ -85,13 +85,26 @@ Route::prefix('gruporisco')->controller('App\Http\Controllers\Admin\GrupoRiscoCo
     Route::any('/{id}/store', 'store')->name('gruporisco.store');    
 });
 
-// FRUPO EXAME
+// GRUPO EXAME
 Route::prefix('grupoexame')->controller('App\Http\Controllers\Admin\GrupoExameController')->middleware(['auth'])->group(function(){
 
     route::get('/{id}', 'index')->name('grupoexame.index');
     route::any('/{id}/destroy', 'destroy')->name('grupoexame.destroy');
     route::any('/{id}/store', 'store')->name('grupoexame.store');
 }); 
+
+// RISCOS
+Route::prefix('riscos')->controller('App\Http\Controllers\Admin\RiscoController')->middleware(['auth'])->group(function(){
+
+    route::get('/', 'index')->name('riscos.index');
+    route::get('/create', 'create')->name('riscos.create');
+    route::get('/edit/{id}', 'edit')->name('riscos.edit');
+    route::any('/update/{id}', 'update')->name('riscos.update');
+    route::get('/show/{id}', 'show')->name('riscos.show');
+    route::any('/store', 'store')->name('riscos.store');
+    route::get('/search', 'search')->name('riscos.search');
+    route::any('/destroy/{id}', 'destroy')->name('riscos.destroy');
+});
 
 Route::get('/', function () {
     return view('welcome');

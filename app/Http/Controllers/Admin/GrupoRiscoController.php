@@ -41,11 +41,7 @@ class GrupoRiscoController extends Controller
         $riscos = new CollectData($this->risco);
         $riscos = $riscos->collection('nome', 'ASC');
         
-        
         $grupoRiscos = $this->grupoRisco->where('grupo_id', $id)->get();
-        // dd($grupoRiscos);
-        
-      
 
         return view('admin.grupoRisco.index', 
         [
@@ -61,7 +57,7 @@ class GrupoRiscoController extends Controller
         
         $dataForm = $request->all();
                
-        $risco_id = $dataForm['risco_id'];
+        $risco_id = filter_var($dataForm['risco_id'], FILTER_SANITIZE_STRING);
 
         $grupoRisco = new SaveInDatabase($this->grupoRisco);
         $grupoRisco = $grupoRisco->saveDatabase

@@ -35,6 +35,7 @@
     </div>
 
   @endif
+
   {{-- TABELA COM LISTA DE FUNCOES --}}
   <table class="table table-striped table-hover mb-3" style="width: 80%; margin:auto">
     <tr>
@@ -57,33 +58,22 @@
     @endforeach
   </table>
 
-  {{-- Voltar para Funcoes --}}
+  {{-- Voltar para Funcoes Botao voltar nao pode aparecer na pogina index --}}
   <div class="ms-3">
     @if(Route::is('funcoes.search') && request()->filled('nome'))
-
-    <a class="btn btn-link" href="{{route('funcoes.index')}}">Voltar</a>
-      
-
+      <a class="btn btn-link" href="{{route('funcoes.index')}}">Voltar</a>
     @endif
   </div>
+
   {{-- Paginacao --}}
   <div class="pagination">
     @if(isset($dataForm))
-
       {{$funcoes->appends($dataForm)->links()}}
-    
     @else
-
       {{$funcoes->links()}}
-    
     @endif
-        
-    
-
   </div>
-  
 
 </div>
 
-    
 @endsection

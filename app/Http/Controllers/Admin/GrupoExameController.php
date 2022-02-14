@@ -67,6 +67,8 @@ class GrupoExameController extends Controller
     public function store(GrupoExameFormRequest $request, $id)
     {
         $dataform = $request->all();
+        $exame_id = filter_var($dataform['exame_id'], FILTER_SANITIZE_STRING);
+        $tipoatendimento_id = filter_var($dataform['tipoatendimento_id'], FILTER_SANITIZE_STRING);
         // dd($id);
         // dd($dataform);
 
@@ -74,7 +76,7 @@ class GrupoExameController extends Controller
         $grupoExames = $grupoExames->saveDatabase
         (
             ['grupo_id', 'exame_id', 'tipoatendimento_id'],
-            [$id, $dataform['exame_id'], $dataform['tipoatendimento_id']],
+            [$id, $exame_id, $tipoatendimento_id],
             'grupoexame.index',
             ['success' => 'Registro cadastrado com sucesso'],
             'grupoexame.index',

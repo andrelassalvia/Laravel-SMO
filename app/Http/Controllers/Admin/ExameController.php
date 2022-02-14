@@ -45,7 +45,7 @@ class ExameController extends Controller
     public function store(ExameFormRequest $request)
     {
         $dataForm = $request->all();
-        $nome = $dataForm['nome']; // array 
+        $nome = filter_var($dataForm['nome'], FILTER_SANITIZE_STRING); 
         
         $exames = new SaveInDatabase($this->exame);
         $exames = $exames->saveDatabase
@@ -82,7 +82,7 @@ class ExameController extends Controller
     {
         // pegar os dados do request
         $dataForm = $request->all();
-        $nome = $dataForm['nome'];
+        $nome = filter_var($dataForm['nome'], FILTER_SANITIZE_STRING);
 
         $alter = new ChangeRegister($this->exame);
         $alter = $alter->changeRegisterInDatabase
@@ -119,7 +119,7 @@ class ExameController extends Controller
     public function search(Request $request){
 
         $dataForm = $request->all();
-        $nome = '%'.$dataForm['nome'].'%';
+        $nome = filter_var('%'.$dataForm['nome'].'%', FILTER_SANITIZE_STRING);
 
         $exames = new SearchRequest($this->exame);
 

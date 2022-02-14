@@ -17,12 +17,15 @@ class Risco extends Model
                 
     ];
 
+    public $timestamps = false;
+
     public function grupos()
     {
         return $this->belongsToMany(Grupo::class);
     }
 
     public function tiporisco(){
+        
         return $this->belongsTo(TipoRisco::class);
     }
 }

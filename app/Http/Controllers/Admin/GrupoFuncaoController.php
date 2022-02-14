@@ -34,9 +34,7 @@ class GrupoFuncaoController extends Controller
         $setores = $setores->collection('nome', 'ASC');
 
         $grupoFuncoes = $this->grupoFuncao->where('grupo_id', $id)->get();
-        // dd($grupoFuncoes);
         
-
         return view ('admin.grupoFuncao.index', 
         [
             'grupo' => $grupo,
@@ -51,8 +49,8 @@ class GrupoFuncaoController extends Controller
     {
         $dataForm = $request->all();
         
-        $funcao_id = $dataForm['funcao_id'];
-        $setor_id = $dataForm['setor_id'];
+        $funcao_id = filter_var($dataForm['funcao_id'], FILTER_SANITIZE_STRING);
+        $setor_id = filter_var($dataForm['setor_id'], FILTER_SANITIZE_STRING);
 
         $grupoFuncoes = new SaveInDatabase($this->grupoFuncao);
         $grupoFuncoes = $grupoFuncoes->saveDatabase

@@ -43,7 +43,7 @@ class SetorController extends Controller
     public function store(SetorFormRequest $request)
     {
         $dataForm = $request->all();
-        $nome = $dataForm['nome'];
+        $nome = filter_var($dataForm['nome'], FILTER_SANITIZE_STRING);
         
         $setores = new SaveInDatabase($this->setor);
         $setores = $setores->saveDatabase
@@ -80,7 +80,7 @@ class SetorController extends Controller
     {
         // pegar os dados do request
         $dataForm = $request->all();
-        $nome = $dataForm['nome'];
+        $nome = filter_var($dataForm['nome'], FILTER_SANITIZE_STRING);
 
         $alter = new ChangeRegister($this->setor);
         $alter = $alter->changeRegisterInDatabase
@@ -117,7 +117,7 @@ class SetorController extends Controller
     public function search(Request $request){
 
         $dataForm = $request->all();
-        $nome = '%'.$dataForm['nome'].'%';
+        $nome = filter_var('%'.$dataForm['nome'].'%', FILTER_SANITIZE_STRING);
 
         $setores = new SearchRequest($this->setor);
 

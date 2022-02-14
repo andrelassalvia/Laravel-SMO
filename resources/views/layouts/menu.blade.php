@@ -17,7 +17,7 @@
             <li><a class="dropdown-item" href="{{route('setores.index')}}">Setores</a></li>
             <li><a class="dropdown-item" href="{{route('exames.index')}}">Exames</a></li>
             <li><a class="dropdown-item" href="{{route('grupos.index')}}">Grupos Homogêneos</a></li>
-            <li><a class="dropdown-item" href="#">Riscos</a></li>
+            <li><a class="dropdown-item" href="{{route('riscos.index')}}">Riscos</a></li>
             <li><a class="dropdown-item" href="#">Tipos de Atendimentos</a></li>
           </ul>
         </li>

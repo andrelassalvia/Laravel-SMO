@@ -109,3 +109,15 @@ input {
     z-index: 1000;
     padding-bottom: 50px;
 }
+
+.form-search {
+    margin-bottom: 20px;
+    margin-left: 10%;
+    width: 20%;
+}
+
+.form-central {
+    margin-bottom: 20px;
+    margin-left: 2%;
+    width: 20%;
+}

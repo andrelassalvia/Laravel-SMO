@@ -46,8 +46,7 @@ class FuncaoController extends Controller
     public function store(FuncaoFormRequest $request)
     {
         $dataForm = $request->all();
-        // dd($dataForm);
-        $nome = $dataForm['nome']; // array 
+        $nome = filter_var($dataForm['nome'], FILTER_SANITIZE_STRING); 
         
         $funcoes = new SaveInDatabase($this->funcao);
         $funcoes = $funcoes->saveDatabase
@@ -84,8 +83,7 @@ class FuncaoController extends Controller
     {
         // pegar os dados do request
         $dataForm = $request->all();
-        
-        $nome = $dataForm['nome'];
+        $nome = filter_var($dataForm['nome'], FILTER_SANITIZE_STRING);
 
         $alter = new ChangeRegister($this->funcao);
         $alter = $alter->changeRegisterInDatabase
@@ -123,7 +121,7 @@ class FuncaoController extends Controller
     public function search(Request $request){
 
         $dataForm = $request->all();
-        $nome = '%'.$dataForm['nome'].'%';
+        $nome = filter_var('%'.$dataForm['nome'].'%', FILTER_SANITIZE_STRING);
 
         $funcoes = new SearchRequest($this->funcao);
 
