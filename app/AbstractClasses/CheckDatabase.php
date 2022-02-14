@@ -16,13 +16,11 @@ class CheckDataBase
     $combined = array_combine($columns, $values);
     
     $checkDatabase = $this->model->where($combined)->get()->first();
-    // dd($checkDatabase);
 
     if($checkDatabase == null){
       return $combined;
-    }else{
+    } else {
       return null;
     }
-    
   }
 }

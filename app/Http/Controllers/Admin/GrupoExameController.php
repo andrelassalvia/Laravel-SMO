@@ -3,27 +3,25 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use App\Http\Requests\Admin\GrupoExameFormRequest;
+
 use App\Models\GrupoExame;
 use App\Models\Grupo;
 use App\Models\Exame;
 use App\Models\TipoAtendimento;
+
+use App\Http\Requests\Admin\GrupoExameFormRequest;
 use App\Classes\GrupoExame\CollectData;
-use App\Classes\GrupoExame\CheckDatabase;
 use App\Classes\GrupoExame\SaveInDatabase;
 use App\Classes\GrupoExame\DeleteRegister;
 
 class GrupoExameController extends Controller
 {
-    public function __construct
-    (
+    public function __construct(
         GrupoExame $grupoExame,
         Grupo $grupo,
         Exame $exame,
         TipoAtendimento $tipoAtendimento
-    )
-    {
+    ) {
         $this->grupoExame = $grupoExame;
         $this->grupo = $grupo;
         $this->exame = $exame;
@@ -35,32 +33,22 @@ class GrupoExameController extends Controller
         $grupo = $this->grupo->find($id);
 
         $exames = new CollectData($this->exame);
-        $exames = $exames->collection
-        (
+        $exames = $exames->collection(
             'nome',
             'ASC'
         );
 
         $tipoAtendimentos = new CollectData($this->tipoAtendimento);
-        $tipoAtendimentos = $tipoAtendimentos->collection
-        (
+        $tipoAtendimentos = $tipoAtendimentos->collection(
             'nome',
             'ASC'
         );
 
-        // dd($tipoAtendimentos);
         $grupoExames = $this->grupoExame->where('grupo_id', $id)->get();
 
-        return view
-        (
+        return view(
             'Admin.grupoExame.index', 
-            [
-                'grupo' => $grupo,
-                'exames' =>$exames,
-                'tipoAtendimentos' => $tipoAtendimentos,
-                'grupoExames' => $grupoExames
-
-            ]
+            compact('grupo', 'exames', 'tipoAtendimentos', 'grupoExames') 
         );
     }
 
@@ -68,13 +56,13 @@ class GrupoExameController extends Controller
     {
         $dataform = $request->all();
         $exame_id = filter_var($dataform['exame_id'], FILTER_SANITIZE_STRING);
-        $tipoatendimento_id = filter_var($dataform['tipoatendimento_id'], FILTER_SANITIZE_STRING);
-        // dd($id);
-        // dd($dataform);
+        $tipoatendimento_id = filter_var(
+            $dataform['tipoatendimento_id'], 
+            FILTER_SANITIZE_STRING
+        );
 
         $grupoExames = new SaveInDatabase($this->grupoExame);
-        $grupoExames = $grupoExames->saveDatabase
-        (
+        $grupoExames = $grupoExames->saveDatabase(
             ['grupo_id', 'exame_id', 'tipoatendimento_id'],
             [$id, $exame_id, $tipoatendimento_id],
             'grupoexame.index',
@@ -93,8 +81,7 @@ class GrupoExameController extends Controller
         $grupo_id = $register['grupo_id'];
         
         $deleted = new DeleteRegister($this->grupoExame);
-        $deleted = $deleted->erase
-        (
+        $deleted = $deleted->erase(
             $id,
             [],
             [],
@@ -102,7 +89,6 @@ class GrupoExameController extends Controller
             'grupoexame.index',
             ['success' => 'Registro deletado com sucesso'],
             $grupo_id
-
         );
 
         return $deleted;

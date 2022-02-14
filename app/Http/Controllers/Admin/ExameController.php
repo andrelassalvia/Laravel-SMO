@@ -4,9 +4,11 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+
 use App\Models\Exame;
 use App\Models\AtendimentoExame;
 use App\Models\GrupoExame;
+
 use App\Http\Requests\Admin\ExameFormRequest; 
 use App\Classes\Exame\CollectData;
 use App\Classes\Exame\SaveInDatabase;
@@ -21,12 +23,10 @@ class ExameController extends Controller
         Exame $exame,
         AtendimentoExame $atendimentoExame,
         GrupoExame $grupoExame
-    )
-    {
+    ) {
         $this->exame = $exame;
         $this->atendimentoExame = $atendimentoExame;
         $this->grupoExame = $grupoExame;
-       
     }
     
     public function index()
@@ -48,8 +48,7 @@ class ExameController extends Controller
         $nome = filter_var($dataForm['nome'], FILTER_SANITIZE_STRING); 
         
         $exames = new SaveInDatabase($this->exame);
-        $exames = $exames->saveDatabase
-        (
+        $exames = $exames->saveDatabase(
         ['nome'], 
         [$nome], 
         'exames.index', 
@@ -64,30 +63,24 @@ class ExameController extends Controller
     
     public function show($id)
     {
-        // buscar a funcao
         $exame = Exame::find($id);
         return view ('admin.exame.show', compact('exame'));
     }
-
     
     public function edit($id)
     {
-        // buscar a funcao
         $exame = Exame::find($id);
-        return view ('admin.exame.edit', ['exame'=>$exame]);
+        return view ('admin.exame.edit', compact('exame'));
     }
-
     
     public function update(ExameFormRequest $request, $id)
     {
-        // pegar os dados do request
         $dataForm = $request->all();
         $nome = filter_var($dataForm['nome'], FILTER_SANITIZE_STRING);
 
         $alter = new ChangeRegister($this->exame);
-        $alter = $alter->changeRegisterInDatabase
-        (
-        $id, 
+        $alter = $alter->changeRegisterInDatabase(
+            $id, 
         ['nome'], 
         [$nome], 
         'exames.index',
@@ -99,7 +92,6 @@ class ExameController extends Controller
         return $alter;
     }
 
-    
     public function destroy($id)
     {
         $delete = new DeleteRegister($this->exame);
@@ -122,9 +114,8 @@ class ExameController extends Controller
         $nome = filter_var('%'.$dataForm['nome'].'%', FILTER_SANITIZE_STRING);
 
         $exames = new SearchRequest($this->exame);
-
         $exames = $exames->searchIt('nome', ['nome' => $nome]);
-    
-        return view('admin.exame.index', ['dataForm'=>$dataForm, 'exames'=>$exames]);
+
+        return view('admin.exame.index',compact('nome', 'exames'));
     }
 }

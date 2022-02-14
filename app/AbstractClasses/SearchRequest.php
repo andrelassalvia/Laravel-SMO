@@ -4,7 +4,6 @@ namespace App\AbstractClasses;
 
 use Illuminate\Database\Eloquent\Model;
 
-
 abstract class SearchRequest
 {
   public function __construct(Model $model)

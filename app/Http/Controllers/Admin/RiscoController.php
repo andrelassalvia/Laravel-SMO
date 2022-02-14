@@ -4,10 +4,12 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+
 use App\Models\Risco;
 use App\Models\TipoRisco;
 use App\Models\AtendimentoRisco;
 use App\Models\GrupoRisco;
+
 use App\Http\Requests\Admin\RiscoFormRequest;
 use App\Classes\Risco\CollectData;
 use App\Classes\Risco\SaveInDatabase;
@@ -18,15 +20,13 @@ use App\Classes\Setor\SearchRequest;
 
 class RiscoController extends Controller
 {
-    public function __construct
-    (
+    public function __construct(
         Risco $risco,
         TipoRisco $tipoRisco,
         AtendimentoRisco $atendimentoRisco,
         GrupoRisco $grupoRisco
         
-    )
-    {
+    ) {
         $this->risco = $risco;
         $this->tipoRisco = $tipoRisco;
         $this->atendimentoRisco = $atendimentoRisco;
@@ -45,7 +45,7 @@ class RiscoController extends Controller
     {
         $tipoRiscos = new CollectData($this->tipoRisco);
         $tipoRiscos = $tipoRiscos->collection('nome', 'ASC');
-        // dd($tipoRiscos);
+
         return view ('admin.risco.create', compact('tipoRiscos'));
     }
      
@@ -53,11 +53,13 @@ class RiscoController extends Controller
     {
         $dataForm = $request->all();
         $nome = filter_var($dataForm['nome'], FILTER_SANITIZE_STRING);
-        $tipoRisco_id = filter_var($dataForm['tiporisco_id'], FILTER_SANITIZE_STRING);
+        $tipoRisco_id = filter_var(
+            $dataForm['tiporisco_id'],
+             FILTER_SANITIZE_STRING
+        );
         
         $riscos = new SaveInDatabase($this->risco);
-        $riscos = $riscos->saveDatabase
-        (
+        $riscos = $riscos->saveDatabase(
             ['nome', 'tiporisco_id'],
             [$nome, $tipoRisco_id],
             'riscos.index',
@@ -65,7 +67,6 @@ class RiscoController extends Controller
             'riscos.create',
             ['errors' => 'Risco já cadastrado'],
             ''
-            
         );
 
         return $riscos;
@@ -81,28 +82,27 @@ class RiscoController extends Controller
     public function edit($id)
     {
       $risco = $this->risco->find($id);
-      $tipoRisco = $risco->tiporisco->nome;
 
       $tipoRiscos = new CollectData($this->tipoRisco);
       $tipoRiscos = $tipoRiscos->collection('nome', 'ASC');
 
-      return view('admin.risco.edit',
-        [
-            'risco' => $risco, 
-            'tipoRisco' =>$tipoRisco, 
-            'tipoRiscos' => $tipoRiscos
-        ]);
+      return view(
+          'admin.risco.edit', 
+          compact('risco', 'tipoRiscos')
+      );
     }
 
     public function update(RiscoFormRequest $request, $id)
     {
         $dataForm = $request->all();
         $nome = filter_var($dataForm['nome'], FILTER_SANITIZE_STRING);
-        $tipoRisco_id = filter_var($dataForm['tiporisco_id'], FILTER_SANITIZE_STRING);
+        $tipoRisco_id = filter_var(
+            $dataForm['tiporisco_id'],
+            FILTER_SANITIZE_STRING
+        );
 
         $riscos = new ChangeRegister($this->risco);
-        $riscos = $riscos->changeRegisterInDatabase
-        (
+        $riscos = $riscos->changeRegisterInDatabase(
             $id,
             ['nome', 'tiporisco_id'],
             [$nome, $tipoRisco_id],
@@ -118,8 +118,7 @@ class RiscoController extends Controller
     public function destroy($id)
     {
         $riscos = new DeleteRegister($this->risco);
-        $riscos = $riscos->erase
-        (
+        $riscos = $riscos->erase(
             $id,
             [$this->atendimentoRisco, $this->grupoRisco],
             ['risco_id'],
@@ -127,7 +126,6 @@ class RiscoController extends Controller
             'riscos.index',
             ['success' => 'Registro deletado com sucesso'],
             ''
-
         );
 
         return $riscos;
@@ -138,12 +136,7 @@ class RiscoController extends Controller
         $dataForm = $request->all();
         $nome = filter_var("%".$dataForm['nome']."%", FILTER_SANITIZE_STRING);
         $riscos = new SearchRequest($this->risco);
-        $riscos = $riscos->searchIt
-        (
-            'nome',
-            [$nome]
-
-        );
+        $riscos = $riscos->searchIt('nome', [$nome]);
 
         return view('admin.risco.index' ,compact('riscos'));
     }

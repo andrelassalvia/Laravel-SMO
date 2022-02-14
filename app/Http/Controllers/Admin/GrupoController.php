@@ -4,19 +4,20 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+
 use App\Models\Grupo;
 use App\Models\Atendimento;
 use App\Models\Empregado;
 use App\Models\GrupoExame;
 use App\Models\GrupoRisco;
 use App\Models\GrupoFuncao;
+
 use App\Http\Requests\Admin\GrupoFormRequest; 
 use App\Classes\Grupo\CollectData;
 use App\Classes\Grupo\SaveInDatabase;
 use App\Classes\Grupo\ChangeRegister;
 use App\Classes\Grupo\DeleteRegister;
 use App\Classes\Grupo\SearchRequest;
-
 
 class GrupoController extends Controller
 {
@@ -28,23 +29,19 @@ class GrupoController extends Controller
         GrupoRisco $grupoRisco,
         GrupoFuncao $grupoFuncao
        
-    )
-    {
+    ) {
         $this->grupo = $grupo;
         $this->atendimento = $atendimento;
         $this->empregado = $empregado;
         $this->grupoExame = $grupoExame;
         $this->grupoRisco = $grupoRisco;
         $this->grupoFuncao = $grupoFuncao;
-        
-       
     }
     
     public function index()
     {
         $grupos = new CollectData($this->grupo);
         $grupos = $grupos->collection('nome', 'ASC');
-        
         
         return view ('admin.grupo.index', compact('grupos'));
     }
@@ -60,15 +57,14 @@ class GrupoController extends Controller
         $nome = filter_var($dataForm['nome'], FILTER_SANITIZE_STRING); 
         
         $grupos = new SaveInDatabase($this->grupo);
-        $grupos = $grupos->saveDatabase
-        (
-        ['nome'], 
-        [$nome], 
-        'grupos.index', 
-        ['success' => 'Registro cadastrado com sucesso'], 
-        'grupos.create', 
-        ['errors' => 'Grupo ja cadastrado'],
-        ''
+        $grupos = $grupos->saveDatabase(
+            ['nome'], 
+            [$nome], 
+            'grupos.index', 
+            ['success' => 'Registro cadastrado com sucesso'], 
+            'grupos.create', 
+            ['errors' => 'Grupo ja cadastrado'],
+            ''
         );
         
         return $grupos;
@@ -76,7 +72,6 @@ class GrupoController extends Controller
     
     public function show($id)
     {
-        // buscar a funcao
         $grupo = Grupo::find($id);
         return view ('admin.grupo.show', compact('grupo'));
     }
@@ -84,39 +79,31 @@ class GrupoController extends Controller
     
     public function edit($id)
     {
-        
-        // buscar a funcao
         $grupo = Grupo::find($id);
-        
-        return view ('admin.grupo.edit', ['grupo'=>$grupo]);
+        return view ('admin.grupo.edit', compact('grupo'));
     }
 
-    
     public function update(GrupoFormRequest $request, $id)
     {
-        // pegar os dados do request
         $dataForm = $request->all();
         $nome = filter_var($dataForm['nome'], FILTER_SANITIZE_STRING);
 
         $alter = new ChangeRegister($this->grupo);
-        $alter = $alter->changeRegisterInDatabase
-        (
-        $id, 
-        ['nome'], 
-        [$nome], 
-        'grupos.index',
-        ['success' => 'Alteracao efetuada com sucesso'],
-        'grupos.edit',
-        ['errors' => 'Registro igual ao anterior']
+        $alter = $alter->changeRegisterInDatabase(
+            $id, 
+            ['nome'], 
+            [$nome], 
+            'grupos.index',
+            ['success' => 'Alteracao efetuada com sucesso'],
+            'grupos.edit',
+            ['errors' => 'Registro igual ao anterior']
         );
 
         return $alter;
     }
 
-    
     public function destroy($id)
     {
-       
         $delete = new DeleteRegister($this->grupo);
         $delete = $delete->erase(
             $id, 
@@ -137,15 +124,14 @@ class GrupoController extends Controller
         return $delete;
     }
 
-    public function search(Request $request){
-
+    public function search(Request $request)
+    {
         $dataForm = $request->all();
         $nome = filter_var('%'.$dataForm['nome'].'%', FILTER_SANITIZE_STRING);
 
         $grupos = new SearchRequest($this->grupo);
-
         $grupos = $grupos->searchIt('nome', ['nome' => $nome]);
     
-        return view('admin.grupo.index', ['dataForm'=>$dataForm, 'grupos'=>$grupos]);
+        return view('admin.grupo.index', compact('nome', 'grupos'));
     }
 }

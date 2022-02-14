@@ -11,10 +11,9 @@ abstract class CollectData
     $this->model = $model;
   }
 
-
   public function collection(string $column, string $order){
 
    return $this->model->orderBy($column, $order)->paginate(5);
-
+   
   }
 }

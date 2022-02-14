@@ -3,20 +3,25 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Admin\GrupoFuncaoFormRequest;
+
 use App\Models\GrupoFuncao;
 use App\Models\Grupo;
 use App\Models\Funcao;
 use App\Models\Setor;
+
+use App\Http\Requests\Admin\GrupoFuncaoFormRequest;
 use App\Classes\GrupoFuncao\CollectData;
 use App\Classes\GrupoFuncao\SaveInDatabase;
 use App\Classes\GrupoFuncao\DeleteRegister;
 
-
 class GrupoFuncaoController extends Controller
 {
-    public function __construct(GrupoFuncao $grupoFuncao, Grupo $grupo, Funcao $funcao, Setor $setor)
-        {
+    public function __construct(
+        GrupoFuncao $grupoFuncao, 
+        Grupo $grupo, 
+        Funcao $funcao, 
+        Setor $setor
+    ) {
             $this->grupoFuncao = $grupoFuncao;
             $this->grupo = $grupo;
             $this->funcao = $funcao;
@@ -35,26 +40,21 @@ class GrupoFuncaoController extends Controller
 
         $grupoFuncoes = $this->grupoFuncao->where('grupo_id', $id)->get();
         
-        return view ('admin.grupoFuncao.index', 
-        [
-            'grupo' => $grupo,
-            'funcoes' => $funcoes,
-            'setores' => $setores,
-            'grupoFuncoes' => $grupoFuncoes
-        ]);
+        return view (
+            'admin.grupoFuncao.index', 
+            compact('grupo', 'funcoes', 'setores', 'grupoFuncoes')
+        );
        
     }
 
     public function store(GrupoFuncaoFormRequest $request, $id)
     {
         $dataForm = $request->all();
-        
         $funcao_id = filter_var($dataForm['funcao_id'], FILTER_SANITIZE_STRING);
         $setor_id = filter_var($dataForm['setor_id'], FILTER_SANITIZE_STRING);
 
         $grupoFuncoes = new SaveInDatabase($this->grupoFuncao);
-        $grupoFuncoes = $grupoFuncoes->saveDatabase
-        (
+        $grupoFuncoes = $grupoFuncoes->saveDatabase(
             ['grupo_id', 'funcao_id', 'setor_id'],
             [$id, $funcao_id, $setor_id],
             'grupofuncao.index',
@@ -62,11 +62,9 @@ class GrupoFuncaoController extends Controller
             'grupofuncao.index',
             ['errors' => 'Registro já cadastrado no banco de dados'],
             $id
-
         );
 
         return $grupoFuncoes;
-
     }
 
     public function destroy($id)
@@ -75,8 +73,7 @@ class GrupoFuncaoController extends Controller
         $grupo_id = $register['grupo_id'];
         
         $deleted = new DeleteRegister($this->grupoFuncao);
-        $deleted = $deleted->erase
-        (
+        $deleted = $deleted->erase(
             $id,
             [],
             [],
@@ -88,6 +85,5 @@ class GrupoFuncaoController extends Controller
         );
 
         return $deleted;
-
     }
 }
