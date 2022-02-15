@@ -106,6 +106,20 @@ Route::prefix('riscos')->controller('App\Http\Controllers\Admin\RiscoController'
     route::any('/destroy/{id}', 'destroy')->name('riscos.destroy');
 });
 
+// TIPOS DE ATENDIMENTPO
+
+Route::prefix('tipoAtendimentos')->controller('App\Http\Controllers\Admin\TipoAtendimentoController')->middleware(['auth'])->group(function(){
+
+    route::get('/', 'index')->name('tipoAtendimentos.index');
+    route::get('/create', 'create')->name('tipoAtendimentos.create');
+    route::get('/edit/{id}', 'edit')->name('tipoAtendimentos.edit');
+    route::any('/update/{id}', 'update')->name('tipoAtendimentos.update');
+    route::get('/show/{id}', 'show')->name('tipoAtendimentos.show');
+    route::any('/store', 'store')->name('tipoAtendimentos.store');
+    route::get('/search', 'search')->name('tipoAtendimentos.search');
+    route::any('/destroy/{id}', 'destroy')->name('tipoAtendimentos.destroy');
+});
+
 Route::get('/', function () {
     return view('welcome');
 });

@@ -52,10 +52,10 @@ class RiscoController extends Controller
     public function store(RiscoFormRequest $request)
     {
         $dataForm = $request->all();
-        $nome = filter_var($dataForm['nome'], FILTER_SANITIZE_STRING);
+        $nome = filter_var($dataForm['nome'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
         $tipoRisco_id = filter_var(
             $dataForm['tiporisco_id'],
-             FILTER_SANITIZE_STRING
+             FILTER_SANITIZE_FULL_SPECIAL_CHARS
         );
         
         $riscos = new SaveInDatabase($this->risco);
@@ -95,10 +95,13 @@ class RiscoController extends Controller
     public function update(RiscoFormRequest $request, $id)
     {
         $dataForm = $request->all();
-        $nome = filter_var($dataForm['nome'], FILTER_SANITIZE_STRING);
+        $nome = filter_var(
+            $dataForm['nome'], 
+            FILTER_SANITIZE_FULL_SPECIAL_CHARS
+        );
         $tipoRisco_id = filter_var(
             $dataForm['tiporisco_id'],
-            FILTER_SANITIZE_STRING
+            FILTER_SANITIZE_FULL_SPECIAL_CHARS
         );
 
         $riscos = new ChangeRegister($this->risco);
@@ -134,7 +137,7 @@ class RiscoController extends Controller
     public function search(Request $request)
     {
         $dataForm = $request->all();
-        $nome = filter_var("%".$dataForm['nome']."%", FILTER_SANITIZE_STRING);
+        $nome = filter_var("%".$dataForm['nome']."%", FILTER_SANITIZE_FULL_SPECIAL_CHARS);
         $riscos = new SearchRequest($this->risco);
         $riscos = $riscos->searchIt('nome', [$nome]);
 

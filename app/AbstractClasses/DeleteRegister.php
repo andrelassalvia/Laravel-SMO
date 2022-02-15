@@ -71,13 +71,13 @@ abstract class DeleteRegister
                     $table = 'tabela de grupos';
                     break;
                   case 'grupoexame':
-                    $table = 'tabela de exames';
+                    $table = 'tabela de exames em grupos homogêneos';
                     break;
                   case 'grupofuncao':
                       $table = 'tabela de funções x setores';
                       break;
                   case 'gruporisco':
-                    $table = 'tabela de riscos';
+                    $table = 'tabela de riscos em grupos homogêneos';
                     break;
                   case 'permissao':
                     $table = 'tabela de permissões';

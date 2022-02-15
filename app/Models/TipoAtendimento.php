@@ -10,10 +10,7 @@ class TipoAtendimento extends Model
     use HasFactory;
 
     protected $table = 'tipoatendimento';
-    protected $fillable = [
-        'nome',
-    ];
-    
+    protected $fillable = ['nome'];
     public $timestamps = false;
 
     public function grupoExame()

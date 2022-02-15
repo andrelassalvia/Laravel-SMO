@@ -54,7 +54,7 @@ class GrupoController extends Controller
     public function store(GrupoFormRequest $request)
     {
         $dataForm = $request->all();
-        $nome = filter_var($dataForm['nome'], FILTER_SANITIZE_STRING); 
+        $nome = filter_var($dataForm['nome'], FILTER_SANITIZE_FULL_SPECIAL_CHARS); 
         
         $grupos = new SaveInDatabase($this->grupo);
         $grupos = $grupos->saveDatabase(
@@ -86,7 +86,7 @@ class GrupoController extends Controller
     public function update(GrupoFormRequest $request, $id)
     {
         $dataForm = $request->all();
-        $nome = filter_var($dataForm['nome'], FILTER_SANITIZE_STRING);
+        $nome = filter_var($dataForm['nome'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 
         $alter = new ChangeRegister($this->grupo);
         $alter = $alter->changeRegisterInDatabase(
@@ -127,7 +127,7 @@ class GrupoController extends Controller
     public function search(Request $request)
     {
         $dataForm = $request->all();
-        $nome = filter_var('%'.$dataForm['nome'].'%', FILTER_SANITIZE_STRING);
+        $nome = filter_var('%'.$dataForm['nome'].'%', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 
         $grupos = new SearchRequest($this->grupo);
         $grupos = $grupos->searchIt('nome', ['nome' => $nome]);

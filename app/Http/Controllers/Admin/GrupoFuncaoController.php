@@ -50,8 +50,8 @@ class GrupoFuncaoController extends Controller
     public function store(GrupoFuncaoFormRequest $request, $id)
     {
         $dataForm = $request->all();
-        $funcao_id = filter_var($dataForm['funcao_id'], FILTER_SANITIZE_STRING);
-        $setor_id = filter_var($dataForm['setor_id'], FILTER_SANITIZE_STRING);
+        $funcao_id = filter_var($dataForm['funcao_id'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $setor_id = filter_var($dataForm['setor_id'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 
         $grupoFuncoes = new SaveInDatabase($this->grupoFuncao);
         $grupoFuncoes = $grupoFuncoes->saveDatabase(

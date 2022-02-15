@@ -45,7 +45,7 @@ class GrupoRiscoController extends Controller
     public function store(GrupoRiscoFormRequest $request, $id)
     {
         $dataForm = $request->all();
-        $risco_id = filter_var($dataForm['risco_id'], FILTER_SANITIZE_STRING);
+        $risco_id = filter_var($dataForm['risco_id'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 
         $grupoRisco = new SaveInDatabase($this->grupoRisco);
         $grupoRisco = $grupoRisco->saveDatabase(

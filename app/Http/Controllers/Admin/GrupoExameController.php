@@ -55,10 +55,10 @@ class GrupoExameController extends Controller
     public function store(GrupoExameFormRequest $request, $id)
     {
         $dataform = $request->all();
-        $exame_id = filter_var($dataform['exame_id'], FILTER_SANITIZE_STRING);
+        $exame_id = filter_var($dataform['exame_id'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
         $tipoatendimento_id = filter_var(
             $dataform['tipoatendimento_id'], 
-            FILTER_SANITIZE_STRING
+            FILTER_SANITIZE_FULL_SPECIAL_CHARS
         );
 
         $grupoExames = new SaveInDatabase($this->grupoExame);

@@ -44,7 +44,7 @@ class FuncaoController extends Controller
     public function store(FuncaoFormRequest $request)
     {
         $dataForm = $request->all();
-        $nome = filter_var($dataForm['nome'], FILTER_SANITIZE_STRING); 
+        $nome = filter_var($dataForm['nome'], FILTER_SANITIZE_FULL_SPECIAL_CHARS); 
         
         $funcoes = new SaveInDatabase($this->funcao);
         $funcoes = $funcoes->saveDatabase(
@@ -76,7 +76,10 @@ class FuncaoController extends Controller
     public function update(FuncaoFormRequest $request, $id)
     {
         $dataForm = $request->all();
-        $nome = filter_var($dataForm['nome'], FILTER_SANITIZE_STRING);
+        $nome = filter_var(
+            $dataForm['nome'], 
+            FILTER_SANITIZE_FULL_SPECIAL_CHARS
+        );
 
         $alter = new ChangeRegister($this->funcao);
         $alter = $alter->changeRegisterInDatabase(
@@ -101,7 +104,7 @@ class FuncaoController extends Controller
             ['funcao_id'],
             'funcoes.show',
             'funcoes.index',
-            ['success' => 'Função deleteada com sucesso'],
+            ['success' => 'Função deletada com sucesso'],
             ''
         );
         
@@ -111,7 +114,10 @@ class FuncaoController extends Controller
     public function search(Request $request)
     {
         $dataForm = $request->all();
-        $nome = filter_var('%'.$dataForm['nome'].'%', FILTER_SANITIZE_STRING);
+        $nome = filter_var(
+            '%'.$dataForm['nome'].'%', 
+            FILTER_SANITIZE_FULL_SPECIAL_CHARS
+        );
 
         $funcoes = new SearchRequest($this->funcao);
         $funcoes = $funcoes->searchIt('nome', ['nome' => $nome]);

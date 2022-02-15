@@ -89,6 +89,7 @@ input {
 .form--create {
     margin-top: 10%;
     width: 50%;
+    max-width: 80%;
     margin: auto;
     background-color: #f1f3f5;
 }
@@ -120,4 +121,25 @@ input {
     margin-bottom: 20px;
     margin-left: 2%;
     width: 20%;
+}
+
+.alert--success {
+    margin: auto;
+    margin-bottom: 1%;
+    width: 80%;
+}
+
+.alert--errors {
+    margin: auto;
+    width: 400px;
+}
+
+.table--style {
+    width: 80%;
+    margin: auto;
+}
+
+.btn--style--cadastrar {
+    color: #fff;
+    text-decoration: none;
 }
