@@ -17,7 +17,6 @@ class TipoAtendimentoSeeder extends Seeder
         $tipoAtendimento = new TipoAtendimento();
         $tipoAtendimento->insert(['nome' => 'Presencial']);
         $tipoAtendimento->insert(['nome' => 'Remoto']);
-        $tipoAtendimento->timeStamps =false;
         $tipoAtendimento->save();
     }
 }

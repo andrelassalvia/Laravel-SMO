@@ -18,7 +18,6 @@ class TipoDeRiscosSeeder extends Seeder
         $tipoRisco->insert(['nome' => 'Fisico']);
         $tipoRisco->insert(['nome' => 'Quimico']);
         $tipoRisco->insert(['nome' => 'Sem Riscos']);
-        $tipoRisco->timeStamps =false;
         $tipoRisco->save();
       
     }

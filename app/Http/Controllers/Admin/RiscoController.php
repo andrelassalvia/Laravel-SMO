@@ -36,35 +36,33 @@ class RiscoController extends Controller
     public function index()
     {
         $riscos = new CollectData($this->risco);
-        $riscos = $riscos->collection('nome', 'ASC');
+        $data = $riscos->collection('nome', 'ASC');
 
-        return view ('admin.risco.index', compact('riscos'));
+        return view ('admin.risco.index', compact('data'));
     }
    
     public function create()
     {
+        $data = $this->risco;
         $tipoRiscos = new CollectData($this->tipoRisco);
         $tipoRiscos = $tipoRiscos->collection('nome', 'ASC');
 
-        return view ('admin.risco.create', compact('tipoRiscos'));
+        return view ('admin.risco.create', compact('tipoRiscos', 'data'));
     }
      
     public function store(RiscoFormRequest $request)
     {
-        $dataForm = $request->all();
-        $nome = filter_var($dataForm['nome'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-        $tipoRisco_id = filter_var(
-            $dataForm['tiporisco_id'],
-             FILTER_SANITIZE_FULL_SPECIAL_CHARS
-        );
+        $dataForm = $request->validated();
+        $nome = $dataForm['nome'];
+        $tipoRisco_id = $dataForm['tiporisco_id'];
         
         $riscos = new SaveInDatabase($this->risco);
         $riscos = $riscos->saveDatabase(
             ['nome', 'tiporisco_id'],
             [$nome, $tipoRisco_id],
-            'riscos.index',
+            'risco.index',
             ['success' => 'Risco cadastrado com sucesso'],
-            'riscos.create',
+            'risco.create',
             ['errors' => 'Risco já cadastrado'],
             ''
         );
@@ -74,44 +72,39 @@ class RiscoController extends Controller
 
     public function show($id)
     {
-        $risco = $this->risco->find($id);
+        $data = $this->risco->find($id);
     
-        return view ('admin.risco.show', compact('risco'));
+        return view ('admin.risco.show', compact('data'));
     }
 
     public function edit($id)
     {
-      $risco = $this->risco->find($id);
+      $data = $this->risco->find($id);
 
       $tipoRiscos = new CollectData($this->tipoRisco);
       $tipoRiscos = $tipoRiscos->collection('nome', 'ASC');
 
       return view(
           'admin.risco.edit', 
-          compact('risco', 'tipoRiscos')
+          compact('data', 'tipoRiscos')
       );
     }
 
     public function update(RiscoFormRequest $request, $id)
     {
-        $dataForm = $request->all();
-        $nome = filter_var(
-            $dataForm['nome'], 
-            FILTER_SANITIZE_FULL_SPECIAL_CHARS
-        );
-        $tipoRisco_id = filter_var(
-            $dataForm['tiporisco_id'],
-            FILTER_SANITIZE_FULL_SPECIAL_CHARS
-        );
+        $dataForm = $request->validated();
+        $nome = 
+            $dataForm['nome'];
+        $tipoRisco_id = $dataForm['tiporisco_id'];
 
         $riscos = new ChangeRegister($this->risco);
         $riscos = $riscos->changeRegisterInDatabase(
             $id,
             ['nome', 'tiporisco_id'],
             [$nome, $tipoRisco_id],
-            'riscos.index',
+            'risco.index',
             ['success' => 'Registro alterado com sucesso'],
-            'riscos.edit',
+            'risco.edit',
             ['errors' => 'Registro já cadastrado na base de dados']
         );
 
@@ -125,8 +118,8 @@ class RiscoController extends Controller
             $id,
             [$this->atendimentoRisco, $this->grupoRisco],
             ['risco_id'],
-            'riscos.show',
-            'riscos.index',
+            'risco.show',
+            'risco.index',
             ['success' => 'Registro deletado com sucesso'],
             ''
         );
@@ -136,8 +129,8 @@ class RiscoController extends Controller
 
     public function search(Request $request)
     {
-        $dataForm = $request->all();
-        $nome = filter_var("%".$dataForm['nome']."%", FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $dataForm = $request->only('nome');
+        $nome = "%".$dataForm['nome']."%";
         $riscos = new SearchRequest($this->risco);
         $riscos = $riscos->searchIt('nome', [$nome]);
 

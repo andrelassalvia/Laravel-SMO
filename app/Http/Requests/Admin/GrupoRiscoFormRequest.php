@@ -24,8 +24,7 @@ class GrupoRiscoFormRequest extends FormRequest
     public function rules()
     {
         return [
-            // 'grupo_id' => 'required',
-            'risco_id'=> 'required',
+                'risco_id'=> 'required|exists:risco,id|digits_between:1,30',
         ];
     }
 }

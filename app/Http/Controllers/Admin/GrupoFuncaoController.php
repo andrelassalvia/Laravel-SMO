@@ -30,7 +30,7 @@ class GrupoFuncaoController extends Controller
 
     public function index($id)
     {
-        $grupo = $this->grupo->find($id);
+        $data = $this->grupo->find($id);
 
         $funcoes = new CollectData($this->funcao);
         $funcoes = $funcoes->collection('nome', 'ASC');
@@ -42,16 +42,16 @@ class GrupoFuncaoController extends Controller
         
         return view (
             'admin.grupoFuncao.index', 
-            compact('grupo', 'funcoes', 'setores', 'grupoFuncoes')
+            compact('data', 'funcoes', 'setores', 'grupoFuncoes')
         );
        
     }
 
     public function store(GrupoFuncaoFormRequest $request, $id)
     {
-        $dataForm = $request->all();
-        $funcao_id = filter_var($dataForm['funcao_id'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-        $setor_id = filter_var($dataForm['setor_id'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $dataForm = $request->validated();
+        $funcao_id = $dataForm['funcao_id'];
+        $setor_id = $dataForm['setor_id'];
 
         $grupoFuncoes = new SaveInDatabase($this->grupoFuncao);
         $grupoFuncoes = $grupoFuncoes->saveDatabase(

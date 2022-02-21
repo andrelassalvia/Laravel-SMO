@@ -24,16 +24,14 @@ class GrupoExameFormRequest extends FormRequest
     public function rules()
     {
         return [
-
-            'exame_id'=>'required',
-            'tipoatendimento_id' => 'required'
+            'exame_id'=>'required|exists:exame,id|digits_between:1,30',
+            'tipoatendimento_id' => 'required|exists:tipostendimento,id|digits_between:1,30'
         ];
     }
 
     public function messages()
     {
         return [
-            
             'exame_id.required' => 'O campo exame é obrigatório',
             'tipoatendimento_id.required' => 'O campo atendimento é obrigatório'
         ];

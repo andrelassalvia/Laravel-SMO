@@ -17,60 +17,55 @@ Route::get('/home', 'App\Http\Controllers\Admin\HomeController@index')->middlewa
 
 // FUNCAO
 Route::prefix('funcoes')->controller('App\Http\Controllers\Admin\FuncaoController')->middleware(['auth'])->group(function(){
-
-    Route::get('/', 'index')->name('funcoes.index');
-    Route::get('/{id}/edit', 'edit')->name('funcoes.edit');
-    Route::any('/{id}/update', 'update')->name('funcoes.update');
-    Route::get('/{id}/show', 'show')->name('funcoes.show');
-    Route::any('/{id}/destroy', 'destroy')->name('funcoes.destroy');
-    Route::get('/search', 'search')->name('funcoes.search');
-    Route::get('/create', 'create')->name('funcoes.create');
-    Route::any('/store', 'store')->name('funcoes.store');
+    Route::get('/', 'index')->name('funcao.index');
+    Route::get('/{id}/edit', 'edit')->name('funcao.edit');
+    Route::any('/{id}/update', 'update')->name('funcao.update');
+    Route::get('/{id}/show', 'show')->name('funcao.show');
+    Route::any('/{id}/destroy', 'destroy')->name('funcao.destroy');
+    Route::get('/search', 'search')->name('funcao.search');
+    Route::get('/create', 'create')->name('funcao.create');
+    Route::any('/store', 'store')->name('funcao.store');
 });
 
 // SETOR
 Route::prefix('setores')->controller('App\Http\Controllers\Admin\SetorController')->middleware(['auth'])->group(function(){
-
-    Route::get('/', 'index')->name('setores.index');
-    Route::get('/{id}/edit', 'edit')->name('setores.edit');
-    Route::any('/{id}/update', 'update')->name('setores.update');
-    Route::get('/{id}/show', 'show')->name('setores.show');
-    Route::any('/{id}/destroy', 'destroy')->name('setores.destroy');
-    Route::get('/search', 'search')->name('setores.search');
-    Route::get('/create', 'create')->name('setores.create');
-    Route::any('/store', 'store')->name('setores.store');
+    Route::get('/', 'index')->name('setor.index');
+    Route::get('/{id}/edit', 'edit')->name('setor.edit');
+    Route::any('/{id}/update', 'update')->name('setor.update');
+    Route::get('/{id}/show', 'show')->name('setor.show');
+    Route::any('/{id}/destroy', 'destroy')->name('setor.destroy');
+    Route::get('/search', 'search')->name('setor.search');
+    Route::get('/create', 'create')->name('setor.create');
+    Route::any('/store', 'store')->name('setor.store');
 });
 
 // EXAME
 Route::prefix('exames')->controller('App\Http\Controllers\Admin\ExameController')->middleware(['auth'])->group(function(){
-
-    Route::get('/', 'index')->name('exames.index');
-    Route::get('/{id}/edit', 'edit')->name('exames.edit');
-    Route::any('/{id}/update', 'update')->name('exames.update');
-    Route::get('/{id}/show', 'show')->name('exames.show');
-    Route::any('/{id}/destroy', 'destroy')->name('exames.destroy');
-    Route::get('/search', 'search')->name('exames.search');
-    Route::get('/create', 'create')->name('exames.create');
-    Route::any('/store', 'store')->name('exames.store');
+    Route::get('/', 'index')->name('exame.index');
+    Route::get('/{id}/edit', 'edit')->name('exame.edit');
+    Route::any('/{id}/update', 'update')->name('exame.update');
+    Route::get('/{id}/show', 'show')->name('exame.show');
+    Route::any('/{id}/destroy', 'destroy')->name('exame.destroy');
+    Route::get('/search', 'search')->name('exame.search');
+    Route::get('/create', 'create')->name('exame.create');
+    Route::any('/store', 'store')->name('exame.store');
 });
 
 // GRUPO
 Route::prefix('grupos')->controller('App\Http\Controllers\Admin\GrupoController')->middleware(['auth'])->group(function(){
-
-    Route::get('/', 'index')->name('grupos.index');
-    Route::get('/{id}/edit', 'edit')->name('grupos.edit');
-    Route::any('/{id}/update', 'update')->name('grupos.update');
-    Route::get('/{id}/show', 'show')->name('grupos.show');
-    Route::any('/{id}/destroy', 'destroy')->name('grupos.destroy');
-    Route::get('/search', 'search')->name('grupos.search');
-    Route::get('/create', 'create')->name('grupos.create');
-    Route::any('/store', 'store')->name('grupos.store');    
+    Route::get('/', 'index')->name('grupo.index');
+    Route::get('/{id}/edit', 'edit')->name('grupo.edit');
+    Route::any('/{id}/update', 'update')->name('grupo.update');
+    Route::get('/{id}/show', 'show')->name('grupo.show');
+    Route::any('/{id}/destroy', 'destroy')->name('grupo.destroy');
+    Route::get('/search', 'search')->name('grupo.search');
+    Route::get('/create', 'create')->name('grupo.create');
+    Route::any('/store', 'store')->name('grupo.store');    
 });
 
 
 //  GRUPO FUNCAO
 Route::prefix('grupofuncao')->controller('App\Http\Controllers\Admin\GrupoFuncaoController')->middleware(['auth'])->group(function(){
-
     Route::get('/{id}', 'index')->name('grupofuncao.index');
     Route::any('/{id}/destroy', 'destroy')->name('grupofuncao.destroy');
     Route::any('/{id}/store', 'store')->name('grupofuncao.store');    
@@ -79,7 +74,6 @@ Route::prefix('grupofuncao')->controller('App\Http\Controllers\Admin\GrupoFuncao
 
 //  GRUPO RISCO
 Route::prefix('gruporisco')->controller('App\Http\Controllers\Admin\GrupoRiscoController')->middleware(['auth'])->group(function(){
-
     Route::get('/{id}', 'index')->name('gruporisco.index');
     Route::any('/{id}/destroy', 'destroy')->name('gruporisco.destroy');
     Route::any('/{id}/store', 'store')->name('gruporisco.store');    
@@ -87,7 +81,6 @@ Route::prefix('gruporisco')->controller('App\Http\Controllers\Admin\GrupoRiscoCo
 
 // GRUPO EXAME
 Route::prefix('grupoexame')->controller('App\Http\Controllers\Admin\GrupoExameController')->middleware(['auth'])->group(function(){
-
     route::get('/{id}', 'index')->name('grupoexame.index');
     route::any('/{id}/destroy', 'destroy')->name('grupoexame.destroy');
     route::any('/{id}/store', 'store')->name('grupoexame.store');
@@ -95,33 +88,35 @@ Route::prefix('grupoexame')->controller('App\Http\Controllers\Admin\GrupoExameCo
 
 // RISCOS
 Route::prefix('riscos')->controller('App\Http\Controllers\Admin\RiscoController')->middleware(['auth'])->group(function(){
-
-    route::get('/', 'index')->name('riscos.index');
-    route::get('/create', 'create')->name('riscos.create');
-    route::get('/edit/{id}', 'edit')->name('riscos.edit');
-    route::any('/update/{id}', 'update')->name('riscos.update');
-    route::get('/show/{id}', 'show')->name('riscos.show');
-    route::any('/store', 'store')->name('riscos.store');
-    route::get('/search', 'search')->name('riscos.search');
-    route::any('/destroy/{id}', 'destroy')->name('riscos.destroy');
+    route::get('/', 'index')->name('risco.index');
+    route::get('/create', 'create')->name('risco.create');
+    route::get('/edit/{id}', 'edit')->name('risco.edit');
+    route::any('/update/{id}', 'update')->name('risco.update');
+    route::get('/show/{id}', 'show')->name('risco.show');
+    route::any('/store', 'store')->name('risco.store');
+    route::get('/search', 'search')->name('risco.search');
+    route::any('/destroy/{id}', 'destroy')->name('risco.destroy');
 });
 
 // TIPOS DE ATENDIMENTPO
-
 Route::prefix('tipoAtendimentos')->controller('App\Http\Controllers\Admin\TipoAtendimentoController')->middleware(['auth'])->group(function(){
+    route::get('/', 'index')->name('tipoatendimento.index');
+    route::get('/create', 'create')->name('tipoatendimento.create');
+    route::get('/edit/{id}', 'edit')->name('tipoatendimento.edit');
+    route::any('/update/{id}', 'update')->name('tipoatendimento.update');
+    route::get('/show/{id}', 'show')->name('tipoatendimento.show');
+    route::any('/store', 'store')->name('tipoatendimento.store');
+    route::get('/search', 'search')->name('tipoatendimento.search');
+    route::any('/destroy/{id}', 'destroy')->name('tipoatendimento.destroy');
+});
 
-    route::get('/', 'index')->name('tipoAtendimentos.index');
-    route::get('/create', 'create')->name('tipoAtendimentos.create');
-    route::get('/edit/{id}', 'edit')->name('tipoAtendimentos.edit');
-    route::any('/update/{id}', 'update')->name('tipoAtendimentos.update');
-    route::get('/show/{id}', 'show')->name('tipoAtendimentos.show');
-    route::any('/store', 'store')->name('tipoAtendimentos.store');
-    route::get('/search', 'search')->name('tipoAtendimentos.search');
-    route::any('/destroy/{id}', 'destroy')->name('tipoAtendimentos.destroy');
+// TIPO USUARIO
+Route::prefix('tipousuarios')->controller('App\Http\Controllers\Admin\TipoUsuario')->middleware(['auth'])->group(function(){
+    route::get('/', 'index')->name('tipousuario.index');
 });
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('auth.login');
 });
 
 Route::get('/dashboard', function () {

@@ -24,7 +24,7 @@ class TipoAtendimentoFormRequest extends FormRequest
     public function rules()
     {
         return [
-            'nome' => 'required'
+            'nome' => 'required|min:3|max:30'
         ];
     }
 }

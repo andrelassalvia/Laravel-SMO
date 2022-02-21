@@ -18,7 +18,6 @@ class FuncaoTableSeeder extends Seeder
            'nome' => 'Mecanico'
        ));
 
-       $funcao->timestamps = false;
        $funcao->save();
 
     }

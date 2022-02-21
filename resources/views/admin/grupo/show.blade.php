@@ -3,59 +3,54 @@
 @section('content')
 
 <div class="conteudo">
-  @include('admin.grupo.title')
+  <x-admin.title-component :title="'Administração de Grupos Homogêneos'"></x-admin.title-component>
 
-  <form action="{{route('grupos.destroy',[$grupo->id])}}" class="form-control form--create" method="get">
-    <div class="aba">
-      <ul class="nav nav-tabs justify-content-center">
-        <li class="nav-item">
-          <a class="nav-link active aba--nav" aria-current="page" href="{{route('grupos.show', [$grupo->id])}}">Grupo</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link aba--nav" href="{{route('grupofuncao.index', [$grupo->id])}}">Funcoes x Setores</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link aba--nav" href="{{route('gruporisco.index', [$grupo->id])}}">Riscos</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link aba--nav" href="#">Exames</a>
-        </li>
-       
+<x-admin.form-name-component :group="''" :data="$data" :blade="'show'">
+  <x-slot name="tabs">
+    <div class="tab">
+      <ul class="nav nav-tabs">
+        <x-admin.tabs-component 
+          :active="'active'" 
+          :route="'grupo.index'" 
+          :id="$data->id" 
+          :tab-name="'Grupo'">
+        </x-admin.tabs-component>
+        <x-admin.tabs-component
+          :active="''" 
+          :route="'grupofuncao.index'" 
+          :id="$data->id" 
+          :tab-name="'Funções x Setores'">
+        </x-admin.tabs-component>
+        <x-admin.tabs-component
+          :active="''" 
+          :route="'gruporisco.index'" 
+          :id="$data->id" 
+          :tab-name="'Riscos'">
+        </x-admin.tabs-component>
+        <x-admin.tabs-component
+          :active="''" 
+          :route="'grupoexame.index'" 
+          :id="$data->id" 
+          :tab-name="'Exames'">
+        </x-admin.tabs-component>
       </ul>
     </div>
-    <div class="form1">
-      <input type="hidden" name="_token" value="{{csrf_token()}}">
-      <input type="hidden" name="_method" value="DELETE">
-      <div class="d-flex align-items-center">
+  </x-slot>
+  <x-slot name="delete">
+    <input type="hidden" name="_method" value="DELETE">
+  </x-slot>
+  <x-slot name="button">
+     <x-admin.delete-button-component></x-admin.delete-button-component>
+  </x-slot>
 
-        <div class="form-group d-flex col-sm-11">
-          <label for="nome" class="control-label col-sm-2 control-label--create">Grupo:</label>
-          <div class=" col-sm-10 ">
-            <input placeholder="" type="text" name="nome" class="form-control" value="{{$grupo->nome}}">
-          </div>
-        </div>
-        
-        {{-- Botao Deletar --}}
-          <div class="form-group ms-3">
-            <button type="submit" class="btn btn-danger btn-sm">
-              <i class="bi bi-trash" aria-hidden="true"></i>
-            </button>
-          </div>
-        
-      </div>
-    </div>
-  </form>
-  <div class= ms-3">
-    <a class="btn btn-link" href="{{route('grupos.index')}}">Voltar</a>
-  </div>
-  
-  @if (isset($errors) && count($errors)>0)
-  <div class="alert alert-warning" style="margin: auto; width:400px">
-    @foreach ($errors->all() as $error)
-      <p>{{$error}}</p>
-    @endforeach
-  </div>
-  @endif
+  <x-slot name="form2"></x-slot>
+  <x-slot name="form3"></x-slot>
+
+</x-admin.form-name-component>
+
+<x-admin.back-button-component :model="$data"></x-admin.back-button-component> 
+
+@include('admin._components.alertErrors')
       
 </div>
 

@@ -24,9 +24,8 @@ class RiscoFormRequest extends FormRequest
     public function rules()
     {
         return [
-            'nome' => 'required|min:2',
-            'tiporisco_id' => 'required'
-            
+            'nome' => 'required|min:3|max:50',
+            'tiporisco_id' => 'required|exists:tiporisco,id|digits_between:1,30'
         ];
     }
 }

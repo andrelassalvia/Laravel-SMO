@@ -25,8 +25,8 @@ class GrupoFuncaoFormRequest extends FormRequest
     {
         return 
             [
-                'funcao_id' => 'required',
-                'setor_id' => 'required'
+                'funcao_id' => 'required|exists:funcao,id|digits_between:1,30',
+                'setor_id' => 'required|exists:setor,id|digits_between:1,30'
             ];
             
     }

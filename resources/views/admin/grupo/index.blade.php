@@ -1,91 +1,27 @@
 @extends('layouts.base')
 
-
 @section('content')
 
 <div class="conteudo">
-  @include('admin.grupo.title')
-
+  <x-admin.title-component :title="'Administração de Grupos Homogêneos'"></x-admin.title-component>
   <div class="d-flex">
-
     {{-- Pesquisa --}}
-    <div class="form-search" style="margin-bottom: 20px; margin-left:10%; 100px;width:20%">
-      <form method="get" class="search" action="{{route('grupos.search')}}">
-        <input type="text" class="form-control me-2" name="nome" placeholder="Nome do grupo">
-        <button class="btn btn-primary">
-          <i class="bi bi-search" aria-hidden="true"></i>
-        </button>
-      </form>
-    </div>
-    
+    <x-admin.search-component :table="'grupo'" :placeholder="'Procura grupo'"></x-admin.search-component>
     {{-- Adicao de Registro --}}
-    <div class="form-central" style="margin-bottom: 20px; margin-left:2%; 100px;width:20%">
-      <div class="btn btn-primary">
-        <a href="{{route('grupos.create')}}" style="color: #fff; text-decoration:none">Cadastrar grupo
-          <i class="bi bi-plus-lg" style="color: #fff"></i>
-        </a>
-      </div>
-    </div>
+    <x-admin.add-register :table="'grupo'" :title="'Cadastrar grupo'"></x-admin.add-register>
   </div>
-
   {{-- Mensagem de cadastro com sucesso --}}
-  @if(Session::has('success'))
-    <div class="alert alert-success" style="margin: auto; margin-bottom:1%;width:80%;">
-      {{Session::get('success')}}
-    </div>
-
-  @endif
+  @include('admin._components.alertSuccess')
   {{-- TABELA COM LISTA DE grupos --}}
-  <table class="table table-striped table-hover mb-3" style="width: 80%; margin:auto">
-    <tr>
-      <th>grupo</th>
-      <th width='100'>Ações</th>
-    </tr>
-    @foreach ($grupos as $grupo )
-    <tr>
-      <td>{{$grupo->nome}}</td>
-      <td width='100'>
-        {{-- editar registro --}}
-        <a href="{{route('grupos.edit',$grupo->id)}}" class="btn btn-primary btn-sm">
-          <i class="bi bi-pen" aria-hidden="true"></i>
-        </a>
-        {{-- deletar registro --}}
-        <a href="{{route('grupos.show', $grupo->id)}}" class="btn btn-danger btn-sm">
-          <i class="bi bi-trash" aria-hidden="true"></i>
-        </a>
-      </td>
-    </tr>
-        
-    @endforeach
-  </table>
-
+  <x-admin.list-component :data="$data" :column="'Grupo'"></x-admin.list-component>
   {{-- Voltar para grupos --}}
   <div class="ms-3">
-    @if(Route::is('grupos.search') && request()->filled('nome'))
-
-    <a class="btn btn-link" href="{{route('grupos.index')}}">Voltar</a>
-      
-
+    @if(Route::is('grupo.search') && request()->filled('nome'))
+    <a class="btn btn-link" href="{{route('grupo.index')}}">Voltar</a>
     @endif
   </div>
   {{-- Paginacao --}}
-  <div class="pagination">
-    @if(isset($dataForm))
-
-      {{$grupos->appends($dataForm)->links()}}
-    
-    @else
-
-      {{$grupos->links()}}
-    
-    @endif
-        
-    
-
-  </div>
-  
-
+  @include('admin._components.pagination')
 </div>
-
-    
+ 
 @endsection

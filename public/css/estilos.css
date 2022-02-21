@@ -88,7 +88,7 @@ input {
 }
 .form--create {
     margin-top: 10%;
-    width: 50%;
+    width: 70%;
     max-width: 80%;
     margin: auto;
     background-color: #f1f3f5;
@@ -102,7 +102,7 @@ input {
     padding: 10px;
 }
 
-.aba--nav {
+.tab--nav {
     color: #163550;
 }
 
@@ -142,4 +142,9 @@ input {
 .btn--style--cadastrar {
     color: #fff;
     text-decoration: none;
+}
+
+.nav-tabs {
+    width: 70%;
+    margin: auto;
 }

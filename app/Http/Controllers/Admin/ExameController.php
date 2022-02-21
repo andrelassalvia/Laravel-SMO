@@ -32,28 +32,30 @@ class ExameController extends Controller
     public function index()
     {
         $exames = new CollectData($this->exame);
-        $exames = $exames->collection('nome', 'ASC');
-        
-        return view ('admin.exame.index', compact('exames'));
+        $data = $exames->collection('nome', 'ASC');
+                
+        return view ('admin.exame.index', compact('data'));
     }
   
     public function create()
     {
-        return view ('admin.exame.create');
+        $data = $this->exame;
+        
+        return view ('admin.exame.create', compact('data'));
     }
 
     public function store(ExameFormRequest $request)
     {
-        $dataForm = $request->all();
-        $nome = filter_var($dataForm['nome'], FILTER_SANITIZE_FULL_SPECIAL_CHARS); 
+        $dataForm = $request->validated();
+        $nome = $dataForm['nome']; 
         
         $exames = new SaveInDatabase($this->exame);
         $exames = $exames->saveDatabase(
         ['nome'], 
         [$nome], 
-        'exames.index', 
+        'exame.index', 
         ['success' => 'Registro cadastrado com sucesso'], 
-        'exames.create', 
+        'exame.create', 
         ['errors' => 'Exame ja cadastrado'],
         ''
         );
@@ -63,29 +65,30 @@ class ExameController extends Controller
     
     public function show($id)
     {
-        $exame = Exame::find($id);
-        return view ('admin.exame.show', compact('exame'));
+        $data = Exame::find($id);
+        return view ('admin.exame.show', compact('data'));
     }
     
     public function edit($id)
     {
-        $exame = Exame::find($id);
-        return view ('admin.exame.edit', compact('exame'));
+        $data = Exame::find($id);
+        
+        return view ('admin.exame.edit', compact('data'));
     }
     
     public function update(ExameFormRequest $request, $id)
     {
-        $dataForm = $request->all();
-        $nome = filter_var($dataForm['nome'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $dataForm = $request->validated();
+        $nome = $dataForm['nome'];
 
         $alter = new ChangeRegister($this->exame);
         $alter = $alter->changeRegisterInDatabase(
             $id, 
         ['nome'], 
         [$nome], 
-        'exames.index',
+        'exame.index',
         ['success' => 'Alteração efetuada com sucesso'],
-        'exames.edit',
+        'exame.edit',
         ['errors' => 'Registro igual ao anterior']
         );
 
@@ -99,9 +102,9 @@ class ExameController extends Controller
             $id, 
             [$this->grupoExame, $this->atendimentoExame], 
             ['exame_id'],
-            'exames.show',
-            'exames.index',
-            ['success' => 'Exame deleteado com sucesso'],
+            'exame.show',
+            'exame.index',
+            ['success' => 'Exame deletado com sucesso'],
             ''
         );
         
@@ -110,12 +113,12 @@ class ExameController extends Controller
 
     public function search(Request $request){
 
-        $dataForm = $request->all();
-        $nome = filter_var('%'.$dataForm['nome'].'%', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $dataForm = $request->only('nome');
+        $nome = '%'.$dataForm['nome'].'%';
 
         $exames = new SearchRequest($this->exame);
-        $exames = $exames->searchIt('nome', ['nome' => $nome]);
+        $data = $exames->searchIt('nome', ['nome' => $nome]);
 
-        return view('admin.exame.index',compact('nome', 'exames'));
+        return view('admin.exame.index',compact('nome', 'data'));
     }
 }

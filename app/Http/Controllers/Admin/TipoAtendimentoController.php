@@ -32,36 +32,34 @@ class TipoAtendimentoController extends Controller
     public function index()
     {
         $tipoAtendimentos = new CollectData($this->tipoAtendimento);
-        $tipoAtendimentos = $tipoAtendimentos->collection(
+        $data = $tipoAtendimentos->collection(
             'nome', 
             'ASC'
         );
         return view(
             'admin.tipoAtendimento.index', 
-            compact('tipoAtendimentos')
+            compact('data')
         );
     }
 
     public function create()
     {
-        return view('admin.tipoAtendimento.create');
+        $data = $this->tipoAtendimento;
+        return view('admin.tipoAtendimento.create', compact('data'));
     }
 
     public function store(TipoAtendimentoFormRequest $request)
     {
-        $dataForm = $request->all();
-        $nome = filter_var(
-            $dataForm['nome'],
-            FILTER_SANITIZE_FULL_SPECIAL_CHARS
-        );
+        $dataForm = $request->validated();
+        $nome = $dataForm['nome'];
 
         $tipoAtendimentos = new SaveInDatabase($this->tipoAtendimento);
         $tipoAtendimentos = $tipoAtendimentos->saveDatabase(
             ['nome'],
             [$nome],
-            'tipoAtendimentos.index',
+            'tipoatendimento.index',
             ['success' => 'Registro cadastrado com sucesso'],
-            'tipoAtendimentos.create',
+            'tipoatendimento.create',
             ['errors' => 'Registro já cadastrado'],
             ''
         );
@@ -71,38 +69,35 @@ class TipoAtendimentoController extends Controller
 
     public function show($id)
     {
-        $tipoAtendimentos = $this->tipoAtendimento->find($id);
+        $data = $this->tipoAtendimento->find($id);
 
         return view(
             'admin.tipoAtendimento.show', 
-            compact('tipoAtendimentos'));
+            compact('data'));
     }
 
     public function edit($id)
     {
-        $tipoAtendimentos = $this->tipoAtendimento->find($id);
+        $data = $this->tipoAtendimento->find($id);
 
         return view(
             'admin.tipoAtendimento.edit',
-            compact('tipoAtendimentos')
+            compact('data')
         );
     }
 
     public function update(TipoAtendimentoFormRequest $request, $id)
     {
-        $dataForm = $request->all();
-        $nome = filter_var(
-            $dataForm['nome'],
-            FILTER_SANITIZE_FULL_SPECIAL_CHARS
-        );
+        $dataForm = $request->validated();
+        $nome = $dataForm['nome'];
         $tipoAtendimentos = new ChangeRegister($this->tipoAtendimento);
         $tipoAtendimentos = $tipoAtendimentos->changeRegisterInDatabase(
             $id,
             ['nome'],
             [$nome],
-            'tipoAtendimentos.index',
+            'tipoatendimento.index',
             ['success' => 'Registro alterado com sucesso'],
-            'tipoAtendimentos.edit',
+            'tipoatendimento.edit',
             ['errors' => 'Registro já cadastrado no banco de dados']
         );
 
@@ -122,8 +117,8 @@ class TipoAtendimentoController extends Controller
             $id,
             [$this->atendimento, $this->grupoExame],
             ['tipoatendimento_id'],
-            'tipoAtendimentos.show',
-            'tipoAtendimentos.index',
+            'tipoatendimento.show',
+            'tipoatendimento.index',
             ['success' => 'Registro deletado com sucesso'],
             ''
         );
@@ -133,11 +128,8 @@ class TipoAtendimentoController extends Controller
 
     public function search(Request $request)
     {
-        $dataForm = $request->all();
-        $data = filter_var(
-            '%'.$dataForm['nome'].'%',
-            FILTER_SANITIZE_FULL_SPECIAL_CHARS
-        );
+        $dataForm = $request->only('nome');
+        $data = '%'.$dataForm['nome'].'%';
 
         $tipoAtendimentos = new SearchRequest($this->tipoAtendimento);
         $tipoAtendimentos = $tipoAtendimentos->searchIt(

@@ -1,78 +1,27 @@
 @extends('layouts.base')
 
-
 @section('content')
 
 <div class="conteudo">
-  @include('admin.tipoAtendimento.title')
-
+  <x-admin.title-component :title="'Administração de Tipos de Atendimentos'" ></x-admin.title-component>
   <div class="d-flex">
-
     {{-- Pesquisa --}}
-    <div class="form-search">
-      <form method="get" class="search" action="{{route('tipoAtendimentos.search')}}">
-        <input type="text" class="form-control me-2" name="nome" placeholder="Nome do tipo de atendimento">
-        <button class="btn btn-primary">
-          <i class="bi bi-search" aria-hidden="true"></i>
-        </button>
-      </form>
-    </div>
-    
+    <x-admin.search-component :table="'tipoatendimento'" :placeholder="'Procura por tipo de atendimento'"></x-admin.search-component>
     {{-- Adicao de Registro --}}
-    <div class="form-central">
-      <div class="btn btn-primary">
-        <a 
-          href="{{route('tipoAtendimentos.create')}}" 
-          class="btn--style--cadastrar">Cadastrar tipo de atendimento
-            <i class="bi bi-plus-lg" style="color: #fff"></i>
-        </a>
-      </div>
-    </div>
+    <x-admin.add-register :table="'tipoatendimento'" :title="'Cadastrar tipo de atendimento'"></x-admin.add-register>
   </div>
-
   {{-- Mensagem de cadastro com sucesso --}}
-  @if(Session::has('success'))
-    <div class="alert alert-success alert--success">
-      {{Session::get('success')}}
-    </div>
-  @endif
-
+  @include('admin._components.alertSuccess')
   {{-- TABELA COM LISTA DE FUNCOES --}}
-  <table class="table table-striped table-hover mb-3 table--style">
-    <tr>
-      <th>Tipo de Atendimento</th>
-      <th width='100'>Ações</th>
-    </tr>
-    @foreach ($tipoAtendimentos as $tipoAtendimento )
-    <tr>
-      <td>{{$tipoAtendimento->nome}}</td>
-      <td width='100'>
-        <a href="{{route('tipoAtendimentos.edit',$tipoAtendimento->id)}}" class="btn btn-primary btn-sm">
-          <i class="bi bi-pen" aria-hidden="true"></i>
-        </a>
-        <a href="{{route('tipoAtendimentos.show', $tipoAtendimento->id)}}" class="btn btn-danger btn-sm">
-          <i class="bi bi-trash" aria-hidden="true"></i>
-        </a>
-      </td>
-    </tr>
-    @endforeach
-  </table>
-
+  <x-admin.list-component :data="$data" :column="'Tipo de Atendimento'"></x-admin.list-component>
   {{-- Voltar para Tipo Atendimento Botao voltar nao pode aparecer na pogina index --}}
   <div class="ms-3">
-    @if(Route::is('tipoAtendimentos.search') && request()->filled('nome'))
-      <a class="btn btn-link" href="{{route('tipoAtendimentos.index')}}">Voltar</a>
+    @if(Route::is('tipoatendimento.search') && request()->filled('nome'))
+      <a class="btn btn-link" href="{{route('tipoatendimento.index')}}">Voltar</a>
     @endif
   </div>
-
   {{-- Paginacao --}}
-  <div class="pagination">
-    @if(isset($dataForm))
-      {{$tipoAtendimentos->appends($dataForm)->links()}}
-    @else
-      {{$tipoAtendimentos->links()}}
-    @endif
-  </div>
+  @include('admin._components.pagination')
 </div>
 
 @endsection

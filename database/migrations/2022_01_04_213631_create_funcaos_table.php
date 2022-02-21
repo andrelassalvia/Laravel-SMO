@@ -14,6 +14,8 @@ class CreateFuncaosTable extends Migration
     public function up()
     {
         Schema::create('funcao', function (Blueprint $table) {
+            $table->charset = 'utf8mb4';
+            $table->collation = 'utf8mb4_unicode_ci';
             $table->id();
             $table->String('nome', 50)->unique();
         });

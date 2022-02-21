@@ -13,12 +13,12 @@
             Tabelas
           </a>
           <ul class="dropdown-menu " aria-labelledby="navbarDropdown">
-            <li><a class="dropdown-item" href="{{route('funcoes.index')}}">Funções</a></li>
-            <li><a class="dropdown-item" href="{{route('setores.index')}}">Setores</a></li>
-            <li><a class="dropdown-item" href="{{route('exames.index')}}">Exames</a></li>
-            <li><a class="dropdown-item" href="{{route('grupos.index')}}">Grupos Homogêneos</a></li>
-            <li><a class="dropdown-item" href="{{route('riscos.index')}}">Riscos</a></li>
-            <li><a class="dropdown-item" href="{{route('tipoAtendimentos.index')}}">Tipos de Atendimentos</a></li>
+            <li><a class="dropdown-item" href="{{route('funcao.index')}}">Funções</a></li>
+            <li><a class="dropdown-item" href="{{route('setor.index')}}">Setores</a></li>
+            <li><a class="dropdown-item" href="{{route('exame.index')}}">Exames</a></li>
+            <li><a class="dropdown-item" href="{{route('grupo.index')}}">Grupos Homogêneos</a></li>
+            <li><a class="dropdown-item" href="{{route('risco.index')}}">Riscos</a></li>
+            <li><a class="dropdown-item" href="{{route('tipoatendimento.index')}}">Tipos de Atendimentos</a></li>
           </ul>
         </li>
         <li class="nav-item dropdown">

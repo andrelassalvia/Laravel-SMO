@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Models\Setor;
 use App\Models\Atendimento;
 use App\Models\Empregado;
+use App\Models\GrupoFuncao;
 
 use App\Http\Requests\Admin\SetorFormRequest;
 use App\Classes\Setor\CollectData;
@@ -21,38 +22,41 @@ class SetorController extends Controller
     public function __construct(
         Setor $setor,
         Atendimento $atendimento,
-        Empregado $empregado
+        Empregado $empregado,
+        GrupoFuncao $grupoFuncao
     ) {
         $this->setor = $setor;
         $this->atendimento = $atendimento;
         $this->empregado = $empregado;
+        $this->grupoFuncao = $grupoFuncao;
     }
 
     public function index()
     {
         $setores = new CollectData($this->setor);
-        $setores = $setores->collection('nome', 'ASC');
+        $data = $setores->collection('nome', 'ASC');
         
-        return view ('admin.setor.index', compact('setores'));
+        return view ('admin.setor.index', compact('data'));
     }
     
     public function create()
     {
-        return view ('admin.setor.create');
+        $data = $this->setor;
+        return view ('admin.setor.create', compact('data'));
     }
 
     public function store(SetorFormRequest $request)
     {
-        $dataForm = $request->all();
-        $nome = filter_var($dataForm['nome'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $dataForm = $request->validated();
+        $nome = $dataForm['nome'];
         
         $setores = new SaveInDatabase($this->setor);
         $setores = $setores->saveDatabase(
             ['nome'],
             [$nome],
-            'setores.index',
+            'setor.index',
             ['success' => 'Registro cadastrado com sucesso'], 
-            'setores.create', 
+            'setor.create', 
             ['errors' => 'Setor ja cadastrado'],
             ''
         );
@@ -61,29 +65,29 @@ class SetorController extends Controller
 
     public function show($id)
     {
-        $setores = Setor::find($id);
-        return view ('admin.setor.show', compact('setores'));
+        $data = Setor::find($id);
+        return view ('admin.setor.show', compact('data'));
     }
 
     public function edit($id)
     {
-        $setores = Setor::find($id);
-        return view ('admin.setor.edit', compact('setores'));
+        $data = Setor::find($id);
+        return view ('admin.setor.edit', compact('data'));
     }
 
     public function update(SetorFormRequest $request, $id)
     {
-        $dataForm = $request->all();
-        $nome = filter_var($dataForm['nome'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $dataForm = $request->validated();
+        $nome = $dataForm['nome'];
 
         $alter = new ChangeRegister($this->setor);
         $alter = $alter->changeRegisterInDatabase(
             $id, 
             ['nome'], 
             [$nome], 
-            'setores.index',
+            'setor.index',
             ['success' => 'Alteracao efetuada com sucesso'],
-            'setores.edit',
+            'setor.edit',
             ['errors' => 'Registro igual ao anterior']
         );
 
@@ -95,11 +99,11 @@ class SetorController extends Controller
         $delete = new DeleteRegister($this->setor);
         $delete = $delete->erase(
             $id, 
-            [$this->empregado, $this->atendimento], 
+            [$this->empregado, $this->atendimento, $this->grupoFuncao], 
             ['setor_id'],
-            'setores.show',
-            'setores.index',
-            ['success' => 'Função deleteada com sucesso'],
+            'setor.show',
+            'setor.index',
+            ['success' => 'Função deletada com sucesso'],
             ''
         );
         
@@ -108,12 +112,12 @@ class SetorController extends Controller
 
     public function search(Request $request)
     {
-        $dataForm = $request->all();
-        $nome = filter_var('%'.$dataForm['nome'].'%', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $dataForm = $request->only('nome');
+        $nome = '%'.$dataForm['nome'].'%';
 
         $setores = new SearchRequest($this->setor);
-        $setores = $setores->searchIt('nome', ['nome' => $nome]);
+        $data = $setores->searchIt('nome', ['nome' => $nome]);
     
-        return view('admin.setor.index', compact('nome', 'setores'));
+        return view('admin.setor.index', compact('nome', 'data'));
     }
 }

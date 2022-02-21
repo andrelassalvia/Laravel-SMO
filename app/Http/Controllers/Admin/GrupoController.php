@@ -41,28 +41,29 @@ class GrupoController extends Controller
     public function index()
     {
         $grupos = new CollectData($this->grupo);
-        $grupos = $grupos->collection('nome', 'ASC');
+        $data = $grupos->collection('nome', 'ASC');
         
-        return view ('admin.grupo.index', compact('grupos'));
+        return view ('admin.grupo.index', compact('data'));
     }
   
     public function create()
     {
-        return view ('admin.grupo.create');
+        $data = $this->grupo;
+        return view ('admin.grupo.create', compact('data'));
     }
 
     public function store(GrupoFormRequest $request)
     {
-        $dataForm = $request->all();
-        $nome = filter_var($dataForm['nome'], FILTER_SANITIZE_FULL_SPECIAL_CHARS); 
+        $dataForm = $request->validated();
+        $nome = $dataForm['nome']; 
         
         $grupos = new SaveInDatabase($this->grupo);
         $grupos = $grupos->saveDatabase(
             ['nome'], 
             [$nome], 
-            'grupos.index', 
+            'grupo.index', 
             ['success' => 'Registro cadastrado com sucesso'], 
-            'grupos.create', 
+            'grupo.create', 
             ['errors' => 'Grupo ja cadastrado'],
             ''
         );
@@ -72,30 +73,30 @@ class GrupoController extends Controller
     
     public function show($id)
     {
-        $grupo = Grupo::find($id);
-        return view ('admin.grupo.show', compact('grupo'));
+        $data = Grupo::find($id);
+        return view ('admin.grupo.show', compact('data'));
     }
 
     
     public function edit($id)
     {
-        $grupo = Grupo::find($id);
-        return view ('admin.grupo.edit', compact('grupo'));
+        $data = Grupo::find($id);
+        return view ('admin.grupo.edit', compact('data'));
     }
 
     public function update(GrupoFormRequest $request, $id)
     {
-        $dataForm = $request->all();
-        $nome = filter_var($dataForm['nome'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $dataForm = $request->validated();
+        $nome = $dataForm['nome'];
 
         $alter = new ChangeRegister($this->grupo);
         $alter = $alter->changeRegisterInDatabase(
             $id, 
             ['nome'], 
             [$nome], 
-            'grupos.index',
+            'grupo.index',
             ['success' => 'Alteracao efetuada com sucesso'],
-            'grupos.edit',
+            'grupo.edit',
             ['errors' => 'Registro igual ao anterior']
         );
 
@@ -115,8 +116,8 @@ class GrupoController extends Controller
                 $this->grupoFuncao
             ], 
             ['grupo_id'],
-            'grupos.show',
-            'grupos.index',
+            'grupo.show',
+            'grupo.index',
             ['success' => 'Registro apagado com sucesso'],
             ''
         );
@@ -126,12 +127,12 @@ class GrupoController extends Controller
 
     public function search(Request $request)
     {
-        $dataForm = $request->all();
-        $nome = filter_var('%'.$dataForm['nome'].'%', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $dataForm = $request->only('nome');
+        $nome = '%'.$dataForm['nome'].'%';
 
         $grupos = new SearchRequest($this->grupo);
-        $grupos = $grupos->searchIt('nome', ['nome' => $nome]);
+        $data = $grupos->searchIt('nome', ['nome' => $nome]);
     
-        return view('admin.grupo.index', compact('nome', 'grupos'));
+        return view('admin.grupo.index', compact('nome', 'data'));
     }
 }

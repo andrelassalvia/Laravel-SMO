@@ -14,9 +14,9 @@ class TipoUsuarioSeeder extends Seeder
      */
     public function run()
     {
-        $tipoRisco = new TipoUsuario();
-        $tipoRisco->insert(['nome' => 'Administrador']);
-        $tipoRisco->timeStamps =false;
-        $tipoRisco->save();
+        $tipoUsuario = new TipoUsuario();
+        $tipoUsuario->insert(['nome' => 'Administrador']);
+       
+        $tipoUsuario->save();
     }
 }

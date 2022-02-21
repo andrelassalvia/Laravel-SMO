@@ -30,7 +30,7 @@ class GrupoExameController extends Controller
 
     public function index($id)
     {
-        $grupo = $this->grupo->find($id);
+        $data = $this->grupo->find($id);
 
         $exames = new CollectData($this->exame);
         $exames = $exames->collection(
@@ -45,17 +45,17 @@ class GrupoExameController extends Controller
         );
 
         $grupoExames = $this->grupoExame->where('grupo_id', $id)->get();
-
+       
         return view(
             'Admin.grupoExame.index', 
-            compact('grupo', 'exames', 'tipoAtendimentos', 'grupoExames') 
+            compact('data', 'exames', 'tipoAtendimentos', 'grupoExames') 
         );
     }
 
     public function store(GrupoExameFormRequest $request, $id)
     {
-        $dataform = $request->all();
-        $exame_id = filter_var($dataform['exame_id'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $dataform = $request->validated();
+        $exame_id = $dataform['exame_id'];
         $tipoatendimento_id = filter_var(
             $dataform['tipoatendimento_id'], 
             FILTER_SANITIZE_FULL_SPECIAL_CHARS

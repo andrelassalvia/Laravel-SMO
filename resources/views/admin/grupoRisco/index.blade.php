@@ -3,76 +3,62 @@
 @section('content')
     <div class="conteudo">
 
-      @include('admin.grupoRisco.title')
+      <x-admin.title-component :title="'Administração de Grupos Homogêneos - Riscos'"></x-admin.title-component>
 
-      <form action="{{route('gruporisco.store', $grupo->id)}}" method="post" class="form-control form--create">
-        <input type="hidden" name="_token" value="{{csrf_token()}}">
-
-        {{-- Tabs de Navegacao --}}
-        <div class="aba">
-          <ul class="nav nav-tabs justify-content-center">
-            <li class="nav-item">
-              <a class="nav-link aba--nav" aria-current="page" href="{{route('grupos.edit', [$grupo->id])}}">Grupo</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link aba--nav" href="{{route('grupofuncao.index', [$grupo->id])}}">Funcoes x Setores</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link aba--nav active" href="{{route('gruporisco.index', $grupo->id)}}">Riscos</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link aba--nav" href="{{route('grupoexame.index', $grupo->id)}}">Exames</a>
-            </li>
-          </ul>
-        </div>
-
-        {{-- Grupo - Input 1 Disabled --}}
-        <div class="form1 mb-2">
-          
-          <div class="form-group d-flex col-sm-11 justify-content-center">
-            <label for="nome" class="control-label col-sm-2 control-label--create">Grupo:</label>
-            <div class=" col-sm-8 ">
-              <input placeholder="Cadastrar grupo" type="text" name="nome" class="form-control" value="{{$grupo->nome}}" disabled >
-            </div>
+      <x-admin.form-name-component :data="$data" :blade="'index'" :group="'gruporisco'">
+        
+        <x-slot name='tabs'>
+          <div class="tab">
+            <ul class="nav nav-tabs">
+              <x-admin.tabs-component 
+              :active="''"
+              :route="'grupo.edit'"
+              :id="$data->id"
+              :tab-name="'Grupo'">
+            </x-admin.tabs-component>
+            <x-admin.tabs-component 
+              :active="''"
+              :route="'grupofuncao.index'"
+              :id="$data->id"
+              :tab-name="'Funções e Setores'">
+            </x-admin.tabs-component>
+            <x-admin.tabs-component 
+              :active="'active'"
+              :route="'gruporisco.index'"
+              :id="$data->id"
+              :tab-name="'Riscos'">
+            </x-admin.tabs-component>
+            <x-admin.tabs-component 
+              :active="''"
+              :route="'grupoexame.index'"
+              :id="$data->id"
+              :tab-name="'Exames'">
+            </x-admin.tabs-component>
+            </ul>
           </div>
-        </div>
+        </x-slot>
 
-        {{-- Risco - Input 2 - Select a risk --}}
-        <div class="form1">
-          <div class="form-group d-flex col-sm-11 justify-content-center">
-            <label class="control-label col-sm-2 control-label--create" for="risco_id">Risco</label>
-            <div class="col-sm-8">
-              <select class="form-select" name="risco_id">
-                <option value="">Selecione</option>
-                @foreach ($riscos as $risco)
-                    <option value="{{$risco->id}}">{{$risco->nome}}</option>
-                @endforeach
-              </select>
-            </div>
-          </div>
-        </div>
+        <x-slot name="delete">
+          <input type="hidden" name="_method" value="DELETE">
+        </x-slot>
 
-        {{-- Button Save --}}
-        <button type="submit" class="btn btn-primary btn-sm">
-          <i class="bi bi-save2" aria-hidden="true">Salvar</i>
-        </button>
-      </form>
+        <x-slot name="form2">
+          <x-admin.form-component :label="'Risco'" :option-column="'risco_id'" :data="$riscos"></x-admin.form-component>
+        </x-slot>
+
+        <x-slot name="form3"></x-slot>
+
+        <x-slot name="button">
+          <x-admin.save-button-component></x-admin.save-button-component>
+        </x-slot>
+      </x-admin.form-name-component>
 
       {{-- Mensagem de erro no cadastro --}}
-      @if (isset($errors) && count($errors)>0)
-      <div class="alert alert-warning" style="margin: auto; width:50%">
-        @foreach ($errors->all() as $error)
-          <p>{{$error}}</p>
-        @endforeach
-      </div>
-      @endif
-       {{-- Mensagem de cadastro com sucesso --}}
-      @if(Session::has('success'))
-        <div class="alert alert-success" style="margin: auto; margin-bottom:1%;width:50%;">
-          {{Session::get('success')}}
-        </div>
-      @endif
+      @include('admin._components.alertErrors')
 
+      {{-- Mensagem de cadastro com sucesso --}}
+      @include('admin._components.alertSuccess')
+      
       {{-- Table --}}
       <div class="container">
         <table class="table table-hover table-sm mt-3" style="width: 70%; margin:auto">
@@ -100,9 +86,7 @@
           </tbody>
         </table>
       </div>
-      <div class="ms-3">
-        <a class="btn btn-link" href="{{route('grupos.index')}}">Voltar</a>
-      </div>
+      <x-admin.back-button-component :model="$data"></x-admin.back-button-component>
     </div>
 
 @endsection

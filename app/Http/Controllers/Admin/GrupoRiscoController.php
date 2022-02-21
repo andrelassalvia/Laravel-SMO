@@ -29,7 +29,7 @@ class GrupoRiscoController extends Controller
 
     public function index($id)
     {
-        $grupo = $this->grupo->find($id);
+        $data = $this->grupo->find($id);
         
         $riscos = new CollectData($this->risco);
         $riscos = $riscos->collection('nome', 'ASC');
@@ -38,14 +38,14 @@ class GrupoRiscoController extends Controller
 
         return view(
             'admin.grupoRisco.index', 
-            compact('grupo', 'riscos', 'grupoRiscos')
+            compact('data', 'riscos', 'grupoRiscos')
         );
     }
 
     public function store(GrupoRiscoFormRequest $request, $id)
     {
-        $dataForm = $request->all();
-        $risco_id = filter_var($dataForm['risco_id'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $dataForm = $request->validated();
+        $risco_id = $dataForm['risco_id'];
 
         $grupoRisco = new SaveInDatabase($this->grupoRisco);
         $grupoRisco = $grupoRisco->saveDatabase(
