@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Classes\Risco;
+namespace App\Classes;
 
 
 class ChangeRegister extends \App\AbstractClasses\ChangeRegister
 {
-  
+
 }

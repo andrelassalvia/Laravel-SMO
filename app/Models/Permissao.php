@@ -18,4 +18,16 @@ class Permissao extends Model
         'exclui',
         
     ];
+
+    public $timestamps = false;
+
+    public function tipoUsuario()
+    {
+        return $this->belongsTo(TipoUsuario::class);
+    }
+
+    public function formulario()
+    {
+        return $this->belongsTo(Formulario::class);
+    }
 }

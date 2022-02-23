@@ -11,11 +11,11 @@ use App\Models\Atendimento;
 use App\Models\GrupoFuncao;
 
 use App\Http\Requests\Admin\FuncaoFormRequest; 
-use App\Classes\Funcao\CollectData;
-use App\Classes\Funcao\SaveInDatabase;
-use App\Classes\Funcao\ChangeRegister;
-use App\Classes\Funcao\DeleteRegister;
-use App\Classes\Funcao\SearchRequest;
+use App\Classes\CollectData;
+use App\Classes\SaveInDatabase;
+use App\Classes\ChangeRegister;
+use App\Classes\DeleteRegister;
+use App\Classes\SearchRequest;
 
 class FuncaoController extends Controller
 {
@@ -34,7 +34,7 @@ class FuncaoController extends Controller
     public function index()
     {
         $funcoes = new CollectData($this->funcao);
-        $data = $funcoes->collection('nome', 'ASC');
+        $data = $funcoes->collection('nome', 'ASC', false);
         
         return view ('admin.funcao.index', compact('data'));
     }

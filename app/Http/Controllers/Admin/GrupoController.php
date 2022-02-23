@@ -13,11 +13,11 @@ use App\Models\GrupoRisco;
 use App\Models\GrupoFuncao;
 
 use App\Http\Requests\Admin\GrupoFormRequest; 
-use App\Classes\Grupo\CollectData;
-use App\Classes\Grupo\SaveInDatabase;
-use App\Classes\Grupo\ChangeRegister;
-use App\Classes\Grupo\DeleteRegister;
-use App\Classes\Grupo\SearchRequest;
+use App\Classes\CollectData;
+use App\Classes\SaveInDatabase;
+use App\Classes\ChangeRegister;
+use App\Classes\DeleteRegister;
+use App\Classes\SearchRequest;
 
 class GrupoController extends Controller
 {
@@ -41,7 +41,7 @@ class GrupoController extends Controller
     public function index()
     {
         $grupos = new CollectData($this->grupo);
-        $data = $grupos->collection('nome', 'ASC');
+        $data = $grupos->collection('nome', 'ASC', false);
         
         return view ('admin.grupo.index', compact('data'));
     }

@@ -36,7 +36,7 @@
             Segurança
           </a>
           <ul class="dropdown-menu " aria-labelledby="navbarDropdown">
-            <li><a class="dropdown-item" href="#">Tipos de Usuários</a></li>
+            <li><a class="dropdown-item" href="{{route('tipousuario.index')}}">Tipos de Usuários</a></li>
             <li><a class="dropdown-item" href="#">Usuários</a></li>
           </ul>
         </li>

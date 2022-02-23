@@ -10,9 +10,9 @@ use App\Models\Exame;
 use App\Models\TipoAtendimento;
 
 use App\Http\Requests\Admin\GrupoExameFormRequest;
-use App\Classes\GrupoExame\CollectData;
-use App\Classes\GrupoExame\SaveInDatabase;
-use App\Classes\GrupoExame\DeleteRegister;
+use App\Classes\CollectData;
+use App\Classes\SaveInDatabase;
+use App\Classes\DeleteRegister;
 
 class GrupoExameController extends Controller
 {
@@ -35,13 +35,15 @@ class GrupoExameController extends Controller
         $exames = new CollectData($this->exame);
         $exames = $exames->collection(
             'nome',
-            'ASC'
+            'ASC',
+            true
         );
 
         $tipoAtendimentos = new CollectData($this->tipoAtendimento);
         $tipoAtendimentos = $tipoAtendimentos->collection(
             'nome',
-            'ASC'
+            'ASC',
+            true
         );
 
         $grupoExames = $this->grupoExame->where('grupo_id', $id)->get();
@@ -56,10 +58,7 @@ class GrupoExameController extends Controller
     {
         $dataform = $request->validated();
         $exame_id = $dataform['exame_id'];
-        $tipoatendimento_id = filter_var(
-            $dataform['tipoatendimento_id'], 
-            FILTER_SANITIZE_FULL_SPECIAL_CHARS
-        );
+        $tipoatendimento_id = $dataform['tipoatendimento_id'];
 
         $grupoExames = new SaveInDatabase($this->grupoExame);
         $grupoExames = $grupoExames->saveDatabase(

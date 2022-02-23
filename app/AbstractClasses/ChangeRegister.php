@@ -21,12 +21,12 @@ abstract class ChangeRegister
 
   public function changeRegisterInDatabase(
     string $id, 
-    array $columnsToCheck,
-    array $values, 
-    string $routeSuccess, 
-    array $msgSuccess, 
-    string $routeError,
-    array $msgError
+    array $columnsToCheck, // columns within this model to check if it's unique
+    array $values, // data to check if it's unique
+    string $routeSuccess, // route case success
+    array $msgSuccess, // return message case success
+    string $routeError, // route case error
+    array $msgError // return message case error
     ) {
         $register = $this->model->find($id);
 

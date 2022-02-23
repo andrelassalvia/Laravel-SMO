@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Classes\TipoAtendimento;
+namespace App\Classes;
+
 
 class CollectData extends \App\AbstractClasses\CollectData
 {
-  
+
 }

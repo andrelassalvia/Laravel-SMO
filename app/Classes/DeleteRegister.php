@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Classes\Exame;
+namespace App\Classes;
 
 
 class DeleteRegister extends \App\AbstractClasses\DeleteRegister

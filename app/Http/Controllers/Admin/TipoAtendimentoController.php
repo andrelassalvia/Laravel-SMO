@@ -10,11 +10,11 @@ use App\Models\Atendimento;
 use App\Models\GrupoExame;
 
 use App\Http\Requests\Admin\TipoAtendimentoFormRequest;
-use App\Classes\TipoAtendimento\CollectData;
-use App\Classes\TipoAtendimento\SaveInDatabase;
-use App\Classes\TipoAtendimento\DeleteRegister;
-use App\Classes\TipoAtendimento\ChangeRegister;
-use App\Classes\TipoAtendimento\SearchRequest;
+use App\Classes\CollectData;
+use App\Classes\SaveInDatabase;
+use App\Classes\DeleteRegister;
+use App\Classes\ChangeRegister;
+use App\Classes\SearchRequest;
 
 class TipoAtendimentoController extends Controller
 {
@@ -34,7 +34,8 @@ class TipoAtendimentoController extends Controller
         $tipoAtendimentos = new CollectData($this->tipoAtendimento);
         $data = $tipoAtendimentos->collection(
             'nome', 
-            'ASC'
+            'ASC',
+            false
         );
         return view(
             'admin.tipoAtendimento.index', 

@@ -11,11 +11,11 @@ use App\Models\AtendimentoRisco;
 use App\Models\GrupoRisco;
 
 use App\Http\Requests\Admin\RiscoFormRequest;
-use App\Classes\Risco\CollectData;
-use App\Classes\Risco\SaveInDatabase;
-use App\Classes\Risco\DeleteRegister;
-use App\Classes\Risco\ChangeRegister;
-use App\Classes\Setor\SearchRequest;
+use App\Classes\CollectData;
+use App\Classes\SaveInDatabase;
+use App\Classes\DeleteRegister;
+use App\Classes\ChangeRegister;
+use App\Classes\SearchRequest;
 
 
 class RiscoController extends Controller
@@ -36,7 +36,7 @@ class RiscoController extends Controller
     public function index()
     {
         $riscos = new CollectData($this->risco);
-        $data = $riscos->collection('nome', 'ASC');
+        $data = $riscos->collection('nome', 'ASC', false);
 
         return view ('admin.risco.index', compact('data'));
     }
@@ -45,7 +45,7 @@ class RiscoController extends Controller
     {
         $data = $this->risco;
         $tipoRiscos = new CollectData($this->tipoRisco);
-        $tipoRiscos = $tipoRiscos->collection('nome', 'ASC');
+        $tipoRiscos = $tipoRiscos->collection('nome', 'ASC', true);
 
         return view ('admin.risco.create', compact('tipoRiscos', 'data'));
     }
@@ -82,7 +82,7 @@ class RiscoController extends Controller
       $data = $this->risco->find($id);
 
       $tipoRiscos = new CollectData($this->tipoRisco);
-      $tipoRiscos = $tipoRiscos->collection('nome', 'ASC');
+      $tipoRiscos = $tipoRiscos->collection('nome', 'ASC', true);
 
       return view(
           'admin.risco.edit', 

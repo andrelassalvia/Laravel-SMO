@@ -11,11 +11,11 @@ use App\Models\Empregado;
 use App\Models\GrupoFuncao;
 
 use App\Http\Requests\Admin\SetorFormRequest;
-use App\Classes\Setor\CollectData;
-use App\Classes\Setor\SaveInDatabase;
-use App\Classes\Setor\ChangeRegister;
-use App\Classes\Setor\DeleteRegister;
-use App\Classes\Setor\SearchRequest;
+use App\Classes\CollectData;
+use App\Classes\SaveInDatabase;
+use App\Classes\ChangeRegister;
+use App\Classes\DeleteRegister;
+use App\Classes\SearchRequest;
 
 class SetorController extends Controller
 {
@@ -34,7 +34,7 @@ class SetorController extends Controller
     public function index()
     {
         $setores = new CollectData($this->setor);
-        $data = $setores->collection('nome', 'ASC');
+        $data = $setores->collection('nome', 'ASC', false);
         
         return view ('admin.setor.index', compact('data'));
     }

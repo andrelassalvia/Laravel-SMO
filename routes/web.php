@@ -111,9 +111,23 @@ Route::prefix('tipoAtendimentos')->controller('App\Http\Controllers\Admin\TipoAt
 });
 
 // TIPO USUARIO
-Route::prefix('tipousuarios')->controller('App\Http\Controllers\Admin\TipoUsuario')->middleware(['auth'])->group(function(){
+Route::prefix('tipousuarios')->controller('App\Http\Controllers\Admin\TipoUsuarioController')->middleware(['auth'])->group(function(){
     route::get('/', 'index')->name('tipousuario.index');
+    route::get('create', 'create')->name('tipousuario.create');
+    route::get('edit/{id}', 'edit')->name('tipousuario.edit');
+    route::any('/update/{id}', 'update')->name('tipousuario.update');
+    route::get('show/{id}', 'show')->name('tipousuario.show');
+    route::any('store', 'store')->name('tipousuario.store');
+    route::any('destroy/{id}','destroy')->name('tipousuario.destroy');
 });
+
+// PERMISSAO
+Route::prefix('permissoes')->controller('App\Http\Controllers\Admin\PermissaoController')->middleware(['auth'])->group(function(){
+    route::get('tipoUsuario/{id}', 'index')->name('permissao.index');
+    route::any('tipoUsuario/{id}/destroy', 'destroy')->name('permissao.destroy');
+    route::any('tipoUsuario/{id}/store', 'store')->name('permissao.store');
+}); 
+
 
 Route::get('/', function () {
     return view('auth.login');

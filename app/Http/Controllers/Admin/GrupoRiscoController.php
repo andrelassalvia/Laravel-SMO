@@ -9,9 +9,9 @@ use App\Models\Grupo;
 use App\Models\Risco;
 
 use App\Http\Requests\Admin\GrupoRiscoFormRequest;
-use App\Classes\GrupoRisco\CollectData;
-use App\Classes\GrupoRisco\SaveInDatabase;
-use App\Classes\GrupoRisco\DeleteRegister;
+use App\Classes\CollectData;
+use App\Classes\SaveInDatabase;
+use App\Classes\DeleteRegister;
 
 class GrupoRiscoController extends Controller
 {
@@ -32,7 +32,7 @@ class GrupoRiscoController extends Controller
         $data = $this->grupo->find($id);
         
         $riscos = new CollectData($this->risco);
-        $riscos = $riscos->collection('nome', 'ASC');
+        $riscos = $riscos->collection('nome', 'ASC', true);
         
         $grupoRiscos = $this->grupoRisco->where('grupo_id', $id)->get();
 

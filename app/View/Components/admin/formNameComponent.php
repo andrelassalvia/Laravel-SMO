@@ -72,6 +72,10 @@ class formNameComponent extends Component
             case 'tipoatendimento':
                 return 'Tipo de Atendimento';
                 break;
+
+            case 'tipousuario':
+                return 'Tipo de Usuário';
+                break;
             
             default:
                 '';

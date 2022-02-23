@@ -10,11 +10,11 @@ use App\Models\AtendimentoExame;
 use App\Models\GrupoExame;
 
 use App\Http\Requests\Admin\ExameFormRequest; 
-use App\Classes\Exame\CollectData;
-use App\Classes\Exame\SaveInDatabase;
-use App\Classes\Exame\ChangeRegister;
-use App\Classes\Exame\DeleteRegister;
-use App\Classes\Exame\SearchRequest;
+use App\Classes\CollectData;
+use App\Classes\SaveInDatabase;
+use App\Classes\ChangeRegister;
+use App\Classes\DeleteRegister;
+use App\Classes\SearchRequest;
 
 
 class ExameController extends Controller
@@ -32,7 +32,7 @@ class ExameController extends Controller
     public function index()
     {
         $exames = new CollectData($this->exame);
-        $data = $exames->collection('nome', 'ASC');
+        $data = $exames->collection('nome', 'ASC', false);
                 
         return view ('admin.exame.index', compact('data'));
     }

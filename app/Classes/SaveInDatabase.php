@@ -1,6 +1,7 @@
 <?php
 
-namespace App\Classes\Funcao;
+namespace App\Classes;
+
 
 class SaveInDatabase extends \App\AbstractClasses\SaveInDatabase
 {

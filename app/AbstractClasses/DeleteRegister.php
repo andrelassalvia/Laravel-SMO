@@ -23,7 +23,7 @@ abstract class DeleteRegister
     string $routeError, // rota de retorno em caso de erro
     string $routeSuccess, // rota de retorno em caso de sucesso no delete
     array $msgSuccess, // mensagem de retorno em caso de sucesso no delete
-    string $mainId // id do model pai (se houver)
+    string $mainId // id do model pai (se for o caso)
     ) {
         $register = $this->model->find($id);
         

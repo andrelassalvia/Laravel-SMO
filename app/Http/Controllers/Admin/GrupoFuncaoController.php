@@ -10,9 +10,9 @@ use App\Models\Funcao;
 use App\Models\Setor;
 
 use App\Http\Requests\Admin\GrupoFuncaoFormRequest;
-use App\Classes\GrupoFuncao\CollectData;
-use App\Classes\GrupoFuncao\SaveInDatabase;
-use App\Classes\GrupoFuncao\DeleteRegister;
+use App\Classes\CollectData;
+use App\Classes\SaveInDatabase;
+use App\Classes\DeleteRegister;
 
 class GrupoFuncaoController extends Controller
 {
@@ -33,10 +33,10 @@ class GrupoFuncaoController extends Controller
         $data = $this->grupo->find($id);
 
         $funcoes = new CollectData($this->funcao);
-        $funcoes = $funcoes->collection('nome', 'ASC');
+        $funcoes = $funcoes->collection('nome', 'ASC', true);
 
         $setores = new CollectData($this->setor);
-        $setores = $setores->collection('nome', 'ASC');
+        $setores = $setores->collection('nome', 'ASC', true);
 
         $grupoFuncoes = $this->grupoFuncao->where('grupo_id', $id)->get();
         

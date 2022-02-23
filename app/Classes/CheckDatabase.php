@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Classes\GrupoRisco;
+namespace App\Classes;
 
 
 class CheckDatabase extends \App\AbstractClasses\CheckDatabase
