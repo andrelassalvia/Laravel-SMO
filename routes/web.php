@@ -123,9 +123,11 @@ Route::prefix('tipousuarios')->controller('App\Http\Controllers\Admin\TipoUsuari
 
 // PERMISSAO
 Route::prefix('permissoes')->controller('App\Http\Controllers\Admin\PermissaoController')->middleware(['auth'])->group(function(){
-    route::get('tipoUsuario/{id}', 'index')->name('permissao.index');
-    route::any('tipoUsuario/{id}/destroy', 'destroy')->name('permissao.destroy');
-    route::any('tipoUsuario/{id}/store', 'store')->name('permissao.store');
+    route::get('/{id}', 'index')->name('permissao.index');
+    route::any('/{id}/destroy', 'destroy')->name('permissao.destroy');
+    route::any('/{id}/store', 'store')->name('permissao.store');
+    route::any('/{id}/edit', 'edit')->name('permissao.edit');
+    route::post('/{id}/update', 'update')->name('permissao.update');
 }); 
 
 

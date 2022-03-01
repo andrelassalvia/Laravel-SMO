@@ -11,7 +11,10 @@ class CheckDataBase
     $this->model = $model;
   }
 
-  public function checkInDatabase(array $columns, array $values)
+  public function checkInDatabase(
+    array $columns, // name of the columns to check in database
+    array $values // columns values to form the combined array
+  )
   {
     $combined = array_combine($columns, $values);
     

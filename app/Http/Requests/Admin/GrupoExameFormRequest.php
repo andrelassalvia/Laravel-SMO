@@ -25,7 +25,7 @@ class GrupoExameFormRequest extends FormRequest
     {
         return [
             'exame_id'=>'required|exists:exame,id|digits_between:1,30',
-            'tipoatendimento_id' => 'required|exists:tipostendimento,id|digits_between:1,30'
+            'tipoatendimento_id' => 'required|exists:tipoatendimento,id|digits_between:1,30'
         ];
     }
 

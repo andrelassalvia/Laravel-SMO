@@ -14,11 +14,17 @@ use App\Http\Requests\Admin\FuncaoFormRequest;
 use App\Classes\CollectData;
 use App\Classes\SaveInDatabase;
 use App\Classes\ChangeRegister;
+use App\Classes\CheckDatabase;
+use App\Classes\CheckToDelete;
 use App\Classes\DeleteRegister;
 use App\Classes\SearchRequest;
+use App\Traits\FailRedirectMessage;
+use App\Traits\SuccessRedirectMessage;
 
 class FuncaoController extends Controller
 {
+    use SuccessRedirectMessage, FailRedirectMessage;
+
     public function __construct(
         Funcao $funcao,
         Empregado $empregado,
@@ -80,36 +86,57 @@ class FuncaoController extends Controller
     public function update(FuncaoFormRequest $request, $id)
     {
         $dataForm = $request->validated();
-        $nome = $dataForm['nome'];
 
-        $alter = new ChangeRegister($this->funcao);
-        $alter = $alter->changeRegisterInDatabase(
-            $id, 
-            ['nome'], 
-            [$nome], 
-            'funcao.index',
-            ['success' => 'Alteracao efetuada com sucesso'],
-            'funcao.edit',
-            ['errors' => 'Registro igual ao anterior']
+        $alter = new CheckDatabase($this->funcao);
+        $alter = $alter->checkInDatabase(
+           ['nome'],
+           [$dataForm['nome']]
         );
 
-        return $alter;
+        if($alter){
+            $newRegister = new ChangeRegister($this->funcao);
+            $newRegister = $newRegister->changeRegisterInDatabase(
+                $id,
+                $alter
+            );
+            return SuccessRedirectMessage::successRedirect(
+                'funcao.index',
+                ['success' => 'Função alterada com sucesso'],
+                $id
+            );
+        } else {
+            return FailRedirectMessage::failRedirect(
+                'funcao.edit',
+                ['errors' => 'Função já cadastrada'],
+                $id
+            );
+        }
     }
 
     public function destroy($id)
     {
-        $delete = new DeleteRegister($this->funcao);
-        $delete = $delete->erase(
-            $id, 
-            [$this->empregado, $this->atendimento, $this->grupoFuncao], 
-            ['funcao_id'],
-            'funcao.show',
-            'funcao.index',
-            ['success' => 'Função deletada com sucesso'],
-            ''
+        $check = new CheckToDelete($this->funcao);
+        $check = $check->checkDb(
+            $id,
+            [$this->empregado, $this->atendimento, $this->grupoFuncao],
+            ['funcao_id']
         );
-        
-        return $delete;
+
+        if($check){
+            return FailRedirectMessage::failRedirect(
+                'funcao.show',
+                ['errors' => "Existe um registro vinculado a ". $check['table']],
+                $id
+            );
+        } else {
+            $delete = new DeleteRegister($this->funcao);
+            $delete = $delete->erase($id);
+            return SuccessRedirectMessage::successRedirect(
+                'funcao.index',
+                ['success' => 'Função apagada com sucesso'],
+                ''
+            );
+        }
     }
 
     public function search(Request $request)

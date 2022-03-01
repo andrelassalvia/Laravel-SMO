@@ -4,8 +4,7 @@ namespace App\Traits;
 
 trait SuccessRedirectMessage
 {
-  public function successRedirect
-  (
+  public function successRedirect(
     string $route,
     array $msg,
     string $id

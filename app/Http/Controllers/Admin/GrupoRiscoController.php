@@ -12,9 +12,14 @@ use App\Http\Requests\Admin\GrupoRiscoFormRequest;
 use App\Classes\CollectData;
 use App\Classes\SaveInDatabase;
 use App\Classes\DeleteRegister;
+use App\Classes\CheckToDelete;
+use App\Traits\FailRedirectMessage;
+use App\Traits\SuccessRedirectMessage;
 
 class GrupoRiscoController extends Controller
 {
+    use SuccessRedirectMessage, FailRedirectMessage;
+
     private $grupoRisco;
 
     public function __construct(
@@ -63,20 +68,29 @@ class GrupoRiscoController extends Controller
 
     public function destroy($id)
     {
-        $deleted = new DeleteRegister($this->grupoRisco);
         $register = $this->grupoRisco->find($id);
-        $grupo_id = $register->grupo->id;
-        $deleted = $deleted->erase
-        (
+        $mainId = $register['grupo_id'];
+        $check = new CheckToDelete($this->grupoRisco);
+        $check = $check->checkDb(
             $id,
             [],
-            [],
-            'gruporisco.index',
-            'gruporisco.index',
-            ['success' => 'Registro apagado com sucesso.'],
-            $grupo_id
+            []
         );
-       
-        return $deleted;
+
+        if($check){
+            return FailRedirectMessage::failRedirect(
+                'gruporisco.index',
+                ['errors' => "Existe um registro vinculado a ". $check['table']],
+                $id
+            );
+        } else {
+            $delete = new DeleteRegister($this->grupoRisco);
+            $delete = $delete->erase($id);
+            return SuccessRedirectMessage::successRedirect(
+                'gruporisco.index',
+                ['success' => 'Registro apagado com sucesso'],
+                $mainId
+            );
+        }
     }
 }

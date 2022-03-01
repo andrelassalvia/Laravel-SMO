@@ -14,11 +14,17 @@ use App\Http\Requests\Admin\SetorFormRequest;
 use App\Classes\CollectData;
 use App\Classes\SaveInDatabase;
 use App\Classes\ChangeRegister;
+use App\Classes\CheckDatabase;
+use App\Classes\CheckToDelete;
 use App\Classes\DeleteRegister;
 use App\Classes\SearchRequest;
+use App\Traits\FailRedirectMessage;
+use App\Traits\SuccessRedirectMessage;
 
 class SetorController extends Controller
 {
+    use SuccessRedirectMessage, FailRedirectMessage;
+
     public function __construct(
         Setor $setor,
         Atendimento $atendimento,
@@ -78,36 +84,57 @@ class SetorController extends Controller
     public function update(SetorFormRequest $request, $id)
     {
         $dataForm = $request->validated();
-        $nome = $dataForm['nome'];
 
-        $alter = new ChangeRegister($this->setor);
-        $alter = $alter->changeRegisterInDatabase(
-            $id, 
+        $alter = new CheckDataBase($this->setor);
+        $alter = $alter->checkInDatabase(
             ['nome'], 
-            [$nome], 
-            'setor.index',
-            ['success' => 'Alteracao efetuada com sucesso'],
-            'setor.edit',
-            ['errors' => 'Registro igual ao anterior']
+            [$dataForm['nome']], 
         );
 
-        return $alter;
+        if($alter){
+            $newRegister = new ChangeRegister($this->setor);
+            $newRegister = $newRegister->changeRegisterInDatabase(
+                $id,
+                $alter
+            );
+            return SuccessRedirectMessage::successRedirect(
+                'setor.index',
+                ['success' => 'Setor alterado com sucesso'],
+                $id
+            );
+        } else {
+            return FailRedirectMessage::failRedirect(
+                'setor.edit',
+                ['errors' => 'Setor já cadastrado'],
+                $id
+            );
+        }
     }
 
     public function destroy($id)
     {
-        $delete = new DeleteRegister($this->setor);
-        $delete = $delete->erase(
-            $id, 
-            [$this->empregado, $this->atendimento, $this->grupoFuncao], 
-            ['setor_id'],
-            'setor.show',
-            'setor.index',
-            ['success' => 'Função deletada com sucesso'],
-            ''
+        $check = new CheckToDelete($this->setor);
+        $check = $check->checkDb(
+            $id,
+            [$this->empregado, $this->atendimento, $this->grupoFuncao],
+            ['setor_id']
         );
-        
-        return $delete;
+
+        if($check){
+            return FailRedirectMessage::failRedirect(
+                'setor.show',
+                ['errors' => "Existe um registro vinculado a ". $check['table']],
+                $id
+            );
+        } else {
+            $delete = new DeleteRegister($this->setor);
+            $delete = $delete->erase($id);
+            return SuccessRedirectMessage::successRedirect(
+                'setor.index',
+                ['success' => 'Setor apagado com sucesso'],
+                ''
+            );
+        }
     }
 
     public function search(Request $request)

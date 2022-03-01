@@ -13,9 +13,14 @@ use App\Http\Requests\Admin\GrupoFuncaoFormRequest;
 use App\Classes\CollectData;
 use App\Classes\SaveInDatabase;
 use App\Classes\DeleteRegister;
+use App\Classes\CheckToDelete;
+use App\Traits\FailRedirectMessage;
+use App\Traits\SuccessRedirectMessage;
 
 class GrupoFuncaoController extends Controller
 {
+    use SuccessRedirectMessage, FailRedirectMessage;
+
     public function __construct(
         GrupoFuncao $grupoFuncao, 
         Grupo $grupo, 
@@ -70,20 +75,28 @@ class GrupoFuncaoController extends Controller
     public function destroy($id)
     {
         $register = $this->grupoFuncao->find($id);
-        $grupo_id = $register['grupo_id'];
-        
-        $deleted = new DeleteRegister($this->grupoFuncao);
-        $deleted = $deleted->erase(
+        $mainId = $register['grupo_id'];
+        $check = new CheckToDelete($this->grupoFuncao);
+        $check = $check->checkDb(
             $id,
             [],
-            [],
-            'grupofuncao.index',
-            'grupofuncao.index',
-            ['success' => 'Registro deletado'],
-            $grupo_id
-
+            []
         );
 
-        return $deleted;
+        if($check){
+            return FailRedirectMessage::failRedirect(
+                'grupofuncao.index',
+                ['errors' => "Existe um registro vinculado a ". $check['table']],
+                $id
+            );
+        } else {
+            $delete = new DeleteRegister($this->grupoFuncao);
+            $delete = $delete->erase($id);
+            return SuccessRedirectMessage::successRedirect(
+                'grupofuncao.index',
+                ['success' => 'Registro apagado com sucesso'],
+                $mainId
+            );
+        }
     }
 }

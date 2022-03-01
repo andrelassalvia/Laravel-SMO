@@ -11,10 +11,16 @@ use App\Models\Permissao;
 use App\Classes\CollectData;
 use App\Classes\SaveInDatabase;
 use App\Classes\ChangeRegister;
+use App\Classes\CheckDataBase;
+use App\Classes\CheckToDelete;
 use App\Classes\DeleteRegister;
+use App\Traits\FailRedirectMessage;
+use App\Traits\SuccessRedirectMessage;
 
 class TipoUsuarioController extends Controller
 {
+    use SuccessRedirectMessage, FailRedirectMessage;
+
     public function __construct (
         TipoUsuario $tipoUsuario,
         Permissao $permissao
@@ -72,33 +78,56 @@ class TipoUsuarioController extends Controller
     public function update(TipoUsuarioFormRequest $request, $id)
     {
         $dataForm = $request->validated();
-        $data = new ChangeRegister($this->tipoUsuario);
-        $data = $data->changeRegisterInDatabase(
-            $id,
-            ['nome'],
-            [$dataForm['nome']],
-            'tipousuario.index',
-            ['success' => 'Tipo de usuário alterado com sucesso'],
-            'tipousuario.edit',
-            ['errors' => 'Erro na alteração do registro']
+
+        $alter = new CheckDataBase($this->tipoUsuario);
+        $alter = $alter->checkInDatabase(
+            ['nome'], 
+            [$dataForm['nome']], 
         );
 
-        return $data;
+        if($alter){
+            $newRegister = new ChangeRegister($this->tipoUsuario);
+            $newRegister = $newRegister->changeRegisterInDatabase(
+                $id,
+                $alter
+            );
+            return SuccessRedirectMessage::successRedirect(
+                'tipousuario.index',
+                ['success' => 'Tipo de usuário alterado com sucesso'],
+                $id
+            );
+        } else {
+            return FailRedirectMessage::failRedirect(
+                'tipousuario.edit',
+                ['errors' => 'Tipo de usuário já cadastrado'],
+                $id
+            );
+        }
     }
 
     public function destroy($id)
     {
-        $data = new DeleteRegister($this->tipoUsuario);
-        $data = $data->erase(
+        $check = new CheckToDelete($this->tipoUsuario);
+        $check = $check->checkDb(
             $id,
             [$this->permissao],
-            ['tipousuario_id'],
-            'tipousuario.show',
-            'tipousuario.index',
-            ['success' => 'Tipo de usuário deletado com sucesso'],
-            ''
+            ['tipousuario_id']
         );
 
-        return $data;
+        if($check){
+            return FailRedirectMessage::failRedirect(
+                'tipousuario.show',
+                ['errors' => "Existe um registro vinculado a ". $check['table']],
+                $id
+            );
+        } else {
+            $delete = new DeleteRegister($this->tipoUsuario);
+            $delete = $delete->erase($id);
+            return SuccessRedirectMessage::successRedirect(
+                'tipousuario.index',
+                ['success' => 'Tipo de usuário apagado com sucesso'],
+                ''
+            );
+        }
     }
 }

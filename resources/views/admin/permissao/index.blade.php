@@ -109,6 +109,9 @@
               
               {{-- Botao Deletar --}}
               <td style="width: 100px">
+                <a href="{{route('permissao.edit',$permissao->id)}}" class="btn btn-primary btn-sm">
+                  <i class="bi bi-pen" aria-hidden="true"></i>
+              </a>
                 <a href="{{route('permissao.destroy', $permissao->id)}}" class="btn btn-danger btn-sm">
                   <i class="bi bi-trash" aria-hidden="true"></i>
                 </a>

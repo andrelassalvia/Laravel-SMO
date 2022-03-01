@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\AbstractClasses\CheckDataBase;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
@@ -13,12 +14,16 @@ use App\Http\Requests\Admin\ExameFormRequest;
 use App\Classes\CollectData;
 use App\Classes\SaveInDatabase;
 use App\Classes\ChangeRegister;
+use App\Classes\CheckToDelete;
 use App\Classes\DeleteRegister;
 use App\Classes\SearchRequest;
-
+use App\Traits\FailRedirectMessage;
+use App\Traits\SuccessRedirectMessage;
 
 class ExameController extends Controller
 {
+    use SuccessRedirectMessage, FailRedirectMessage;
+
     public function __construct(
         Exame $exame,
         AtendimentoExame $atendimentoExame,
@@ -79,36 +84,56 @@ class ExameController extends Controller
     public function update(ExameFormRequest $request, $id)
     {
         $dataForm = $request->validated();
-        $nome = $dataForm['nome'];
 
-        $alter = new ChangeRegister($this->exame);
-        $alter = $alter->changeRegisterInDatabase(
-            $id, 
-        ['nome'], 
-        [$nome], 
-        'exame.index',
-        ['success' => 'Alteração efetuada com sucesso'],
-        'exame.edit',
-        ['errors' => 'Registro igual ao anterior']
+        $alter = new CheckDataBase($this->exame);
+        $alter = $alter->checkInDatabase(
+            ['nome'],
+            [$dataForm['nome']]
         );
-
-        return $alter;
+        if($alter){
+            $newRegister = new ChangeRegister(($this->exame));
+            $newRegister = $newRegister->changeRegisterInDatabase(
+                $id,
+                $alter
+            );
+            return SuccessRedirectMessage::successRedirect(
+                'exame.index',
+                ['success' => 'Exame alterado com sucesso'],
+                $id
+            );
+        } else {
+            return FailRedirectMessage::failRedirect(
+                'exame.edit',
+                ['errors' => 'Exame já cadastrado'],
+                $id
+            );
+        }
     }
 
     public function destroy($id)
     {
-        $delete = new DeleteRegister($this->exame);
-        $delete = $delete->erase(
-            $id, 
-            [$this->grupoExame, $this->atendimentoExame], 
-            ['exame_id'],
-            'exame.show',
-            'exame.index',
-            ['success' => 'Exame deletado com sucesso'],
-            ''
+        $check = new CheckToDelete($this->exame);
+        $check = $check->checkDb(
+            $id,
+            [$this->grupoExame, $this->atendimentoExame],
+            ['exame_id']
         );
-        
-        return $delete;
+
+        if($check){
+            return FailRedirectMessage::failRedirect(
+                'exame.show',
+                ['errors' => "Existe um registro vinculado a ". $check['table']],
+                $id
+            );
+        } else {
+            $delete = new DeleteRegister($this->exame);
+            $delete = $delete->erase($id);
+            return SuccessRedirectMessage::successRedirect(
+                'exame.index',
+                ['success' => 'Exame apagado com sucesso'],
+                ''
+            );
+        }
     }
 
     public function search(Request $request){

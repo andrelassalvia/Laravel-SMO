@@ -24,8 +24,6 @@ class PermissaoFormRequest extends FormRequest
     public function rules()
     {
         return [
-            'formulario_id' => 'required',
-            'nome' => 'required|min:3|max:30',
             'tipousuario_id' => 'exists:tipousuario,id',
             'formulario_id' => 'exists:formulario,id',
             'inclui' => 'digits_between:0,1',

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\AbstractClasses\CheckDataBase;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
@@ -16,11 +17,16 @@ use App\Http\Requests\Admin\GrupoFormRequest;
 use App\Classes\CollectData;
 use App\Classes\SaveInDatabase;
 use App\Classes\ChangeRegister;
+use App\Classes\CheckToDelete;
 use App\Classes\DeleteRegister;
 use App\Classes\SearchRequest;
+use App\Traits\FailRedirectMessage;
+use App\Traits\SuccessRedirectMessage;
 
 class GrupoController extends Controller
 {
+    use SuccessRedirectMessage, FailRedirectMessage;
+
     public function __construct(
         Grupo $grupo,
         Atendimento $atendimento,
@@ -87,42 +93,63 @@ class GrupoController extends Controller
     public function update(GrupoFormRequest $request, $id)
     {
         $dataForm = $request->validated();
-        $nome = $dataForm['nome'];
 
-        $alter = new ChangeRegister($this->grupo);
-        $alter = $alter->changeRegisterInDatabase(
-            $id, 
+        $alter = new CheckDataBase($this->grupo);
+        $alter = $alter->checkInDatabase(
             ['nome'], 
-            [$nome], 
-            'grupo.index',
-            ['success' => 'Alteracao efetuada com sucesso'],
-            'grupo.edit',
-            ['errors' => 'Registro igual ao anterior']
+            [$dataForm['nome']], 
         );
 
-        return $alter;
+        if($alter){
+            $newRegister = new ChangeRegister($this->grupo);
+            $newRegister = $newRegister->changeRegisterInDatabase(
+                $id,
+                $alter
+            );
+            return SuccessRedirectMessage::successRedirect(
+                'grupo.index',
+                ['success' => 'Grupo alterado com sucesso'],
+                $id
+            );
+        } else {
+            return FailRedirectMessage::failRedirect(
+                'grupo.edit',
+                ['errors' => 'Grupo já cadastrado'],
+                $id
+            );
+        }
     }
 
     public function destroy($id)
     {
-        $delete = new DeleteRegister($this->grupo);
-        $delete = $delete->erase(
-            $id, 
+        $check = new CheckToDelete($this->grupo);
+        $check = $check->checkDb(
+            $id,
             [
                 $this->atendimento,
                 $this->empregado, 
                 $this->grupoExame,
                 $this->grupoRisco,
                 $this->grupoFuncao
-            ], 
-            ['grupo_id'],
-            'grupo.show',
-            'grupo.index',
-            ['success' => 'Registro apagado com sucesso'],
-            ''
+            ],
+            ['grupo_id']
         );
-        
-        return $delete;
+
+        if($check){
+            return FailRedirectMessage::failRedirect(
+                'grupo.show',
+                ['errors' => "Existe um registro vinculado a ". $check['table']],
+                $id
+            );
+        } else {
+            $delete = new DeleteRegister($this->grupo);
+            $delete = $delete->erase($id);
+            return SuccessRedirectMessage::successRedirect(
+                'grupo.index',
+                ['success' => 'Grupo apagado com sucesso'],
+                ''
+            );
+        }
     }
 
     public function search(Request $request)

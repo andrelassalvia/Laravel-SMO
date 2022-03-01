@@ -13,9 +13,14 @@ use App\Http\Requests\Admin\GrupoExameFormRequest;
 use App\Classes\CollectData;
 use App\Classes\SaveInDatabase;
 use App\Classes\DeleteRegister;
+use App\Classes\CheckToDelete;
+use App\Traits\FailRedirectMessage;
+use App\Traits\SuccessRedirectMessage;
 
 class GrupoExameController extends Controller
 {
+    use SuccessRedirectMessage, FailRedirectMessage;
+
     public function __construct(
         GrupoExame $grupoExame,
         Grupo $grupo,
@@ -77,19 +82,28 @@ class GrupoExameController extends Controller
     public function destroy($id)
     {
         $register = $this->grupoExame->find($id);
-        $grupo_id = $register['grupo_id'];
-        
-        $deleted = new DeleteRegister($this->grupoExame);
-        $deleted = $deleted->erase(
+        $mainId = $register['grupo_id'];
+        $check = new CheckToDelete($this->grupoExame);
+        $check = $check->checkDb(
             $id,
             [],
-            [],
-            'grupoexame.index',
-            'grupoexame.index',
-            ['success' => 'Registro deletado com sucesso'],
-            $grupo_id
+            []
         );
 
-        return $deleted;
+        if($check){
+            return FailRedirectMessage::failRedirect(
+                'grupoexame.index',
+                ['errors' => "Existe um registro vinculado a ". $check['table']],
+                $id
+            );
+        } else {
+            $delete = new DeleteRegister($this->grupoExame);
+            $delete = $delete->erase($id);
+            return SuccessRedirectMessage::successRedirect(
+                'grupoexame.index',
+                ['success' => 'Registro apagado com sucesso'],
+                $mainId
+            );
+        }
     }
 }

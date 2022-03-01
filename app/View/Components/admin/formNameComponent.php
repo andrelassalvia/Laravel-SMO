@@ -24,7 +24,6 @@ class formNameComponent extends Component
 
     public function render()
     {
-        header('Content-Type: text/html; charset=utf-8');
         return view('components.admin.form-name-component');
     }
 

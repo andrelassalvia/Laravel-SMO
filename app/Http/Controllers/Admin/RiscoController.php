@@ -14,12 +14,17 @@ use App\Http\Requests\Admin\RiscoFormRequest;
 use App\Classes\CollectData;
 use App\Classes\SaveInDatabase;
 use App\Classes\DeleteRegister;
+use App\Classes\CheckDatabase;
+use App\Classes\CheckToDelete;
 use App\Classes\ChangeRegister;
 use App\Classes\SearchRequest;
-
+use App\Traits\FailRedirectMessage;
+use App\Traits\SuccessRedirectMessage;
 
 class RiscoController extends Controller
 {
+    use SuccessRedirectMessage, FailRedirectMessage;
+
     public function __construct(
         Risco $risco,
         TipoRisco $tipoRisco,
@@ -93,38 +98,57 @@ class RiscoController extends Controller
     public function update(RiscoFormRequest $request, $id)
     {
         $dataForm = $request->validated();
-        $nome = 
-            $dataForm['nome'];
-        $tipoRisco_id = $dataForm['tiporisco_id'];
 
-        $riscos = new ChangeRegister($this->risco);
-        $riscos = $riscos->changeRegisterInDatabase(
-            $id,
-            ['nome', 'tiporisco_id'],
-            [$nome, $tipoRisco_id],
-            'risco.index',
-            ['success' => 'Registro alterado com sucesso'],
-            'risco.edit',
-            ['errors' => 'Registro já cadastrado na base de dados']
+        $alter = new CheckDataBase($this->risco);
+        $alter = $alter->checkInDatabase(
+            ['nome'], 
+            [$dataForm['nome']], 
         );
 
-        return $riscos;
+        if($alter){
+            $newRegister = new ChangeRegister($this->risco);
+            $newRegister = $newRegister->changeRegisterInDatabase(
+                $id,
+                $alter
+            );
+            return SuccessRedirectMessage::successRedirect(
+                'risco.index',
+                ['success' => 'Risco alterado com sucesso'],
+                $id
+            );
+        } else {
+            return FailRedirectMessage::failRedirect(
+                'risco.edit',
+                ['errors' => 'Risco já cadastrado'],
+                $id
+            );
+        }
     }
 
     public function destroy($id)
     {
-        $riscos = new DeleteRegister($this->risco);
-        $riscos = $riscos->erase(
+        $check = new CheckToDelete($this->risco);
+        $check = $check->checkDb(
             $id,
             [$this->atendimentoRisco, $this->grupoRisco],
-            ['risco_id'],
-            'risco.show',
-            'risco.index',
-            ['success' => 'Registro deletado com sucesso'],
-            ''
+            ['risco_id']
         );
 
-        return $riscos;
+        if($check){
+            return FailRedirectMessage::failRedirect(
+                'risco.show',
+                ['errors' => "Existe um registro vinculado a ". $check['table']],
+                $id
+            );
+        } else {
+            $delete = new DeleteRegister($this->risco);
+            $delete = $delete->erase($id);
+            return SuccessRedirectMessage::successRedirect(
+                'risco.index',
+                ['success' => 'Risco apagado com sucesso'],
+                ''
+            );
+        }
     }
 
     public function search(Request $request)

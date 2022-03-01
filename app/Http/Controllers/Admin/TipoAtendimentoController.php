@@ -14,10 +14,16 @@ use App\Classes\CollectData;
 use App\Classes\SaveInDatabase;
 use App\Classes\DeleteRegister;
 use App\Classes\ChangeRegister;
+use App\Classes\CheckDatabase;
+use App\Classes\CheckToDelete;
 use App\Classes\SearchRequest;
+use App\Traits\FailRedirectMessage;
+use App\Traits\SuccessRedirectMessage;
 
 class TipoAtendimentoController extends Controller
 {
+    use SuccessRedirectMessage, FailRedirectMessage;
+
     public function __construct(
         TipoAtendimento $tipoAtendimento,
         Atendimento $atendimento,
@@ -90,41 +96,57 @@ class TipoAtendimentoController extends Controller
     public function update(TipoAtendimentoFormRequest $request, $id)
     {
         $dataForm = $request->validated();
-        $nome = $dataForm['nome'];
-        $tipoAtendimentos = new ChangeRegister($this->tipoAtendimento);
-        $tipoAtendimentos = $tipoAtendimentos->changeRegisterInDatabase(
-            $id,
-            ['nome'],
-            [$nome],
-            'tipoatendimento.index',
-            ['success' => 'Registro alterado com sucesso'],
-            'tipoatendimento.edit',
-            ['errors' => 'Registro já cadastrado no banco de dados']
+
+        $alter = new CheckDataBase($this->tipoAtendimento);
+        $alter = $alter->checkInDatabase(
+            ['nome'], 
+            [$dataForm['nome']], 
         );
 
-        return $tipoAtendimentos;
+        if($alter){
+            $newRegister = new ChangeRegister($this->tipoAtendimento);
+            $newRegister = $newRegister->changeRegisterInDatabase(
+                $id,
+                $alter
+            );
+            return SuccessRedirectMessage::successRedirect(
+                'tipoatendimento.index',
+                ['success' => 'Tipo de atendimento alterado com sucesso'],
+                $id
+            );
+        } else {
+            return FailRedirectMessage::failRedirect(
+                'tipoatendimento.edit',
+                ['errors' => 'Tipo de atendimento já cadastrado'],
+                $id
+            );
+        }
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function destroy($id)
     {
-        $tipoAtendimentos = new DeleteRegister($this->tipoAtendimento);
-        $tipoAtendimentos = $tipoAtendimentos->erase(
+        $check = new CheckToDelete($this->tipoAtendimento);
+        $check = $check->checkDb(
             $id,
             [$this->atendimento, $this->grupoExame],
-            ['tipoatendimento_id'],
-            'tipoatendimento.show',
-            'tipoatendimento.index',
-            ['success' => 'Registro deletado com sucesso'],
-            ''
+            ['tipoatendimento_id']
         );
 
-        return $tipoAtendimentos;
+        if($check){
+            return FailRedirectMessage::failRedirect(
+                'tipoatendimento.show',
+                ['errors' => "Existe um registro vinculado a ". $check['table']],
+                $id
+            );
+        } else {
+            $delete = new DeleteRegister($this->tipoAtendimento);
+            $delete = $delete->erase($id);
+            return SuccessRedirectMessage::successRedirect(
+                'tipoatendimento.index',
+                ['success' => 'Tipo de atendimento apagado com sucesso'],
+                ''
+            );
+        }
     }
 
     public function search(Request $request)
