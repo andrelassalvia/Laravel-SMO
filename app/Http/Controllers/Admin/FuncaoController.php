@@ -30,18 +30,19 @@ class FuncaoController extends Controller
         Empregado $empregado,
         Atendimento $atendimento,
         GrupoFuncao $grupoFuncao
-    ) {
+    ) 
+    {
         $this->funcao = $funcao;
         $this->empregado = $empregado;
         $this->atendimento = $atendimento;
         $this->grupoFuncao = $grupoFuncao;
+       
     }
     
     public function index()
     {
         $funcoes = new CollectData($this->funcao);
         $data = $funcoes->collection('nome', 'ASC', false);
-        
         return view ('admin.funcao.index', compact('data'));
     }
   
@@ -54,25 +55,31 @@ class FuncaoController extends Controller
     public function store(FuncaoFormRequest $request)
     {
         $dataForm = $request->validated();
-        $nome = $dataForm['nome']; 
-        
-        $funcoes = new SaveInDatabase($this->funcao);
-        $funcoes = $funcoes->saveDatabase(
-            ['nome'], 
-            [$nome], 
-            'funcao.index', 
-            ['success' => 'Registro cadastrado com sucesso'], 
-            'funcao.create', 
-            ['errors' => 'Funcao ja cadastrada'],
+        $data = new CheckDataBase($this->funcao);
+        $data = $data->checkInDatabase(['nome'], [$dataForm['nome']]);
+        if($data){
+            $store = new SaveInDatabase($this->funcao);
+            $store = $store->saveDatabase($data);
+            return SuccessRedirectMessage::successRedirect(
+                'funcao.index',
+                ['success' => 'Função cadastrada com sucesso'],
                 ''
-        );
-        
-        return $funcoes;
+            );
+        } else {
+            return FailRedirectMessage::failRedirect(
+                'funcao.create',
+                ['errors' => 'Função já cadastrada'],
+                ''
+            );
+        }
     }
     
     public function show($id)
     {
+        // dd($id);
+        
         $data = Funcao::find($id);
+       
         return view ('admin.funcao.show', compact('data'));
     }
 
@@ -86,7 +93,6 @@ class FuncaoController extends Controller
     public function update(FuncaoFormRequest $request, $id)
     {
         $dataForm = $request->validated();
-
         $alter = new CheckDatabase($this->funcao);
         $alter = $alter->checkInDatabase(
            ['nome'],
@@ -141,12 +147,13 @@ class FuncaoController extends Controller
 
     public function search(Request $request)
     {
-        $dataForm = $request->only('nome');
+        $dataForm = $request->validate([
+            'nome' => 'required'
+        ]);
         $nome = '%'.$dataForm['nome'].'%';
-
         $funcoes = new SearchRequest($this->funcao);
         $data = $funcoes->searchIt('nome', ['nome' => $nome]);
-    
-        return view('admin.funcao.index', compact('nome', 'data'));
+        
+        return view('admin.funcao.index', compact('nome', 'data', 'dataForm'));
     }
 }

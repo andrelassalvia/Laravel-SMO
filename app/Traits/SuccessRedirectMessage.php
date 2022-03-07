@@ -10,6 +10,9 @@ trait SuccessRedirectMessage
     string $id
   )
   {
-    return redirect()->route($route, $id)->with($msg)->withInput();
+    return redirect()
+    ->route($route, $id)
+    ->with($msg)
+    ->withInput();
   }
 }

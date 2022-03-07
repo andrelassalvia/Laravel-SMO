@@ -1,3 +1,7 @@
+body {
+    min-height: 100vh;
+}
+
 ::-webkit--scrollbar {
     width: 10px;
 }
@@ -8,6 +12,309 @@
 }
 
 label {
+    text-align: right;
+    padding-top: 5px;
+}
+input {
+    border: 1px solid #ccc;
+    padding-top: 5px;
+}
+
+#corpo {
+    background-color: #fff;
+    width: 400px;
+    height: 220px;
+    margin: auto;
+    margin-top: 100px;
+    text-align: center;
+}
+
+#title {
+    background-color: #163550;
+    color: #fff;
+    width: 400px;
+    height: 40px;
+    margin: auto;
+    margin-bottom: 20px;
+    text-align: center;
+    padding-top: 8px;
+    font-size: 18px;
+}
+
+.topo {
+    width: 100%;
+    height: 80px;
+    background-color: #fff;
+    font-size: 20px;
+    color: #163550;
+}
+
+.titulo {
+    background-color: #fff;
+    color: #163550;
+    width: 900px;
+    height: 40px;
+    margin: auto;
+    margin-bottom: 50px;
+    text-align: center;
+}
+.form1 {
+    background-color: #ebf3fa;
+    width: 800px;
+    height: 90px;
+    margin: auto;
+    margin-top: 22px;
+    text-align: center;
+    padding-top: 30px;
+}
+
+.form2 {
+    background-color: #ebf3fa;
+    width: 800px;
+    height: 120px;
+    margin: auto;
+    margin-top: 8px;
+    margin-bottom: 60px;
+    text-align: center;
+    padding-top: 20px;
+}
+
+.form3 {
+    background-color: #ebf3fa;
+    width: 800px;
+    height: 190px;
+    margin: auto;
+    margin-top: 8px;
+    margin-bottom: 60px;
+    text-align: center;
+    padding-top: 20px;
+}
+.form4 {
+    background-color: #ebf3fa;
+    width: 800px;
+    height: 210px;
+    margin: auto;
+    margin-top: 8px;
+    margin-bottom: 60px;
+    text-align: center;
+    padding-top: 20px;
+}
+.form5 {
+    background-color: #ebf3fa;
+    width: 800px;
+    min-height: 80px;
+    margin: auto;
+    margin-top: 8px;
+    margin-bottom: 30px;
+    text-align: center;
+    padding-top: 20px;
+    padding-bottom: 20px;
+}
+.form6 {
+    background-color: #ebf3fa;
+    width: 800px;
+    height: 440px;
+    margin: auto;
+    margin-top: 8px;
+    margin-bottom: 60px;
+    text-align: center;
+    padding-top: 20px;
+}
+.form7 {
+    background-color: #ebf3fa;
+    width: 800px;
+    height: 280px;
+    margin: auto;
+    margin-top: 8px;
+    margin-bottom: 60px;
+    text-align: center;
+    padding-top: 20px;
+}
+
+.form-search-add {
+    margin: auto;
+    margin-bottom: 20px;
+    display: flex;
+    width: 80%;
+}
+
+.aba {
+    width: 800px;
+    margin: auto;
+    margin-top: 10px;
+    margin-bottom: -20px;
+    background-color: #fff;
+    cursor: pointer;
+}
+
+.conteudo {
+    width: 90%;
+    margin: auto;
+}
+
+.footer {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 40px;
+    background-color: #163550;
+    color: white;
+    text-align: center;
+    padding-top: 7px;
+    font-size: 17px;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+.nav-tabs > li.active > a,
+.nav-tabs > li.active > a:focus,
+.nav-tabs > li.active > a:hover {
+    color: #fff;
+    cursor: default;
+    background-color: #163550;
+    border: 1px solid #ddd;
+    border-bottom-color: transparent;
+}
+.nav-tabs > li > a {
+    margin-right: 2px;
+    line-height: 1.42857143;
+    border: 1px solid #ddd;
+    border-radius: 4px 4px 0 0;
+    color: #163550;
+    font-weight: bold;
+}
+
+.navbar-default {
+    background-color: #163550;
+    border-color: #e7e7e7;
+}
+.navbar-default .navbar-brand {
+    color: #fff;
+}
+.navbar-default .navbar-brand:hover,
+.navbar-default .navbar-brand:focus {
+    color: #5e5e5e;
+    background-color: transparent;
+}
+.navbar-default .navbar-text {
+    color: #777;
+}
+.navbar-default .navbar-nav > li > a {
+    color: #fff;
+}
+.navbar-default .navbar-nav > li > a:hover,
+.navbar-default .navbar-nav > li > a:focus {
+    color: #00ccff;
+    background-color: transparent;
+}
+.navbar-default .navbar-nav > .active > a,
+.navbar-default .navbar-nav > .active > a:hover,
+.navbar-default .navbar-nav > .active > a:focus {
+    color: #000;
+    background-color: #e7e7e7;
+}
+.navbar-default .navbar-nav > .disabled > a,
+.navbar-default .navbar-nav > .disabled > a:hover,
+.navbar-default .navbar-nav > .disabled > a:focus {
+    color: #ccc;
+    background-color: transparent;
+}
+.navbar-default .navbar-nav > .open > a,
+.navbar-default .navbar-nav > .open > a:hover,
+.navbar-default .navbar-nav > .open > a:focus {
+    color: #555;
+    background-color: #e7e7e7;
+}
+
+.navbar-default .navbar-toggle {
+    border-color: #ddd;
+}
+.navbar-default .navbar-toggle:hover,
+.navbar-default .navbar-toggle:focus {
+    background-color: #ddd;
+}
+.navbar-default .navbar-toggle .icon-bar {
+    background-color: #888;
+}
+.navbar-default .navbar-collapse,
+.navbar-default .navbar-form {
+    border-color: #e7e7e7;
+}
+.navbar-default .navbar-link {
+    color: #777;
+}
+.navbar-default .navbar-link:hover {
+    color: #333;
+}
+.navbar-default .btn-link {
+    color: #777;
+}
+.navbar-default .btn-link:hover,
+.navbar-default .btn-link:focus {
+    color: #333;
+}
+
+.div4 {
+    width: 48%;
+    height: 100px;
+    color: #fff;
+    margin-right: 10px;
+    margin-bottom: 5px;
+    display: inline-block;
+    background-color: #163550;
+    font-size: 18px;
+    text-align: center;
+    padding: 0px 0px 0px 0px;
+    border: solid 1px #ccc;
+    border-radius: 10px;
+}
+.div5 {
+    width: 48%;
+    height: 100px;
+    color: #fff;
+    margin-right: 10px;
+    margin-bottom: 5px;
+    display: inline-block;
+    background-color: #163550;
+    font-size: 18px;
+    text-align: center;
+    padding: 0px 0px 0px 0px;
+    border: solid 1px #ccc;
+    border-radius: 10px;
+}
+#graf1 {
+    width: 48%;
+    height: 350px;
+    color: #000;
+    margin-right: 10px;
+    display: inline-block;
+    background-color: #fff;
+    font-size: 24px;
+    text-align: center;
+    padding: 15px 0px 5px 0px;
+}
+
+#graf2 {
+    width: 48%;
+    height: 350px;
+    color: #000;
+    margin-right: 10px;
+    display: inline-block;
+    background-color: #fff;
+    font-size: 24px;
+    text-align: center;
+    padding: 15px 0px 5px 0px;
+}
+
+.tabs {
+    justify-content: space-around;
+}
+
+.tabs--item {
+    color: #163550;
+}
+
+/* label {
     text-align: right;
     padding-top: 5px;
 }
@@ -74,10 +381,10 @@ input {
 .titulo {
     background-color: #fff;
     color: #163550;
-    width: 70%;
+    width: 900px;
     height: 40px;
     margin: auto;
-    margin-bottom: 20px;
+    margin-bottom: 50px;
     text-align: center;
 }
 .pagination {
@@ -99,7 +406,77 @@ input {
     margin-right: 10px;
 }
 .form1 {
-    padding: 10px;
+    background-color: #ebf3fa;
+    width: 800px;
+    height: 90px;
+    margin: auto;
+    margin-top: 22px;
+    text-align: center;
+    padding-top: 30px;
+}
+
+.form2 {
+    background-color: #ebf3fa;
+    width: 800px;
+    height: 120px;
+    margin: auto;
+    margin-top: 8px;
+    margin-bottom: 60px;
+    text-align: center;
+    padding-top: 20px;
+}
+
+.form3 {
+    background-color: #ebf3fa;
+    width: 800px;
+    height: 190px;
+    margin: auto;
+    margin-top: 8px;
+    margin-bottom: 60px;
+    text-align: center;
+    padding-top: 20px;
+}
+.form4 {
+    background-color: #ebf3fa;
+    width: 800px;
+    height: 210px;
+    margin: auto;
+    margin-top: 8px;
+    margin-bottom: 60px;
+    text-align: center;
+    padding-top: 20px;
+}
+
+.form5 {
+    background-color: #ebf3fa;
+    width: 800px;
+    height: 300px;
+    margin: auto;
+    margin-top: 8px;
+    margin-bottom: 60px;
+    text-align: center;
+    padding-top: 20px;
+}
+
+.form6 {
+    background-color: #ebf3fa;
+    width: 800px;
+    height: 440px;
+    margin: auto;
+    margin-top: 8px;
+    margin-bottom: 60px;
+    text-align: center;
+    padding-top: 20px;
+}
+.form7 {
+    background-color: #ebf3fa;
+    width: 800px;
+    height: 280px;
+    margin: auto;
+    margin-top: 8px;
+    margin-bottom: 60px;
+    text-align: center;
+    padding-top: 20px;
 }
 
 .tab--nav {
@@ -108,7 +485,9 @@ input {
 
 .conteudo {
     z-index: 1000;
-    padding-bottom: 50px;
+    width: 90px;
+    margin: auto;
+    min-height: 300px;
 }
 
 .form-search {
@@ -147,4 +526,4 @@ input {
 .nav-tabs {
     width: 70%;
     margin: auto;
-}
+} */

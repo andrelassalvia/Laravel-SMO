@@ -1,3 +1,3 @@
-<div class="titulo mb-4">
+<div class="titulo">
     <h2>{{$title}}</h2>
 </div>

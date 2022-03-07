@@ -2,8 +2,8 @@
 
 @section('content')
 
+  <x-admin.title-component :title="'Administração de Funções'"></x-admin.title-component>
   <div class="conteudo">
-    <x-admin.title-component :title="'Administração de Funções'"></x-admin.title-component>
 
     <x-admin.form-name-component :group="''" :data="$data" :blade="'create'">
       <x-slot name="tabs"></x-slot>

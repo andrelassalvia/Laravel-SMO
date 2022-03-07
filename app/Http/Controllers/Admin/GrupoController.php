@@ -35,7 +35,8 @@ class GrupoController extends Controller
         GrupoRisco $grupoRisco,
         GrupoFuncao $grupoFuncao
        
-    ) {
+    ) 
+    {
         $this->grupo = $grupo;
         $this->atendimento = $atendimento;
         $this->empregado = $empregado;
@@ -48,7 +49,6 @@ class GrupoController extends Controller
     {
         $grupos = new CollectData($this->grupo);
         $data = $grupos->collection('nome', 'ASC', false);
-        
         return view ('admin.grupo.index', compact('data'));
     }
   
@@ -61,20 +61,23 @@ class GrupoController extends Controller
     public function store(GrupoFormRequest $request)
     {
         $dataForm = $request->validated();
-        $nome = $dataForm['nome']; 
-        
-        $grupos = new SaveInDatabase($this->grupo);
-        $grupos = $grupos->saveDatabase(
-            ['nome'], 
-            [$nome], 
-            'grupo.index', 
-            ['success' => 'Registro cadastrado com sucesso'], 
-            'grupo.create', 
-            ['errors' => 'Grupo ja cadastrado'],
-            ''
-        );
-        
-        return $grupos;
+        $data = new CheckDataBase($this->grupo);
+        $data = $data->checkInDatabase(['nome'], [$dataForm['nome']]);
+        if($data){
+            $store = new SaveInDatabase($this->grupo);
+            $store = $store->saveDatabase($data);
+            return SuccessRedirectMessage::successRedirect(
+                'grupo.index',
+                ['success' => 'Grupo cadastrado com sucesso'],
+                ''
+            );
+        } else {
+            return FailRedirectMessage::failRedirect(
+                'grupo.create',
+                ['errors' => 'Grupo já cadastrado'],
+                ''
+            );
+        }
     }
     
     public function show($id)
@@ -93,7 +96,6 @@ class GrupoController extends Controller
     public function update(GrupoFormRequest $request, $id)
     {
         $dataForm = $request->validated();
-
         $alter = new CheckDataBase($this->grupo);
         $alter = $alter->checkInDatabase(
             ['nome'], 
@@ -154,12 +156,12 @@ class GrupoController extends Controller
 
     public function search(Request $request)
     {
-        $dataForm = $request->only('nome');
+        $dataForm = $request->validate([
+            'nome' => 'required'
+        ]);
         $nome = '%'.$dataForm['nome'].'%';
-
         $grupos = new SearchRequest($this->grupo);
         $data = $grupos->searchIt('nome', ['nome' => $nome]);
-    
-        return view('admin.grupo.index', compact('nome', 'data'));
+        return view('admin.grupo.index', compact('nome', 'data', 'dataForm'));
     }
 }

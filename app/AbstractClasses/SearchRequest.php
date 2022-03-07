@@ -11,7 +11,10 @@ abstract class SearchRequest
     $this->model = $model;
   }
 
-  public function searchIt(string $column, array $data)
+  public function searchIt(
+    string $column, // column name of the searched value
+    array $data // 
+  )
   {
     $register = $this->model->where($column, 'like', $data)->paginate(5);
 

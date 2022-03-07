@@ -1,4 +1,4 @@
-<nav class="navbar navbar-expand-lg mb-3 navbar--white navbar--main">
+<nav class="navbar navbar-default navbar-expand-lg mb-3">
   <div class="container-fluid">
     
     
@@ -37,7 +37,7 @@
           </a>
           <ul class="dropdown-menu " aria-labelledby="navbarDropdown">
             <li><a class="dropdown-item" href="{{route('tipousuario.index')}}">Tipos de Usuários</a></li>
-            <li><a class="dropdown-item" href="#">Usuários</a></li>
+            <li><a class="dropdown-item" href="{{route('users.index')}}">Usuários</a></li>
           </ul>
         </li>
         
@@ -49,7 +49,7 @@
             {{ Auth::user()->name }}
           </a>
           <ul class="dropdown-menu ">
-            <li><a class="dropdown-item" href="#">Mudança de Senha</a></li>
+            <li><a class="dropdown-item" href="{{route('password.edit')}}">Mudança de Senha</a></li>
             <li><a class="dropdown-item" href="{{url('/logout')}}">Sair</a></li>
             
           </ul>

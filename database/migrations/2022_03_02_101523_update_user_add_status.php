@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class UpdateUsersTable extends Migration
+class UpdateUserAddStatus extends Migration
 {
     /**
      * Run the migrations.
@@ -14,9 +14,7 @@ class UpdateUsersTable extends Migration
     public function up()
     {
         Schema::table('users', function (Blueprint $table) {
-           
-            $table->unsignedBigInteger('tipousuario_id')->default(1);
-            $table->foreign('tipousuario_id')->references('id')->on('tipousuario');
+            $table->boolean('status')->default(1)->after('email');
         });
     }
 
@@ -27,9 +25,8 @@ class UpdateUsersTable extends Migration
      */
     public function down()
     {
-        Schema::table('users', function(Blueprint $table){
-            $table->dropForeign('users_tipousuario_id_foreign');
-            $table->dropColumn('tipousuario_id');
+        Schema::table('users', function (Blueprint $table) {
+            $table->dropColumn('status');
         });
     }
 }

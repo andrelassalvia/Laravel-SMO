@@ -12,6 +12,7 @@ use App\Models\TipoAtendimento;
 use App\Http\Requests\Admin\GrupoExameFormRequest;
 use App\Classes\CollectData;
 use App\Classes\SaveInDatabase;
+use App\Classes\CheckDataBase;
 use App\Classes\DeleteRegister;
 use App\Classes\CheckToDelete;
 use App\Traits\FailRedirectMessage;
@@ -26,7 +27,8 @@ class GrupoExameController extends Controller
         Grupo $grupo,
         Exame $exame,
         TipoAtendimento $tipoAtendimento
-    ) {
+    ) 
+    {
         $this->grupoExame = $grupoExame;
         $this->grupo = $grupo;
         $this->exame = $exame;
@@ -36,23 +38,19 @@ class GrupoExameController extends Controller
     public function index($id)
     {
         $data = $this->grupo->find($id);
-
         $exames = new CollectData($this->exame);
         $exames = $exames->collection(
             'nome',
             'ASC',
             true
         );
-
         $tipoAtendimentos = new CollectData($this->tipoAtendimento);
         $tipoAtendimentos = $tipoAtendimentos->collection(
             'nome',
             'ASC',
             true
         );
-
         $grupoExames = $this->grupoExame->where('grupo_id', $id)->get();
-       
         return view(
             'Admin.grupoExame.index', 
             compact('data', 'exames', 'tipoAtendimentos', 'grupoExames') 
@@ -61,22 +59,26 @@ class GrupoExameController extends Controller
 
     public function store(GrupoExameFormRequest $request, $id)
     {
-        $dataform = $request->validated();
-        $exame_id = $dataform['exame_id'];
-        $tipoatendimento_id = $dataform['tipoatendimento_id'];
-
-        $grupoExames = new SaveInDatabase($this->grupoExame);
-        $grupoExames = $grupoExames->saveDatabase(
-            ['grupo_id', 'exame_id', 'tipoatendimento_id'],
-            [$id, $exame_id, $tipoatendimento_id],
-            'grupoexame.index',
-            ['success' => 'Registro cadastrado com sucesso'],
-            'grupoexame.index',
-            ['errors' => 'Este registro já consta no banco de dados'],
-            $id
-        );
-
-        return $grupoExames;
+        $dataForm = $request->validated();
+        $data = new CheckDataBase($this->grupoExame);
+        $data = $data->checkInDatabase(
+            ['grupo_id', 'exame_id', 'tipoatendimento_id'], 
+            [$id, $dataForm['exame_id'], $dataForm['tipoatendimento_id']]);
+        if($data){
+            $store = new SaveInDatabase($this->grupoExame);
+            $store = $store->saveDatabase($data);
+            return SuccessRedirectMessage::successRedirect(
+                'grupoexame.index',
+                ['success' => 'Registro cadastrado com sucesso'],
+                $id
+            );
+        } else {
+            return FailRedirectMessage::failRedirect(
+                'grupoexame.index',
+                ['errors' => 'Registro já cadastrado'],
+                $id
+            );
+        }
     }
 
     public function destroy($id)
@@ -89,7 +91,6 @@ class GrupoExameController extends Controller
             [],
             []
         );
-
         if($check){
             return FailRedirectMessage::failRedirect(
                 'grupoexame.index',

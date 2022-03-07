@@ -31,7 +31,8 @@ class RiscoController extends Controller
         AtendimentoRisco $atendimentoRisco,
         GrupoRisco $grupoRisco
         
-    ) {
+    )
+    {
         $this->risco = $risco;
         $this->tipoRisco = $tipoRisco;
         $this->atendimentoRisco = $atendimentoRisco;
@@ -42,7 +43,6 @@ class RiscoController extends Controller
     {
         $riscos = new CollectData($this->risco);
         $data = $riscos->collection('nome', 'ASC', false);
-
         return view ('admin.risco.index', compact('data'));
     }
    
@@ -51,44 +51,44 @@ class RiscoController extends Controller
         $data = $this->risco;
         $tipoRiscos = new CollectData($this->tipoRisco);
         $tipoRiscos = $tipoRiscos->collection('nome', 'ASC', true);
-
         return view ('admin.risco.create', compact('tipoRiscos', 'data'));
     }
      
     public function store(RiscoFormRequest $request)
     {
         $dataForm = $request->validated();
-        $nome = $dataForm['nome'];
-        $tipoRisco_id = $dataForm['tiporisco_id'];
-        
-        $riscos = new SaveInDatabase($this->risco);
-        $riscos = $riscos->saveDatabase(
-            ['nome', 'tiporisco_id'],
-            [$nome, $tipoRisco_id],
-            'risco.index',
-            ['success' => 'Risco cadastrado com sucesso'],
-            'risco.create',
-            ['errors' => 'Risco já cadastrado'],
-            ''
-        );
-
-        return $riscos;
+        $data = new CheckDataBase($this->risco);
+        $data = $data->checkInDatabase(
+            ['nome'], 
+            [$dataForm['nome']]);
+        if($data){
+            $store = new SaveInDatabase($this->risco);
+            $store = $store->saveDatabase($data);
+            return SuccessRedirectMessage::successRedirect(
+                'risco.index',
+                ['success' => 'Risco cadastrado com sucesso'],
+                ''
+            );
+        } else {
+            return FailRedirectMessage::failRedirect(
+                'risco.create',
+                ['errors' => 'Risco já cadastrado'],
+                ''
+            );
+        }
     }
 
     public function show($id)
     {
         $data = $this->risco->find($id);
-    
         return view ('admin.risco.show', compact('data'));
     }
 
     public function edit($id)
     {
       $data = $this->risco->find($id);
-
       $tipoRiscos = new CollectData($this->tipoRisco);
       $tipoRiscos = $tipoRiscos->collection('nome', 'ASC', true);
-
       return view(
           'admin.risco.edit', 
           compact('data', 'tipoRiscos')
@@ -98,13 +98,11 @@ class RiscoController extends Controller
     public function update(RiscoFormRequest $request, $id)
     {
         $dataForm = $request->validated();
-
         $alter = new CheckDataBase($this->risco);
         $alter = $alter->checkInDatabase(
             ['nome'], 
             [$dataForm['nome']], 
         );
-
         if($alter){
             $newRegister = new ChangeRegister($this->risco);
             $newRegister = $newRegister->changeRegisterInDatabase(
@@ -133,7 +131,6 @@ class RiscoController extends Controller
             [$this->atendimentoRisco, $this->grupoRisco],
             ['risco_id']
         );
-
         if($check){
             return FailRedirectMessage::failRedirect(
                 'risco.show',
@@ -153,11 +150,12 @@ class RiscoController extends Controller
 
     public function search(Request $request)
     {
-        $dataForm = $request->only('nome');
+        $dataForm = $request->validate([
+            'nome' => 'required'
+        ]);
         $nome = "%".$dataForm['nome']."%";
         $riscos = new SearchRequest($this->risco);
         $riscos = $riscos->searchIt('nome', [$nome]);
-
-        return view('admin.risco.index' ,compact('riscos'));
+        return view('admin.risco.index' ,compact('riscos', 'nome', 'dataForm'));
     }
 }

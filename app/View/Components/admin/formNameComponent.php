@@ -29,6 +29,7 @@ class formNameComponent extends Component
 
     public function tableName()
     {
+
         return $this->data->getTable();
     }
 

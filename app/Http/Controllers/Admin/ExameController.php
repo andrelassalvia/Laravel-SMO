@@ -28,7 +28,8 @@ class ExameController extends Controller
         Exame $exame,
         AtendimentoExame $atendimentoExame,
         GrupoExame $grupoExame
-    ) {
+    ) 
+    {
         $this->exame = $exame;
         $this->atendimentoExame = $atendimentoExame;
         $this->grupoExame = $grupoExame;
@@ -37,35 +38,36 @@ class ExameController extends Controller
     public function index()
     {
         $exames = new CollectData($this->exame);
-        $data = $exames->collection('nome', 'ASC', false);
-                
+        $data = $exames->collection('nome', 'ASC', false);     
         return view ('admin.exame.index', compact('data'));
     }
   
     public function create()
     {
         $data = $this->exame;
-        
         return view ('admin.exame.create', compact('data'));
     }
 
     public function store(ExameFormRequest $request)
     {
         $dataForm = $request->validated();
-        $nome = $dataForm['nome']; 
-        
-        $exames = new SaveInDatabase($this->exame);
-        $exames = $exames->saveDatabase(
-        ['nome'], 
-        [$nome], 
-        'exame.index', 
-        ['success' => 'Registro cadastrado com sucesso'], 
-        'exame.create', 
-        ['errors' => 'Exame ja cadastrado'],
-        ''
-        );
-        
-        return $exames;
+        $data = new CheckDataBase($this->exame);
+        $data = $data->checkInDatabase(['nome'], [$dataForm['nome']]);
+        if($data){
+            $store = new SaveInDatabase($this->exame);
+            $store = $store->saveDatabase($data);
+            return SuccessRedirectMessage::successRedirect(
+                'exame.index',
+                ['success' => 'Exame cadastrado com sucesso'],
+                ''
+            );
+        } else {
+            return FailRedirectMessage::failRedirect(
+                'exame.create',
+                ['errors' => 'Exame já cadastrado'],
+                ''
+            );
+        }
     }
     
     public function show($id)
@@ -77,14 +79,12 @@ class ExameController extends Controller
     public function edit($id)
     {
         $data = Exame::find($id);
-        
         return view ('admin.exame.edit', compact('data'));
     }
     
     public function update(ExameFormRequest $request, $id)
     {
         $dataForm = $request->validated();
-
         $alter = new CheckDataBase($this->exame);
         $alter = $alter->checkInDatabase(
             ['nome'],
@@ -118,7 +118,6 @@ class ExameController extends Controller
             [$this->grupoExame, $this->atendimentoExame],
             ['exame_id']
         );
-
         if($check){
             return FailRedirectMessage::failRedirect(
                 'exame.show',
@@ -136,14 +135,16 @@ class ExameController extends Controller
         }
     }
 
-    public function search(Request $request){
-
-        $dataForm = $request->only('nome');
+    public function search(Request $request)
+    {
+        $dataForm = $request->validate([
+            'nome' => 'required'
+        ]);
         $nome = '%'.$dataForm['nome'].'%';
-
         $exames = new SearchRequest($this->exame);
         $data = $exames->searchIt('nome', ['nome' => $nome]);
 
-        return view('admin.exame.index',compact('nome', 'data'));
+        
+        return view('admin.exame.index',compact('nome', 'data', 'dataForm'));
     }
 }

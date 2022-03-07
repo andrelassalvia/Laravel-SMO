@@ -35,13 +35,11 @@ class TipoUsuarioController extends Controller
         $table = $this->tipoUsuario->getTable();
         $data = new CollectData($this->tipoUsuario);
         $data = $data->collection('nome', 'ASC', false);
-
         return view ('admin.tipoUsuario.index', compact('table', 'data'));
     }
 
     public function create()
     {
-        
         $table = $this->tipoUsuario;
         return view('admin.tipoUsuario.create', compact('table'));
     }
@@ -49,18 +47,23 @@ class TipoUsuarioController extends Controller
     public function store(TipoUsuarioFormRequest $request)
     {
         $dataForm = $request->validated();
-        $data = new SaveInDatabase($this->tipoUsuario);
-        $data = $data->saveDatabase(
-            ['nome'],
-            [$dataForm['nome']],
-            'tipousuario.index',
-            ['success' => 'Tipo de usuário cadastrado com sucesso'],
-            'tipousuario.create',
-            ['errors' => 'Erro no cadastramento'],
-            ''
-        );
-
-        return $data;
+        $data = new CheckDataBase($this->tipoUsuario);
+        $data = $data->checkInDatabase(['nome'], [$dataForm['nome']]);
+        if($data){
+            $store = new SaveInDatabase($this->tipoUsuario);
+            $store = $store->saveDatabase($data);
+            return SuccessRedirectMessage::successRedirect(
+                'tipousuario.index',
+                ['success' => 'Tipo de usuario cadastrado com sucesso'],
+                ''
+            );
+        } else {
+            return FailRedirectMessage::failRedirect(
+                'tipousuario.create',
+                ['errors' => 'Tipo de usuario já cadastrado'],
+                ''
+            );
+        }
     }
 
     public function show($id)
@@ -78,7 +81,6 @@ class TipoUsuarioController extends Controller
     public function update(TipoUsuarioFormRequest $request, $id)
     {
         $dataForm = $request->validated();
-
         $alter = new CheckDataBase($this->tipoUsuario);
         $alter = $alter->checkInDatabase(
             ['nome'], 

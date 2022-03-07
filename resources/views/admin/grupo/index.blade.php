@@ -4,7 +4,7 @@
 
 <div class="conteudo">
   <x-admin.title-component :title="'Administração de Grupos Homogêneos'"></x-admin.title-component>
-  <div class="d-flex">
+  <div class="form-search-add">
     {{-- Pesquisa --}}
     <x-admin.search-component :table="'grupo'" :placeholder="'Procura grupo'"></x-admin.search-component>
     {{-- Adicao de Registro --}}

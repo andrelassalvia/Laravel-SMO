@@ -13,6 +13,7 @@ use App\Classes\CollectData;
 use App\Classes\SaveInDatabase;
 use App\Classes\DeleteRegister;
 use App\Classes\CheckToDelete;
+use App\Classes\CheckDataBase;
 use App\Traits\FailRedirectMessage;
 use App\Traits\SuccessRedirectMessage;
 
@@ -26,7 +27,8 @@ class GrupoRiscoController extends Controller
         GrupoRisco $grupoRisco,
         Grupo $grupo,
         Risco $risco
-    ) {
+    ) 
+    {
         $this->grupoRisco = $grupoRisco;
         $this->grupo = $grupo;
         $this->risco = $risco;
@@ -35,12 +37,9 @@ class GrupoRiscoController extends Controller
     public function index($id)
     {
         $data = $this->grupo->find($id);
-        
         $riscos = new CollectData($this->risco);
         $riscos = $riscos->collection('nome', 'ASC', true);
-        
         $grupoRiscos = $this->grupoRisco->where('grupo_id', $id)->get();
-
         return view(
             'admin.grupoRisco.index', 
             compact('data', 'riscos', 'grupoRiscos')
@@ -50,20 +49,25 @@ class GrupoRiscoController extends Controller
     public function store(GrupoRiscoFormRequest $request, $id)
     {
         $dataForm = $request->validated();
-        $risco_id = $dataForm['risco_id'];
-
-        $grupoRisco = new SaveInDatabase($this->grupoRisco);
-        $grupoRisco = $grupoRisco->saveDatabase(
+        $data = new CheckDataBase($this->grupoRisco);
+        $data = $data->checkInDatabase(
             ['grupo_id', 'risco_id'], 
-            [$id, $risco_id], 
-            'gruporisco.index',
-            ['success' => 'Registro cadastrado com sucesso'],
-            'gruporisco.index',
-            ['errors' => 'Registro ja cadastrado'],
-            $id
-        );
-
-        return $grupoRisco;
+            [$id, $dataForm['risco_id']]);
+        if($data){
+            $store = new SaveInDatabase($this->grupoRisco);
+            $store = $store->saveDatabase($data);
+            return SuccessRedirectMessage::successRedirect(
+                'gruporisco.index',
+                ['success' => 'Registro cadastrado com sucesso'],
+                $id
+            );
+        } else {
+            return FailRedirectMessage::failRedirect(
+                'gruporisco.index',
+                ['errors' => 'Registro já cadastrado'],
+                $id
+            );
+        }
     }
 
     public function destroy($id)
@@ -76,7 +80,6 @@ class GrupoRiscoController extends Controller
             [],
             []
         );
-
         if($check){
             return FailRedirectMessage::failRedirect(
                 'gruporisco.index',

@@ -4,8 +4,9 @@
 
 <div class="conteudo">
   <x-admin.title-component :title="'Administração de Funções'" ></x-admin.title-component>
-  <div class="d-flex">
+  <div class="form-search-add">
     {{-- Pesquisa --}}
+    
     <x-admin.search-component :table="'funcao'" :placeholder="'Procura função'"></x-admin.search-component>
     {{-- Adicao de Registro --}}
     <x-admin.add-register :table="'funcao'" :title="'Cadastrar função'"></x-admin.add-register>

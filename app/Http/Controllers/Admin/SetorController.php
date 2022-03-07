@@ -54,19 +54,23 @@ class SetorController extends Controller
     public function store(SetorFormRequest $request)
     {
         $dataForm = $request->validated();
-        $nome = $dataForm['nome'];
-        
-        $setores = new SaveInDatabase($this->setor);
-        $setores = $setores->saveDatabase(
-            ['nome'],
-            [$nome],
-            'setor.index',
-            ['success' => 'Registro cadastrado com sucesso'], 
-            'setor.create', 
-            ['errors' => 'Setor ja cadastrado'],
-            ''
-        );
-        return $setores;
+        $data = new CheckDataBase($this->setor);
+        $data = $data->checkInDatabase(['nome'], [$dataForm['nome']]);
+        if($data){
+            $store = new SaveInDatabase($this->setor);
+            $store = $store->saveDatabase($data);
+            return SuccessRedirectMessage::successRedirect(
+                'setor.index',
+                ['success' => 'Setor cadastrado com sucesso'],
+                ''
+            );
+        } else {
+            return FailRedirectMessage::failRedirect(
+                'setor.create',
+                ['errors' => 'Setor já cadastrado'],
+                ''
+            );
+        }
     }
 
     public function show($id)
@@ -84,7 +88,6 @@ class SetorController extends Controller
     public function update(SetorFormRequest $request, $id)
     {
         $dataForm = $request->validated();
-
         $alter = new CheckDataBase($this->setor);
         $alter = $alter->checkInDatabase(
             ['nome'], 
@@ -139,12 +142,12 @@ class SetorController extends Controller
 
     public function search(Request $request)
     {
-        $dataForm = $request->only('nome');
+        $dataForm = $request->validate([
+            'nome' => 'required'
+        ]);
         $nome = '%'.$dataForm['nome'].'%';
-
         $setores = new SearchRequest($this->setor);
         $data = $setores->searchIt('nome', ['nome' => $nome]);
-    
-        return view('admin.setor.index', compact('nome', 'data'));
+        return view('admin.setor.index', compact('nome', 'data', 'dataForm'));
     }
 }

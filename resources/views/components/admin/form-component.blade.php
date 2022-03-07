@@ -6,7 +6,11 @@
         <select class="form-select" name="{{$optionColumn}}">
           <option value="">Selecione</option>
               @foreach ($data as $dt)
-              <option value="{{$dt->id}}" {{old($optionColumn) == $dt->id ? 'selected' : '' }}>{{$dt->nome}}</option>
+              <option 
+                value="{{$dt->id}}" 
+                {{old($optionColumn) == $dt->id ? 'selected' : '' }}
+                >{{$dt->nome}}
+              </option>
               @endforeach
             </select>
         </div>  

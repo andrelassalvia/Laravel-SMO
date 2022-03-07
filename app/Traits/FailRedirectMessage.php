@@ -10,6 +10,9 @@ trait FailRedirectMessage
     $id
   )
   {
-    return redirect()->route($route, $id)->withErrors($msg)->withInput();
+    return redirect()
+          ->route($route, $id)
+          ->withErrors($msg)
+          ->withInput();
   }
 }

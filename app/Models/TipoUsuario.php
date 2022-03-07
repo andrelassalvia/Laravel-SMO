@@ -15,4 +15,14 @@ class TipoUsuario extends Model
                         
     ];
     public $timestamps = false;
+
+    public function users(){
+        return $this->hasMany(User::class);
+    }
+
+    public function permissoes(){
+        return $this->hasMany(Permissao::class);
+    }
 }
+
+

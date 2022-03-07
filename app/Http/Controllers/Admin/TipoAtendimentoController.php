@@ -58,20 +58,23 @@ class TipoAtendimentoController extends Controller
     public function store(TipoAtendimentoFormRequest $request)
     {
         $dataForm = $request->validated();
-        $nome = $dataForm['nome'];
-
-        $tipoAtendimentos = new SaveInDatabase($this->tipoAtendimento);
-        $tipoAtendimentos = $tipoAtendimentos->saveDatabase(
-            ['nome'],
-            [$nome],
-            'tipoatendimento.index',
-            ['success' => 'Registro cadastrado com sucesso'],
-            'tipoatendimento.create',
-            ['errors' => 'Registro já cadastrado'],
-            ''
-        );
-
-        return $tipoAtendimentos;
+        $data = new CheckDataBase($this->tipoAtendimento);
+        $data = $data->checkInDatabase(['nome'], [$dataForm['nome']]);
+        if($data){
+            $store = new SaveInDatabase($this->tipoAtendimento);
+            $store = $store->saveDatabase($data);
+            return SuccessRedirectMessage::successRedirect(
+                'tipoatendimento.index',
+                ['success' => 'Tipo de atendimento cadastrado com sucesso'],
+                ''
+            );
+        } else {
+            return FailRedirectMessage::failRedirect(
+                'tipoatendimento.create',
+                ['errors' => 'Tipo de atendimento já cadastrado'],
+                ''
+            );
+        }
     }
 
     public function show($id)
@@ -151,9 +154,10 @@ class TipoAtendimentoController extends Controller
 
     public function search(Request $request)
     {
-        $dataForm = $request->only('nome');
+        $dataForm = $request->validate([
+            'nome' => 'required'
+        ]);
         $data = '%'.$dataForm['nome'].'%';
-
         $tipoAtendimentos = new SearchRequest($this->tipoAtendimento);
         $tipoAtendimentos = $tipoAtendimentos->searchIt(
             'nome',
@@ -162,7 +166,7 @@ class TipoAtendimentoController extends Controller
 
         return view(
             'admin.tipoAtendimento.index',
-            compact('tipoAtendimentos', 'data')
+            compact('tipoAtendimentos', 'data', 'dataForm')
         );
     }
 }

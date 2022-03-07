@@ -36,12 +36,9 @@ class PermissaoController extends Controller
     public function index($id)
     {
         $data = TipoUsuario::find($id);
-
         $formularios = new CollectData($this->formulario);
         $formularios = $formularios->collection('nome', 'ASC',true);
-        
         $permissoes = $this->permissao->where('tipousuario_id', $data->id)->get();
-        
         return view('admin.permissao.index', compact('data', 'formularios', 'permissoes'));
     }
 
@@ -50,34 +47,44 @@ class PermissaoController extends Controller
         $permissao = $this->permissao->find($id);
         $data = $this->tipoUsuario->where('id', $permissao['tipousuario_id'])->get()->first();
         $formularios = $this->formulario->where('id', $permissao['formulario_id'])->get()->first();
-
         return view ('admin.permissao.edit', compact('data', 'formularios', 'permissao'));
     }
 
     public function store(PermissaoFormRequest $request, $id)
     {
         $dataForm = $request->validated();
-        $tipoUsuario = TipoUsuario::find($id);
-       
-        $permissoes =new SaveInDatabase($this->permissao);
-
-        $permissoes = $permissoes->saveDatabase(
-            ['tipousuario_id', 'formulario_id', 'inclui', 'altera', 'exclui'],
+        $data = new CheckDataBase($this->permissao);
+        $data = $data->checkInDatabase(
+            ['tipousuario_id', 'formulario_id'], 
             [
-                $tipoUsuario->id, 
-                $dataForm['formulario_id'], 
-                $dataForm['inclui'],
-                $dataForm['altera'],
-                $dataForm['exclui']
-            ],
-            'permissao.index',
-            ['success' => 'Registro cadastrado com sucesso'],
-            'permissao.index',
-            ['errors' => 'Registro já cadastrado'],
-            $id
-        );
-
-        return $permissoes;
+                $id,
+                $dataForm['formulario_id']
+         ]);
+        if($data){
+            $store = new SaveInDatabase($this->permissao);
+            $newData = array_combine(
+                ['tipousuario_id', 'formulario_id', 'inclui', 'altera', 'exclui'],
+                [
+                    $id, 
+                    $dataForm['formulario_id'],
+                    $dataForm['inclui'],
+                    $dataForm['altera'],
+                    $dataForm['exclui']
+                ]
+            );
+            $store = $store->saveDatabase($newData);
+            return SuccessRedirectMessage::successRedirect(
+                'permissao.index',
+                ['success' => 'Registro cadastrado com sucesso'],
+                $id
+            );
+        } else {
+            return FailRedirectMessage::failRedirect(
+                'permissao.index',
+                ['errors' => 'Registro já cadastrado'],
+                $id
+            );
+        }
     }
 
     public function update(PermissaoFormRequest $request, $id)
@@ -97,20 +104,17 @@ class PermissaoController extends Controller
                         $dataForm['exclui']
             ]
         );
-        
         if($alter){
             $newValue = new ChangeRegister($this->permissao);
             $newValue = $newValue->changeRegisterInDatabase(
                 $id,
                 $alter
             );
-
             return SuccessRedirectMessage::successRedirect(
                 'permissao.index',
                 ['success' => 'Permissões alteradas com sucesso'],
                 $usuarioId
             );
-            
         } else {
             return FailRedirectMessage::failRedirect(
                 'permissao.edit', 
@@ -118,7 +122,6 @@ class PermissaoController extends Controller
                 $id
             );
         }
-
         return $alter;
     }
 
@@ -132,7 +135,6 @@ class PermissaoController extends Controller
             [],
             []
         );
-
         if($check){
             return FailRedirectMessage::failRedirect(
                 'permissao.index',

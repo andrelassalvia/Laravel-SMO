@@ -8,8 +8,8 @@
   <x-admin.form-name-component :data="$data" :blade="'edit'" :group="''">
     {{-- TABS de navegacao --}}
     <x-slot name="tabs">
-      <div class="tab">
-        <ul class="nav nav-tabs">
+      <div class="">
+        <ul class="nav nav-tabs tabs" style="margin-bottom: 10px; margin-top: -10px">
           <x-admin.tabs-component 
             :active="'active'" {{-- shine active tab or no--}}
             :route="'grupo.edit'" {{-- route tab goes --}}
