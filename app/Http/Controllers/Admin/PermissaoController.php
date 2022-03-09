@@ -23,45 +23,53 @@ class PermissaoController extends Controller
     use FailRedirectMessage, SuccessRedirectMessage;
 
     public function __construct(
-        Permissao $permissao,
         TipoUsuario $tipoUsuario,
         Formulario $formulario
     )
     {
-        $this->permissao = $permissao;
         $this->tipoUsuario = $tipoUsuario;
         $this->formulario = $formulario;
     }
 
-    public function index($id)
+    public function index(Permissao $permissao, $id)
     {
+        $this->authorize('view-any', $permissao);
         $data = TipoUsuario::find($id);
         $formularios = new CollectData($this->formulario);
         $formularios = $formularios->collection('nome', 'ASC',true);
-        $permissoes = $this->permissao->where('tipousuario_id', $data->id)->get();
+        $permissoes = $permissao->where('tipousuario_id', $data->id)->get();
         return view('admin.permissao.index', compact('data', 'formularios', 'permissoes'));
     }
 
-    public function edit($id)
+    public function edit(Permissao $permissao, $id)
     {
-        $permissao = $this->permissao->find($id);
+        $this->authorize('update', $permissao);
+        $permissao = Permissao::find($id);
         $data = $this->tipoUsuario->where('id', $permissao['tipousuario_id'])->get()->first();
-        $formularios = $this->formulario->where('id', $permissao['formulario_id'])->get()->first();
-        return view ('admin.permissao.edit', compact('data', 'formularios', 'permissao'));
+        $formularios = $this->formulario
+            ->where('id', $permissao['formulario_id'])
+            ->get()
+            ->first();
+        return view (
+            'admin.permissao.edit', 
+            compact('data', 'formularios', 'permissao')
+        );
     }
 
-    public function store(PermissaoFormRequest $request, $id)
+    public function store(PermissaoFormRequest $request, Permissao $permissao, $id)
     {
+        $this->authorize('create', $permissao);
         $dataForm = $request->validated();
-        $data = new CheckDataBase($this->permissao);
+        $data = new CheckDataBase($permissao);
         $data = $data->checkInDatabase(
             ['tipousuario_id', 'formulario_id'], 
             [
-                $id,
-                $dataForm['formulario_id']
-         ]);
+                        $id,
+                        $dataForm['formulario_id']
+                    ]
+        );
         if($data){
-            $store = new SaveInDatabase($this->permissao);
+            $store = new SaveInDatabase($permissao);
             $newData = array_combine(
                 ['tipousuario_id', 'formulario_id', 'inclui', 'altera', 'exclui'],
                 [
@@ -87,13 +95,14 @@ class PermissaoController extends Controller
         }
     }
 
-    public function update(PermissaoFormRequest $request, $id)
+    public function update(PermissaoFormRequest $request, Permissao $permissao, $id)
     {
-        $register = $this->permissao->find($id);
+        $this->authorize('update', $permissao);
+        $register = Permissao::find($id);
         $usuarioId = $register['tipousuario_id'];
         $formularioId = $register['formulario_id'];
         $dataForm = $request->validated();
-        $alter = new CheckDataBase($this->permissao);
+        $alter = new CheckDataBase($permissao);
         $alter = $alter->checkInDatabase(
             ['tipousuario_id','formulario_id','inclui', 'altera', 'exclui'],
             [
@@ -105,7 +114,7 @@ class PermissaoController extends Controller
             ]
         );
         if($alter){
-            $newValue = new ChangeRegister($this->permissao);
+            $newValue = new ChangeRegister($permissao);
             $newValue = $newValue->changeRegisterInDatabase(
                 $id,
                 $alter
@@ -125,11 +134,12 @@ class PermissaoController extends Controller
         return $alter;
     }
 
-    public function destroy($id)
+    public function destroy(Permissao $permissao, $id)
     {
-        $register = $this->permissao->find($id);
+        $this->authorize('delete', $permissao);
+        $register = Permissao::find($id);
         $mainId = $register['tipousuario_id'];
-        $check = new CheckToDelete($this->permissao);
+        $check = new CheckToDelete($permissao);
         $check = $check->checkDb(
             $id,
             [],
@@ -142,7 +152,7 @@ class PermissaoController extends Controller
                 $id
             );
         } else {
-            $delete = new DeleteRegister($this->permissao);
+            $delete = new DeleteRegister($permissao);
             $delete = $delete->erase($id);
             return SuccessRedirectMessage::successRedirect(
                 'permissao.index',

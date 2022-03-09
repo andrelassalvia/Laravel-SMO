@@ -33,4 +33,6 @@ class Funcao extends Model
         return $this->hasMany(GrupoFuncao::class);
     }
 
+   
+
 }

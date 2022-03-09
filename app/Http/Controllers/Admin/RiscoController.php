@@ -26,43 +26,45 @@ class RiscoController extends Controller
     use SuccessRedirectMessage, FailRedirectMessage;
 
     public function __construct(
-        Risco $risco,
         TipoRisco $tipoRisco,
         AtendimentoRisco $atendimentoRisco,
         GrupoRisco $grupoRisco
         
     )
     {
-        $this->risco = $risco;
         $this->tipoRisco = $tipoRisco;
         $this->atendimentoRisco = $atendimentoRisco;
         $this->grupoRisco = $grupoRisco;
     }
 
-    public function index()
+    public function index(Risco $risco)
     {
-        $riscos = new CollectData($this->risco);
+        $this->authorize('view-any', $risco);
+        $riscos = new CollectData($risco);
         $data = $riscos->collection('nome', 'ASC', false);
         return view ('admin.risco.index', compact('data'));
     }
    
-    public function create()
+    public function create(Risco $risco)
     {
-        $data = $this->risco;
+        $this->authorize('create', $risco);
+        $data = $risco;
         $tipoRiscos = new CollectData($this->tipoRisco);
         $tipoRiscos = $tipoRiscos->collection('nome', 'ASC', true);
         return view ('admin.risco.create', compact('tipoRiscos', 'data'));
     }
      
-    public function store(RiscoFormRequest $request)
+    public function store(RiscoFormRequest $request, Risco $risco)
     {
+        $this->authorize('create', $risco);
+
         $dataForm = $request->validated();
-        $data = new CheckDataBase($this->risco);
+        $data = new CheckDataBase($risco);
         $data = $data->checkInDatabase(
             ['nome'], 
             [$dataForm['nome']]);
         if($data){
-            $store = new SaveInDatabase($this->risco);
+            $store = new SaveInDatabase($risco);
             $store = $store->saveDatabase($data);
             return SuccessRedirectMessage::successRedirect(
                 'risco.index',
@@ -78,33 +80,36 @@ class RiscoController extends Controller
         }
     }
 
-    public function show($id)
+    public function show(Risco $risco, $id)
     {
-        $data = $this->risco->find($id);
+        $this->authorize('view', $risco);
+        $data = Risco::find($id);
         return view ('admin.risco.show', compact('data'));
     }
 
-    public function edit($id)
+    public function edit(Risco $risco, $id)
     {
-      $data = $this->risco->find($id);
-      $tipoRiscos = new CollectData($this->tipoRisco);
-      $tipoRiscos = $tipoRiscos->collection('nome', 'ASC', true);
-      return view(
-          'admin.risco.edit', 
-          compact('data', 'tipoRiscos')
-      );
+        $this->authorize('update', $risco);
+        $data = Risco::find($id);
+        $tipoRiscos = new CollectData($this->tipoRisco);
+        $tipoRiscos = $tipoRiscos->collection('nome', 'ASC', true);
+        return view(
+            'admin.risco.edit', 
+            compact('data', 'tipoRiscos')
+        );
     }
 
-    public function update(RiscoFormRequest $request, $id)
+    public function update(RiscoFormRequest $request, Risco $risco, $id)
     {
+        $this->authorize('update', $risco);
         $dataForm = $request->validated();
-        $alter = new CheckDataBase($this->risco);
+        $alter = new CheckDataBase($risco);
         $alter = $alter->checkInDatabase(
             ['nome'], 
             [$dataForm['nome']], 
         );
         if($alter){
-            $newRegister = new ChangeRegister($this->risco);
+            $newRegister = new ChangeRegister($risco);
             $newRegister = $newRegister->changeRegisterInDatabase(
                 $id,
                 $alter
@@ -123,9 +128,10 @@ class RiscoController extends Controller
         }
     }
 
-    public function destroy($id)
+    public function destroy(Risco $risco, $id)
     {
-        $check = new CheckToDelete($this->risco);
+        $this->authorize('delete', $risco);
+        $check = new CheckToDelete($risco);
         $check = $check->checkDb(
             $id,
             [$this->atendimentoRisco, $this->grupoRisco],
@@ -138,7 +144,7 @@ class RiscoController extends Controller
                 $id
             );
         } else {
-            $delete = new DeleteRegister($this->risco);
+            $delete = new DeleteRegister($risco);
             $delete = $delete->erase($id);
             return SuccessRedirectMessage::successRedirect(
                 'risco.index',
@@ -148,13 +154,13 @@ class RiscoController extends Controller
         }
     }
 
-    public function search(Request $request)
+    public function search(Request $request, Risco $risco)
     {
         $dataForm = $request->validate([
             'nome' => 'required'
         ]);
         $nome = "%".$dataForm['nome']."%";
-        $riscos = new SearchRequest($this->risco);
+        $riscos = new SearchRequest($risco);
         $riscos = $riscos->searchIt('nome', [$nome]);
         return view('admin.risco.index' ,compact('riscos', 'nome', 'dataForm'));
     }

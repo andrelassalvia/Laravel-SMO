@@ -25,23 +25,23 @@ class UsersController extends Controller
     use SuccessRedirectMessage, FailRedirectMessage;
 
     public function __construct(
-        User $user,
         TipoUsuario $tipoUsuario
     )
     {
-        $this->user = $user;
         $this->tipoUsuario = $tipoUsuario;
     }
 
-    public function index()
+    public function index(User $user)
     {
-        $data = new CollectData($this->user);
+        $this->authorize('view-any', $user);
+        $data = new CollectData($user);
         $data = $data->collection('name', 'ASC', false);
         return view('admin.usuario.index', compact('data'));
     }
 
-    public function create()
+    public function create(User $user)
     {
+        $this->authorize('create', $user);
         $tipoUsuarios = new CollectData($this->tipoUsuario);
         $tipoUsuarios = $tipoUsuarios->collection(
             'nome',
@@ -51,10 +51,11 @@ class UsersController extends Controller
         return view('admin.usuario.create', compact('tipoUsuarios'));
     }
 
-    public function store(UsersFormRequest $request)
+    public function store(UsersFormRequest $request, User $user)
     {
+        $this->authorize('create', $user);
         $dataForm = $request->validated();
-        $data = new CheckDataBase($this->user);
+        $data = new CheckDataBase($user);
         $data = $data->checkInDatabase(
             ['email'],
             [$dataForm['email']]
@@ -66,7 +67,7 @@ class UsersController extends Controller
                 ''
             );
         } else {
-            $save = new SaveInDatabase($this->user);
+            $save = new SaveInDatabase($user);
             $dataForm['password'] = bcrypt($dataForm['password']);
             $save = $save->saveDatabase($dataForm);
             return SuccessRedirectMessage::successRedirect(
@@ -77,10 +78,10 @@ class UsersController extends Controller
         }
     }
 
-    public function edit($id)
+    public function edit(User $user, $id)
     {
-        $data = $this->user->find($id);
-        // dd($data);
+        $this->authorize('update', $user);
+        $data = $user->find($id);
         $tipoUsuarios = new CollectData($this->tipoUsuario);
         $tipoUsuarios = $tipoUsuarios->collection(
             'nome',
@@ -90,8 +91,9 @@ class UsersController extends Controller
         return view('admin.usuario.edit', compact('data', 'tipoUsuarios'));
     }
 
-    public function update(Request $request, UsersSaveFormRequest $formRequest, $id)
+    public function update(Request $request, UsersSaveFormRequest $formRequest, User $user, $id)
     {
+        $this->authorize('update', $user);
         $validated = $formRequest->validated();
         $data = $request->validate([
             'name' => 'required|min:3|max:30',
@@ -103,7 +105,7 @@ class UsersController extends Controller
        
         if($data['password']){
            $data['password'] = bcrypt($data['password']);
-           $newData = new ChangeRegister($this->user);
+           $newData = new ChangeRegister($user);
            $newData = $newData->changeRegisterInDatabase($id, $data);
            if($newData){
                return SuccessRedirectMessage::successRedirect(
@@ -119,7 +121,7 @@ class UsersController extends Controller
                );
            }
         } else {
-            $newData = new ChangeRegister($this->user);
+            $newData = new ChangeRegister($user);
             $newData = $newData->changeRegisterInDatabase($id, $validated);
             if($newData){
                 return SuccessRedirectMessage::successRedirect(
@@ -137,13 +139,13 @@ class UsersController extends Controller
         }
     }
 
-    public function search(Request $request)
+    public function search(Request $request, User $user)
     {
         $dataForm = $request->validate([
             'name' => 'required'
         ]);
         $nome = '%'.$dataForm['name'].'%';
-        $data = new SearchRequest($this->user);
+        $data = new SearchRequest($user);
         $data = $data->searchIt('name', ['nome' => $nome]);
         return view('admin.usuario.index', compact('data', 'nome', 'dataForm'));
     }
@@ -154,12 +156,12 @@ class UsersController extends Controller
        return view('admin.usuario.password_edit', compact('user'));
     }
 
-    public function passwordUpdate(PasswordFormRequest $request, $id)
+    public function passwordUpdate(PasswordFormRequest $request, User $user, $id)
     {
         $dataForm = $request->validated();
         $dataForm['password'] = bcrypt($dataForm['password']);
         if(Hash::check($dataForm['last_password'], Auth::user()->password)){
-            $user = $this->user->find($id);
+            $user = User::find($id);
             $update = $user->update($dataForm);
             if($update){
                 return SuccessRedirectMessage::successRedirect(

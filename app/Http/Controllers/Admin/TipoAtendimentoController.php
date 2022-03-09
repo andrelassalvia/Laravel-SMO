@@ -24,20 +24,16 @@ class TipoAtendimentoController extends Controller
 {
     use SuccessRedirectMessage, FailRedirectMessage;
 
-    public function __construct(
-        TipoAtendimento $tipoAtendimento,
-        Atendimento $atendimento,
-        GrupoExame $grupoExame
-        )
+    public function __construct(Atendimento $atendimento, GrupoExame $grupoExame)
     {
-        $this->tipoAtendimento = $tipoAtendimento;
         $this->atendimento = $atendimento;
         $this->grupoExame = $grupoExame;
     }
 
-    public function index()
+    public function index(TipoAtendimento $tipoAtendimento)
     {
-        $tipoAtendimentos = new CollectData($this->tipoAtendimento);
+        $this->authorize('view-any', $tipoAtendimento);
+        $tipoAtendimentos = new CollectData($tipoAtendimento);
         $data = $tipoAtendimentos->collection(
             'nome', 
             'ASC',
@@ -49,19 +45,22 @@ class TipoAtendimentoController extends Controller
         );
     }
 
-    public function create()
+    public function create(TipoAtendimento $tipoAtendimento)
     {
-        $data = $this->tipoAtendimento;
+        $this->authorize('create', $tipoAtendimento);
+        $data = $tipoAtendimento;
         return view('admin.tipoAtendimento.create', compact('data'));
     }
 
-    public function store(TipoAtendimentoFormRequest $request)
+    public function store(TipoAtendimentoFormRequest $request, TipoAtendimento $tipoAtendimento)
     {
+        $this->authorize('create', $tipoAtendimento);
+
         $dataForm = $request->validated();
-        $data = new CheckDataBase($this->tipoAtendimento);
+        $data = new CheckDataBase($tipoAtendimento);
         $data = $data->checkInDatabase(['nome'], [$dataForm['nome']]);
         if($data){
-            $store = new SaveInDatabase($this->tipoAtendimento);
+            $store = new SaveInDatabase($tipoAtendimento);
             $store = $store->saveDatabase($data);
             return SuccessRedirectMessage::successRedirect(
                 'tipoatendimento.index',
@@ -77,37 +76,41 @@ class TipoAtendimentoController extends Controller
         }
     }
 
-    public function show($id)
+    public function show(TipoAtendimento $tipoAtendimento, $id)
     {
-        $data = $this->tipoAtendimento->find($id);
-
+        $this->authorize('view', $tipoAtendimento);
+        $data = TipoAtendimento::find($id);
         return view(
             'admin.tipoAtendimento.show', 
             compact('data'));
     }
 
-    public function edit($id)
+    public function edit(TipoAtendimento $tipoAtendimento, $id)
     {
-        $data = $this->tipoAtendimento->find($id);
-
+        $this->authorize('update', $tipoAtendimento);
+        $data = TipoAtendimento::find($id);
         return view(
             'admin.tipoAtendimento.edit',
             compact('data')
         );
     }
 
-    public function update(TipoAtendimentoFormRequest $request, $id)
+    public function update(
+        TipoAtendimentoFormRequest $request, 
+        TipoAtendimento $tipoAtendimento, 
+        $id
+    )
     {
+        $this->authorize('update', $tipoAtendimento);
         $dataForm = $request->validated();
-
-        $alter = new CheckDataBase($this->tipoAtendimento);
+        $alter = new CheckDataBase($tipoAtendimento);
         $alter = $alter->checkInDatabase(
             ['nome'], 
             [$dataForm['nome']], 
         );
 
         if($alter){
-            $newRegister = new ChangeRegister($this->tipoAtendimento);
+            $newRegister = new ChangeRegister($tipoAtendimento);
             $newRegister = $newRegister->changeRegisterInDatabase(
                 $id,
                 $alter
@@ -126,9 +129,10 @@ class TipoAtendimentoController extends Controller
         }
     }
 
-    public function destroy($id)
+    public function destroy($id, TipoAtendimento $tipoAtendimento)
     {
-        $check = new CheckToDelete($this->tipoAtendimento);
+        $this->authorize('delete', $tipoAtendimento);
+        $check = new CheckToDelete($tipoAtendimento);
         $check = $check->checkDb(
             $id,
             [$this->atendimento, $this->grupoExame],
@@ -142,7 +146,7 @@ class TipoAtendimentoController extends Controller
                 $id
             );
         } else {
-            $delete = new DeleteRegister($this->tipoAtendimento);
+            $delete = new DeleteRegister($tipoAtendimento);
             $delete = $delete->erase($id);
             return SuccessRedirectMessage::successRedirect(
                 'tipoatendimento.index',
@@ -152,13 +156,13 @@ class TipoAtendimentoController extends Controller
         }
     }
 
-    public function search(Request $request)
+    public function search(Request $request, TipoAtendimento $tipoAtendimento)
     {
         $dataForm = $request->validate([
             'nome' => 'required'
         ]);
         $data = '%'.$dataForm['nome'].'%';
-        $tipoAtendimentos = new SearchRequest($this->tipoAtendimento);
+        $tipoAtendimentos = new SearchRequest($tipoAtendimento);
         $tipoAtendimentos = $tipoAtendimentos->searchIt(
             'nome',
            ['data' => $data]

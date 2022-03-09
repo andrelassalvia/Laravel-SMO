@@ -22,35 +22,36 @@ class TipoUsuarioController extends Controller
     use SuccessRedirectMessage, FailRedirectMessage;
 
     public function __construct (
-        TipoUsuario $tipoUsuario,
         Permissao $permissao
     )
     {
-        $this->tipoUsuario = $tipoUsuario;
         $this->permissao = $permissao;
     }
    
-    public function index()
+    public function index(TipoUsuario $tipoUsuario)
     {
-        $table = $this->tipoUsuario->getTable();
-        $data = new CollectData($this->tipoUsuario);
+        $this->authorize('view-any', $tipoUsuario);
+        $table = $tipoUsuario->getTable();
+        $data = new CollectData($tipoUsuario);
         $data = $data->collection('nome', 'ASC', false);
         return view ('admin.tipoUsuario.index', compact('table', 'data'));
     }
 
-    public function create()
+    public function create(TipoUsuario $tipoUsuario)
     {
-        $table = $this->tipoUsuario;
+        $this->authorize('create', $tipoUsuario);
+        $table = $tipoUsuario;
         return view('admin.tipoUsuario.create', compact('table'));
     }
 
-    public function store(TipoUsuarioFormRequest $request)
+    public function store(TipoUsuarioFormRequest $request, TipoUsuario $tipoUsuario)
     {
+        $this->authorize('create', $tipoUsuario);
         $dataForm = $request->validated();
-        $data = new CheckDataBase($this->tipoUsuario);
+        $data = new CheckDataBase($tipoUsuario);
         $data = $data->checkInDatabase(['nome'], [$dataForm['nome']]);
         if($data){
-            $store = new SaveInDatabase($this->tipoUsuario);
+            $store = new SaveInDatabase($tipoUsuario);
             $store = $store->saveDatabase($data);
             return SuccessRedirectMessage::successRedirect(
                 'tipousuario.index',
@@ -66,29 +67,32 @@ class TipoUsuarioController extends Controller
         }
     }
 
-    public function show($id)
+    public function show(TipoUsuario $tipoUsuario, $id)
     {
+        $this->authorize('view', $tipoUsuario);
         $data = TipoUsuario::find($id);
         return view('admin.tipoUsuario.show', compact('data'));
     }
 
-    public function edit($id)
+    public function edit(TipoUsuario $tipoUsuario, $id)
     {
+        $this->authorize('update', $tipoUsuario);
         $data = TipoUsuario::find($id);
         return view('admin.tipoUsuario.edit', compact('data'));
     }
 
-    public function update(TipoUsuarioFormRequest $request, $id)
+    public function update(TipoUsuarioFormRequest $request, TipoUsuario $tipoUsuario, $id)
     {
+        $this->authorize('update', $tipoUsuario);
         $dataForm = $request->validated();
-        $alter = new CheckDataBase($this->tipoUsuario);
+        $alter = new CheckDataBase($tipoUsuario);
         $alter = $alter->checkInDatabase(
             ['nome'], 
             [$dataForm['nome']], 
         );
 
         if($alter){
-            $newRegister = new ChangeRegister($this->tipoUsuario);
+            $newRegister = new ChangeRegister($tipoUsuario);
             $newRegister = $newRegister->changeRegisterInDatabase(
                 $id,
                 $alter
@@ -107,9 +111,10 @@ class TipoUsuarioController extends Controller
         }
     }
 
-    public function destroy($id)
+    public function destroy(TipoUsuario $tipoUsuario, $id)
     {
-        $check = new CheckToDelete($this->tipoUsuario);
+        $this->authorize('delete', $tipoUsuario);
+        $check = new CheckToDelete($tipoUsuario);
         $check = $check->checkDb(
             $id,
             [$this->permissao],
@@ -123,7 +128,7 @@ class TipoUsuarioController extends Controller
                 $id
             );
         } else {
-            $delete = new DeleteRegister($this->tipoUsuario);
+            $delete = new DeleteRegister($tipoUsuario);
             $delete = $delete->erase($id);
             return SuccessRedirectMessage::successRedirect(
                 'tipousuario.index',

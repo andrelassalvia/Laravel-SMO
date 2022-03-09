@@ -26,38 +26,39 @@ class SetorController extends Controller
     use SuccessRedirectMessage, FailRedirectMessage;
 
     public function __construct(
-        Setor $setor,
         Atendimento $atendimento,
         Empregado $empregado,
         GrupoFuncao $grupoFuncao
     ) {
-        $this->setor = $setor;
         $this->atendimento = $atendimento;
         $this->empregado = $empregado;
         $this->grupoFuncao = $grupoFuncao;
     }
 
-    public function index()
+    public function index(Setor $setor)
     {
-        $setores = new CollectData($this->setor);
+        $this->authorize('view-any', $setor);
+        $setores = new CollectData($setor);
         $data = $setores->collection('nome', 'ASC', false);
         
         return view ('admin.setor.index', compact('data'));
     }
     
-    public function create()
+    public function create(Setor $setor)
     {
-        $data = $this->setor;
+        $this->authorize('create', $setor);
+        $data = $setor;
         return view ('admin.setor.create', compact('data'));
     }
 
-    public function store(SetorFormRequest $request)
+    public function store(SetorFormRequest $request, Setor $setor)
     {
+        $this->authorize('create', $setor);
         $dataForm = $request->validated();
-        $data = new CheckDataBase($this->setor);
+        $data = new CheckDataBase($setor);
         $data = $data->checkInDatabase(['nome'], [$dataForm['nome']]);
         if($data){
-            $store = new SaveInDatabase($this->setor);
+            $store = new SaveInDatabase($setor);
             $store = $store->saveDatabase($data);
             return SuccessRedirectMessage::successRedirect(
                 'setor.index',
@@ -73,29 +74,32 @@ class SetorController extends Controller
         }
     }
 
-    public function show($id)
+    public function show(Setor $setor, $id)
     {
+        $this->authorize('view', $setor);
         $data = Setor::find($id);
         return view ('admin.setor.show', compact('data'));
     }
 
-    public function edit($id)
+    public function edit(Setor $setor, $id)
     {
+        $this->authorize('update', $setor);
         $data = Setor::find($id);
         return view ('admin.setor.edit', compact('data'));
     }
 
-    public function update(SetorFormRequest $request, $id)
+    public function update(SetorFormRequest $request, Setor $setor, $id)
     {
+        $this->authorize('update', $setor);
         $dataForm = $request->validated();
-        $alter = new CheckDataBase($this->setor);
+        $alter = new CheckDataBase($setor);
         $alter = $alter->checkInDatabase(
             ['nome'], 
             [$dataForm['nome']], 
         );
 
         if($alter){
-            $newRegister = new ChangeRegister($this->setor);
+            $newRegister = new ChangeRegister($setor);
             $newRegister = $newRegister->changeRegisterInDatabase(
                 $id,
                 $alter
@@ -114,9 +118,10 @@ class SetorController extends Controller
         }
     }
 
-    public function destroy($id)
+    public function destroy(Setor $setor, $id)
     {
-        $check = new CheckToDelete($this->setor);
+        $this->authorize('delete', $setor);
+        $check = new CheckToDelete($setor);
         $check = $check->checkDb(
             $id,
             [$this->empregado, $this->atendimento, $this->grupoFuncao],
@@ -130,7 +135,7 @@ class SetorController extends Controller
                 $id
             );
         } else {
-            $delete = new DeleteRegister($this->setor);
+            $delete = new DeleteRegister($setor);
             $delete = $delete->erase($id);
             return SuccessRedirectMessage::successRedirect(
                 'setor.index',
@@ -140,13 +145,13 @@ class SetorController extends Controller
         }
     }
 
-    public function search(Request $request)
+    public function search(Request $request, Setor $setor)
     {
         $dataForm = $request->validate([
             'nome' => 'required'
         ]);
         $nome = '%'.$dataForm['nome'].'%';
-        $setores = new SearchRequest($this->setor);
+        $setores = new SearchRequest($setor);
         $data = $setores->searchIt('nome', ['nome' => $nome]);
         return view('admin.setor.index', compact('nome', 'data', 'dataForm'));
     }

@@ -25,36 +25,37 @@ class ExameController extends Controller
     use SuccessRedirectMessage, FailRedirectMessage;
 
     public function __construct(
-        Exame $exame,
         AtendimentoExame $atendimentoExame,
         GrupoExame $grupoExame
     ) 
     {
-        $this->exame = $exame;
         $this->atendimentoExame = $atendimentoExame;
         $this->grupoExame = $grupoExame;
     }
     
-    public function index()
+    public function index(Exame $exame)
     {
-        $exames = new CollectData($this->exame);
+        $this->authorize('view-any', $exame);
+        $exames = new CollectData($exame);
         $data = $exames->collection('nome', 'ASC', false);     
         return view ('admin.exame.index', compact('data'));
     }
   
-    public function create()
+    public function create(Exame $exame)
     {
-        $data = $this->exame;
+        $this->authorize('create', $exame);
+        $data = $exame;
         return view ('admin.exame.create', compact('data'));
     }
 
-    public function store(ExameFormRequest $request)
+    public function store(ExameFormRequest $request, Exame $exame)
     {
+        $this->authorize('create', $exame);
         $dataForm = $request->validated();
-        $data = new CheckDataBase($this->exame);
+        $data = new CheckDataBase($exame);
         $data = $data->checkInDatabase(['nome'], [$dataForm['nome']]);
         if($data){
-            $store = new SaveInDatabase($this->exame);
+            $store = new SaveInDatabase($exame);
             $store = $store->saveDatabase($data);
             return SuccessRedirectMessage::successRedirect(
                 'exame.index',
@@ -70,28 +71,31 @@ class ExameController extends Controller
         }
     }
     
-    public function show($id)
+    public function show(Exame $exame, $id)
     {
+        $this->authorize('view', $exame);
         $data = Exame::find($id);
         return view ('admin.exame.show', compact('data'));
     }
     
-    public function edit($id)
+    public function edit(Exame $exame, $id)
     {
+        $this->authorize('update', $exame);
         $data = Exame::find($id);
         return view ('admin.exame.edit', compact('data'));
     }
     
-    public function update(ExameFormRequest $request, $id)
+    public function update(ExameFormRequest $request, Exame $exame, $id)
     {
+        $this->authorize('update', $exame);
         $dataForm = $request->validated();
-        $alter = new CheckDataBase($this->exame);
+        $alter = new CheckDataBase($exame);
         $alter = $alter->checkInDatabase(
             ['nome'],
             [$dataForm['nome']]
         );
         if($alter){
-            $newRegister = new ChangeRegister(($this->exame));
+            $newRegister = new ChangeRegister(($exame));
             $newRegister = $newRegister->changeRegisterInDatabase(
                 $id,
                 $alter
@@ -110,9 +114,10 @@ class ExameController extends Controller
         }
     }
 
-    public function destroy($id)
+    public function destroy(Exame $exame, $id)
     {
-        $check = new CheckToDelete($this->exame);
+        $this->authorize('delete', $exame);
+        $check = new CheckToDelete($exame);
         $check = $check->checkDb(
             $id,
             [$this->grupoExame, $this->atendimentoExame],
@@ -125,7 +130,7 @@ class ExameController extends Controller
                 $id
             );
         } else {
-            $delete = new DeleteRegister($this->exame);
+            $delete = new DeleteRegister($exame);
             $delete = $delete->erase($id);
             return SuccessRedirectMessage::successRedirect(
                 'exame.index',
@@ -135,13 +140,13 @@ class ExameController extends Controller
         }
     }
 
-    public function search(Request $request)
+    public function search(Request $request, Exame $exame)
     {
         $dataForm = $request->validate([
             'nome' => 'required'
         ]);
         $nome = '%'.$dataForm['nome'].'%';
-        $exames = new SearchRequest($this->exame);
+        $exames = new SearchRequest($exame);
         $data = $exames->searchIt('nome', ['nome' => $nome]);
 
         

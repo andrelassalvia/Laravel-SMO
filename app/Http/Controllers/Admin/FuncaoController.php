@@ -26,39 +26,39 @@ class FuncaoController extends Controller
     use SuccessRedirectMessage, FailRedirectMessage;
 
     public function __construct(
-        Funcao $funcao,
         Empregado $empregado,
         Atendimento $atendimento,
         GrupoFuncao $grupoFuncao
     ) 
     {
-        $this->funcao = $funcao;
         $this->empregado = $empregado;
         $this->atendimento = $atendimento;
-        $this->grupoFuncao = $grupoFuncao;
-       
+        $this->grupoFuncao = $grupoFuncao; 
     }
     
-    public function index()
+    public function index(Funcao $funcao)
     {
-        $funcoes = new CollectData($this->funcao);
+        $this->authorize('view-any', $funcao);
+        $funcoes = new CollectData($funcao);
         $data = $funcoes->collection('nome', 'ASC', false);
         return view ('admin.funcao.index', compact('data'));
     }
   
-    public function create()
+    public function create(Funcao $funcao)
     {
-        $data = $this->funcao;
+        $this->authorize('create', $funcao);
+        $data = $funcao;
         return view ('admin.funcao.create', compact('data'));
     }
 
-    public function store(FuncaoFormRequest $request)
+    public function store(FuncaoFormRequest $request, Funcao $funcao)
     {
+        $this->authorize('create', $funcao);
         $dataForm = $request->validated();
-        $data = new CheckDataBase($this->funcao);
+        $data = new CheckDataBase($funcao);
         $data = $data->checkInDatabase(['nome'], [$dataForm['nome']]);
         if($data){
-            $store = new SaveInDatabase($this->funcao);
+            $store = new SaveInDatabase($funcao);
             $store = $store->saveDatabase($data);
             return SuccessRedirectMessage::successRedirect(
                 'funcao.index',
@@ -74,33 +74,32 @@ class FuncaoController extends Controller
         }
     }
     
-    public function show($id)
+    public function show(Funcao $funcao, $id)
     {
-        // dd($id);
-        
-        $data = Funcao::find($id);
-       
-        return view ('admin.funcao.show', compact('data'));
+        $this->authorize('view', $funcao);
+        $data = $funcao->find($id);
+        return view ('admin.funcao.show', ['data' => $data]);
     }
 
     
-    public function edit($id)
+    public function edit(Funcao $funcao, $id)
     {
+        $this->authorize('update', $funcao);
         $data = Funcao::find($id);
         return view ('admin.funcao.edit', compact('data'));
     }
 
-    public function update(FuncaoFormRequest $request, $id)
+    public function update(FuncaoFormRequest $request, Funcao $funcao,  $id)
     {
         $dataForm = $request->validated();
-        $alter = new CheckDatabase($this->funcao);
+        $alter = new CheckDatabase($funcao);
         $alter = $alter->checkInDatabase(
            ['nome'],
            [$dataForm['nome']]
         );
 
         if($alter){
-            $newRegister = new ChangeRegister($this->funcao);
+            $newRegister = new ChangeRegister($funcao);
             $newRegister = $newRegister->changeRegisterInDatabase(
                 $id,
                 $alter
@@ -119,9 +118,9 @@ class FuncaoController extends Controller
         }
     }
 
-    public function destroy($id)
+    public function destroy(Funcao $funcao, $id)
     {
-        $check = new CheckToDelete($this->funcao);
+        $check = new CheckToDelete($funcao);
         $check = $check->checkDb(
             $id,
             [$this->empregado, $this->atendimento, $this->grupoFuncao],
@@ -135,7 +134,7 @@ class FuncaoController extends Controller
                 $id
             );
         } else {
-            $delete = new DeleteRegister($this->funcao);
+            $delete = new DeleteRegister($funcao);
             $delete = $delete->erase($id);
             return SuccessRedirectMessage::successRedirect(
                 'funcao.index',
@@ -145,13 +144,13 @@ class FuncaoController extends Controller
         }
     }
 
-    public function search(Request $request)
+    public function search(Request $request, Funcao $funcao)
     {
         $dataForm = $request->validate([
             'nome' => 'required'
         ]);
         $nome = '%'.$dataForm['nome'].'%';
-        $funcoes = new SearchRequest($this->funcao);
+        $funcoes = new SearchRequest($funcao);
         $data = $funcoes->searchIt('nome', ['nome' => $nome]);
         
         return view('admin.funcao.index', compact('nome', 'data', 'dataForm'));

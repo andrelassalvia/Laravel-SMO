@@ -49,4 +49,11 @@ class User extends Authenticatable
         return $this->belongsTo(TipoUsuario::class);
     }
 
+    public function isAdmin(User $user)
+    {
+        if($user['tipousuario_id'] == '1'){
+            return true;
+        }
+    }
+
 }

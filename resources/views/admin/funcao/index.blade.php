@@ -14,7 +14,10 @@
   {{-- Mensagem de cadastro com sucesso --}}
   @include('admin._components.alertSuccess')
   {{-- TABELA COM LISTA DE FUNCOES --}}
+
   <x-admin.list-component :data="$data" :column="'Função'"></x-admin.list-component>
+      
+
   {{-- Voltar para Funcoes Botao voltar nao pode aparecer na pogina index --}}
   <div class="ms-3">
     @if(Route::is('funcao.search') && request()->filled('nome'))

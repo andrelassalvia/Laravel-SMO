@@ -1,129 +1,131 @@
 @extends('layouts.base')
 
 @section('content')
-    <div class="conteudo">
-
-      <x-admin.title-component :title="'Administração de Permissões'"></x-admin.title-component>
-
-      <x-admin.form-name-component :data="$data" :blade="'index'" :group="'permissao'">
-        <x-slot name="delete"></x-slot>
-        {{-- Tabs de Navegacao --}}
-        <x-slot name="tabs">
-          <div class="tab">
-            <ul class="nav nav-tabs">
-              <x-admin.tabs-component 
-                :active="''" 
-                :route="'tipousuario.edit'"
-                :id="$data->id"
-                :tab-name="'Tipo Usuário'">
-              </x-admin.tabs-component>
-              <x-admin.tabs-component 
-                :active="'active'" 
-                :route="'permissao.index'" {{-- route tab goes --}}
-                :id="$data->id" 
-                :tab-name="'Permissões'">
-              </x-admin.tabs-component>
+<div class="conteudo">
+    <div class="titulo">
+        <h2>Administração de Tipos de Usuários - Permissões</h2>
+    </div>
+    
+    <form class=" method="POST" action="{{ route('permissao.store', $data->id) }}">
+        <div class="aba">
+            <ul class="nav nav-tabs" style="margin-bottom: 10px; margin-top: -10px;">
+                <li><a href="{{route('tipousuario.edit', $data->id)}}">Tipo Usuário</a></li>
+                <li class="active"><a href="{{route('permissao.index', $data->id)}}" style="cursor: pointer;">Permissões</a></li>
             </ul>
-          </div>
-        </x-slot>
-        <x-slot name='form2'>
-          <x-admin.form-component :label="'Formulário'" :option-column="'formulario_id'" :data="$formularios"></x-admin.form-component>
-        </x-slot>
-        <x-slot name='form3'>
-          <div class="form-group" >
-            <label for="flexCheckDefault" class="control-label col-sm-2 control-label--create">Permissão</label>
-            <div class="" style="display: grid; margin-left:18%">
-              <div class="form-check"> 
-                <input type="hidden" name="inclui" value="0">
-                <input class="form-check-input" type="checkbox" name="inclui" value="1" id="flexCheckDefault">
-                <label class="form-check-label" style="display: grid; align-items: center; padding:0; text-align:left" for="flexCheckDefault">
-                  Incluir
+        </div>
+        <div class="form1">   
+        
+            <input type="hidden" name="_token" value="{{csrf_token()}}">
+            <div class="row mb-2">
+                <label class="control-label col-sm-2" for="nome">Tipo Usuário:</label>
+              <div class="col-sm-8">
+                  <input class="form-control" type="text" name="nome" value="{{ $data->nome }}">
               </div>
-              <div class="form-check">
-                <input type="hidden" name="altera" value="0">
-                <input class="form-check-input" type="checkbox" name="altera" value="1" id="flexCheckDefault">
-                <label class="form-check-label" style="display: grid; align-items: center; padding:0; text-align:left" for="flexCheckDefault">
-                  Alterar
-              </div>
-              <div class="form-check">
-                <input type="hidden" name="exclui" value="0">
-                <input class="form-check-input" type="checkbox" name="exclui" value="1" id="flexCheckDefault">
-                <label class="form-check-label" style="display: grid; align-items: center; padding:0; text-align:left" for="flexCheckDefault">
-                  Excluir
+            </div>  
+        
+        </div> 
+
+        <div class="form3">
+            <div class="row mb-2">
+                <label class="control-label col-sm-2" for="formulario_id">Formulário:</label>
+              <div class="col-sm-8">
+                    <select class="form-select" name="formulario_id">
+                        <option value="">Selecione</option>
+                        @foreach($formularios as $formulario)
+                            <option value="{{$formulario->id}}">{{$formulario->nome}}</option>
+                        @endforeach
+                    </select>
               </div>
             </div>
-          </div>
-        </x-slot>
-        <x-slot name='button'>
-          <x-admin.save-button-component></x-admin.save-button-component>
-        </x-slot>
-      </x-admin.form-name-component>
 
+            <div class="row mb-2">
+                <label class="control-label col-sm-2" for="inclui">Permissoes:</label>
+                <div class="col-sm-2 mt-2">
+                    <input type="checkbox" name="inclui"> Inclui                     
+                </div>
+            </div>
 
+            <div class="row mb-2">
+                <label class="control-label col-sm-2" for="altera"></label>
+                <div class="col-sm-2">
+                    <input type="checkbox" name="altera"> Altera                    
+                </div>
+            </div>
 
-      {{-- Mensagem de erro no cadastro --}}
-      @include('admin._components.alertErrors')
-       {{-- Mensagem de cadastro com sucesso --}}
-      @include('admin._components.alertSuccess')
+            <div class="row mb-2">
+                <label class="control-label col-sm-2" for="exclui"></label>
+                <div class="col-sm-2">
+                    <input type="checkbox" name="exclui"> Exclui                    
+                </div>
+            </div>
 
-      {{-- Table --}}
-      <div class="container">
-        <table class="table table-hover table-sm mt-3" style="width: 70%; margin:auto">
-          <thead>
-            <tr>
-              <th scope="col">Formulario</th>
-              <th scope="col">Inclui</th>
-              <th scope="col">Altera</th>
-              <th scope="col">Exclui</th>
-              <th scope="col" style="width: 100px">Ações</th>
-            </tr>
-          </thead>
-          <tbody>
-            @foreach ($permissoes as $permissao)
-            <tr>
-              <td>
-                {{$permissao->formulario->nome}}
-              </td>
-              <td>
-                @if ($permissao->inclui == 1)
-                  <input type="checkbox" id="inc" disabled checked>
-                @else
-                  <input type="checkbox" disabled id="inc">
-                @endif
-              </td>
-              <td>
-                @if ($permissao->altera == 1)
-                  <input type="checkbox" disabled checked id="alt">
-                @else
-                <input type="checkbox" disabled id="alt">
-                @endif
-              </td>
-              <td>
-                @if ($permissao->exclui == 1)
-                  <input type="checkbox" disabled checked id="exc">
-                @else
-                <input type="checkbox" disabled id="exc">
-                @endif
-              </td>
-             
-              
-              {{-- Botao Deletar --}}
-              <td style="width: 100px">
-                <a href="{{route('permissao.edit',$permissao->id)}}" class="btn btn-primary btn-sm">
-                  <i class="bi bi-pen" aria-hidden="true"></i>
-              </a>
-                <a href="{{route('permissao.destroy', $permissao->id)}}" class="btn btn-danger btn-sm">
-                  <i class="bi bi-trash" aria-hidden="true"></i>
-                </a>
-              </td>
-            </tr>
-            @endforeach
-          </tbody>
-        </table>
-        
-          <x-admin.back-button-component :model="$data"></x-admin.back-button-component>
-        
-      </div>
+            <div class="form-central" style="margin-top: 35px;">
+                <div class="form-group">
+                  <button type="submit" class="btn btn-primary">
+                    <i style="font-size: 20px;" class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></i> Salvar
+                  </button>
+                </div>
+            </div>  
+        </div>
+         
+    </form>
+    @if ( isset($errors) && count($errors) > 0) 
+    <div class="alert alert-warning">
+        @foreach ($errors->all() as $error)
+            <p>{{$error}}</p>
+        @endforeach
     </div>
+    @endif
+    <br><br><br>
+    <table class="table table-striped table-condensed table-hover">
+        <tr>
+            <th>Formulário</th>
+            <th>INCLUI</th>
+            <th>ALTERA</th>
+            <th>EXCLUI</th>
+            <th width="100">Ações</th>
+        </tr>
+        @foreach($permissoes as $permissao) 
+        <tr>
+            <td>{{ $permissao->formulario['nome'] }}</td>  
+            @if($permissao->inclui==1)
+                <td>
+                    <input type="checkbox" checked id="inc">
+                </td>
+            @else
+                <td>
+                    <input type="checkbox" id="inc">
+                </td>                
+            @endif 
+            @if($permissao->altera==1)
+                <td>
+                    <input type="checkbox" checked id="alt">
+                </td>
+            @else
+                <td>
+                    <input type="checkbox" id="alt">
+                </td>                
+            @endif 
+            @if($permissao->exclui==1)
+                <td>
+                    <input type="checkbox" checked id="exc">
+                </td>
+            @else
+                <td>
+                    <input type="checkbox" id="exc">
+                </td>                
+            @endif 
+            <td width="100">  
+                <a href="{{route('permissao.edit', $permissao->id)}}" class="btn btn-primary btn-sm" style="color: #FFF; margin-right: 5px;">
+                  <i class="bi bi-pen" aria-hidden="true"></i>
+                </a>                 
+            </td>
 
+        </tr>
+
+        @endforeach
+
+    </table>
+    
+</div> 
 @endsection

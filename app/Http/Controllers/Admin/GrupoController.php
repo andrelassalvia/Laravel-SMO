@@ -28,16 +28,13 @@ class GrupoController extends Controller
     use SuccessRedirectMessage, FailRedirectMessage;
 
     public function __construct(
-        Grupo $grupo,
         Atendimento $atendimento,
         Empregado $empregado,
         GrupoExame $grupoExame,
         GrupoRisco $grupoRisco,
         GrupoFuncao $grupoFuncao
-       
     ) 
     {
-        $this->grupo = $grupo;
         $this->atendimento = $atendimento;
         $this->empregado = $empregado;
         $this->grupoExame = $grupoExame;
@@ -45,26 +42,29 @@ class GrupoController extends Controller
         $this->grupoFuncao = $grupoFuncao;
     }
     
-    public function index()
+    public function index(Grupo $grupo)
     {
-        $grupos = new CollectData($this->grupo);
+        $this->authorize('view-any', $grupo);
+        $grupos = new CollectData($grupo);
         $data = $grupos->collection('nome', 'ASC', false);
         return view ('admin.grupo.index', compact('data'));
     }
   
-    public function create()
+    public function create(Grupo $grupo)
     {
-        $data = $this->grupo;
+        $this->authorize('create', $grupo);
+        $data = $grupo;
         return view ('admin.grupo.create', compact('data'));
     }
 
-    public function store(GrupoFormRequest $request)
+    public function store(GrupoFormRequest $request, Grupo $grupo)
     {
+        $this->authorize('create', $grupo);
         $dataForm = $request->validated();
-        $data = new CheckDataBase($this->grupo);
+        $data = new CheckDataBase($grupo);
         $data = $data->checkInDatabase(['nome'], [$dataForm['nome']]);
         if($data){
-            $store = new SaveInDatabase($this->grupo);
+            $store = new SaveInDatabase($grupo);
             $store = $store->saveDatabase($data);
             return SuccessRedirectMessage::successRedirect(
                 'grupo.index',
@@ -80,30 +80,32 @@ class GrupoController extends Controller
         }
     }
     
-    public function show($id)
+    public function show(Grupo $grupo, $id)
     {
+        $this->authorize('view', $grupo);
         $data = Grupo::find($id);
         return view ('admin.grupo.show', compact('data'));
     }
 
-    
-    public function edit($id)
+    public function edit(Grupo $grupo, $id)
     {
+        $this->authorize('update', $grupo);
         $data = Grupo::find($id);
         return view ('admin.grupo.edit', compact('data'));
     }
 
-    public function update(GrupoFormRequest $request, $id)
+    public function update(GrupoFormRequest $request, Grupo $grupo, $id)
     {
+        $this->authorize('update', $grupo);
         $dataForm = $request->validated();
-        $alter = new CheckDataBase($this->grupo);
+        $alter = new CheckDataBase($grupo);
         $alter = $alter->checkInDatabase(
             ['nome'], 
             [$dataForm['nome']], 
         );
 
         if($alter){
-            $newRegister = new ChangeRegister($this->grupo);
+            $newRegister = new ChangeRegister($grupo);
             $newRegister = $newRegister->changeRegisterInDatabase(
                 $id,
                 $alter
@@ -122,9 +124,10 @@ class GrupoController extends Controller
         }
     }
 
-    public function destroy($id)
+    public function destroy(Grupo $grupo, $id)
     {
-        $check = new CheckToDelete($this->grupo);
+        $this->authorize('delete', $grupo);
+        $check = new CheckToDelete($grupo);
         $check = $check->checkDb(
             $id,
             [
@@ -136,7 +139,6 @@ class GrupoController extends Controller
             ],
             ['grupo_id']
         );
-
         if($check){
             return FailRedirectMessage::failRedirect(
                 'grupo.show',
@@ -144,7 +146,7 @@ class GrupoController extends Controller
                 $id
             );
         } else {
-            $delete = new DeleteRegister($this->grupo);
+            $delete = new DeleteRegister($grupo);
             $delete = $delete->erase($id);
             return SuccessRedirectMessage::successRedirect(
                 'grupo.index',
@@ -154,13 +156,13 @@ class GrupoController extends Controller
         }
     }
 
-    public function search(Request $request)
+    public function search(Request $request, Grupo $grupo)
     {
         $dataForm = $request->validate([
             'nome' => 'required'
         ]);
         $nome = '%'.$dataForm['nome'].'%';
-        $grupos = new SearchRequest($this->grupo);
+        $grupos = new SearchRequest($grupo);
         $data = $grupos->searchIt('nome', ['nome' => $nome]);
         return view('admin.grupo.index', compact('nome', 'data', 'dataForm'));
     }
