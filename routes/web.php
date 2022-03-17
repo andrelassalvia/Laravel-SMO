@@ -188,6 +188,26 @@ Route::prefix('users')
                 ->name('senha.update');
         });
 
+// EMPREGADOS
+Route::prefix('empregados')
+->controller('App\Http\Controllers\Admin\EmpregadoController')
+        ->middleware(['auth'])
+        ->group(function()
+            {
+                route::get('/', 'index')->name('empregados.index');
+                route::get('/create', 'create')->name('empregados.create');
+                route::post('/', 'store')->name('empregados.store');
+                Route::get('/search', 'search')->name('empregados.search');
+                route::get('/{empregado}', 'show')->name('empregados.show');
+                route::get('/{empregado}/edit', 'edit')->name('empregados.edit');
+                route::any('/{empregado}', 'update')->name('empregados.update');
+                route::delete('/{empregado}', 'destroy')->name('empregados.destroy');
+                
+                route::get('/load_funcoes/{id}', 'loadFuncoes');
+                route::get('/load_grupos/{setor_id}/{funcao_id}', 'loadGrupos');
+            }
+        );
+
 Route::get('/', function () {
     return view('auth.login');
 });

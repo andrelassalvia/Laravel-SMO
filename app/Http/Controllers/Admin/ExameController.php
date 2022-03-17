@@ -141,7 +141,7 @@ class ExameController extends Controller
     }
 
     public function search(Request $request, Exame $exame)
-    {
+    {    
         $dataForm = $request->validate([
             'nome' => 'required'
         ]);

@@ -155,7 +155,7 @@ class RiscoController extends Controller
     }
 
     public function search(Request $request, Risco $risco)
-    {
+    {    
         $dataForm = $request->validate([
             'nome' => 'required'
         ]);

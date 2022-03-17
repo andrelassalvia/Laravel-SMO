@@ -10,6 +10,7 @@ class Empregado extends Model
     use HasFactory;
 
     protected $table = 'empregado';
+    public $timestamps = false;
     protected $fillable = [
         'nome',
         'cpf',
@@ -23,4 +24,18 @@ class Empregado extends Model
         'grupo_id',
         
     ];
+    public function setor()
+    {
+        return $this->belongsTo(Setor::class);
+    }
+
+    public function funcao()
+    {
+        return $this->belongsTo(Funcao::class);
+    }
+
+    public function grupo()
+    {
+        return $this->belongsTo(Grupo::class);
+    }
 }

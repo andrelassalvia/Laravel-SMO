@@ -149,6 +149,7 @@ class FuncaoController extends Controller
         $dataForm = $request->validate([
             'nome' => 'required'
         ]);
+        
         $nome = '%'.$dataForm['nome'].'%';
         $funcoes = new SearchRequest($funcao);
         $data = $funcoes->searchIt('nome', ['nome' => $nome]);

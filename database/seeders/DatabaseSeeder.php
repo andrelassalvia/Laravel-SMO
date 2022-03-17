@@ -21,5 +21,6 @@ class DatabaseSeeder extends Seeder
         // $this->call(TipoDeRiscosSeeder::class);
         // $this->call(TipoAtendimentoSeeder::class);
         // $this->call(FormularioSeeder::class);
+        // $this->call(EmpregadoSeeder::class);
     }
 }

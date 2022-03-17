@@ -26,7 +26,7 @@
             Cadastros
           </a>
           <ul class="dropdown-menu " aria-labelledby="navbarDropdown">
-            <li><a class="dropdown-item" href="#">Empregados</a></li>
+            <li><a class="dropdown-item" href="{{route('empregados.index')}}">Empregados</a></li>
             <li><a class="dropdown-item" href="#">Coordenador de PCMSO</a></li>
             <li><a class="dropdown-item" href="#">Atendimentos</a></li>
           </ul>

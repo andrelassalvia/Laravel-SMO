@@ -5,7 +5,7 @@
 </div> --}}
 
 <div>
-    <div class="form-group">
+    <div class="text-center">
       <button type="submit" class="btn btn-primary">
         <i style="font-size: 20px;" class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></i> Salvar
       </button>
